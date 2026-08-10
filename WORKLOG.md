@@ -6,6 +6,63 @@ backfilled summaries.
 
 ---
 
+## 2026-08-10 (Monday)
+
+**Theme: references VERIFIED (two were wrong), repo prepared for GitHub, and a
+migration plan - user has an internship and is losing access to this machine.**
+
+### References verified against arxiv.org / CVF Open Access
+Not from memory this time. Two entries in my own references.bib were WRONG:
+1. **I had INVENTED the VL-JEPA title** ("Selective Decoding for Streaming Video
+   Captioning"). Real: *"VL-JEPA: Joint Embedding Predictive Architecture for
+   Vision-language"*, Delong Chen, Mustafa Shukor, Theo Moutakanni, Willy Chung,
+   Jade Yu, Tejaswi Kasarla, Yejin Bang, Allen Bolourchi, Yann LeCun, Pascale
+   Fung. arXiv:2512.10942, submitted 2025-12-11, revised 2026-02-02.
+   **Checked for propagation: none.** The prose only ever cites it by arXiv ID
+   and "Chen, Shukor et al." (which is correct). THESIS.md:1 is LiveJEPA's OWN
+   title, not VL-JEPA's - not a conflict.
+2. LiveCC had a placeholder venue. Real: CVPR 2025, pp. 29083-29095,
+   arXiv:2504.16030, Joya Chen, Ziyun Zeng, Yiqi Lin, Wei Li, Zejun Ma, Mike
+   Zheng Shou.
+Confirmed correct as written: V-JEPA 2 (2506.09985, Assran/Bardes/Fan/Garrido/
+Howes), SONAR (2308.11466, Duquenne/Schwenk/Sagot), CIDEr (1411.5726, Vedantam/
+Zitnick/Parikh, CVPR 2015), COIN (1903.02874, Tang et al., CVPR 2019),
+Ego-Exo4D (2311.18259 submitted 2023, proceedings CVPR 2024 - both noted).
+
+### Git repo prepared (NOT pushed - awaiting the user's remote)
+- `git init`, `.gitignore`, one commit `e4e0a14`: **169 files, 4.05 MB**.
+- **.gitignore bug caught by verification, not by reading.** First draft used
+  inline comments (`*.zip   # 286 MB`). **git has NO inline comments in
+  .gitignore** - the trailing text becomes part of the pattern and silently
+  matches nothing. Result: `*.zip`, `webapp/cloudflared.exe` and
+  `.claude/settings.local.json` were all still staged - **342 MB**, including a
+  286 MB zip and a 52 MB binary. Rules with no comment (`eval_data/`,
+  `checkpoints*/`) worked, which is why it looked fine at a glance.
+  Comments now on their own lines; re-verified 342 MB -> 4.05 MB, zero leaks.
+  (`git check-ignore` reports nothing for files already in the index - that
+  masked it the first time. Reset the index before trusting it.)
+- Secret scan clean: the only hits are env-var NAMES and doc references to
+  `~/.kaggle/access_token`. `scripts/download_egoexo_subset.ps1` explicitly tells
+  the reader not to hard-code AWS keys. Repo will be **PRIVATE** (user's call),
+  so the demo token in 8 files is not a concern; parameterise it before ever
+  flipping to public.
+- No `gh` CLI on this box, so the user creates the repo and authenticates; I
+  wire the remote and push.
+
+### Migration: user is leaving the college machine
+Measured what is actually irreplaceable rather than copying 120 GB:
+- **`data_cache_coin_full` (12.6 GB) is the single least-replaceable artifact** -
+  more so than the checkpoints, which can be retrained FROM it. 1,650 COIN
+  YouTube links were already dead during extraction and more die monthly, so a
+  re-run would now yield strictly less.
+- New **`scripts/export_project.ps1`** (pure ASCII, parses clean): copies ~19.4 GB
+  of caches + the 2 result-producing checkpoints + streams + GT annotations,
+  checks free space BEFORE writing anything, robocopy with retries, writes
+  MANIFEST.txt, optional `-Verify` for SHA-256. Deliberately skips the 63 GB
+  EgoExo video (re-downloadable), 21 GB backups/ (redundant tars), intermediate
+  checkpoints, and a100m (both its experiments are closed negatives).
+- User will keep it on their laptop. Told them plainly: one copy is not a backup.
+
 ## 2026-08-02 (Sunday)
 
 **Theme: headroom analysis closes the experimental programme. The corrected
