@@ -1,0 +1,38 @@
+# Core (needed even in stub mode)
+numpy>=1.24
+scipy>=1.10
+scikit-learn>=1.3
+pyyaml>=6.0
+
+# Real models (install when use_stubs=false)
+# NOTE for CUDA on Windows: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+torch>=2.2
+torchvision>=0.17
+transformers>=4.44
+accelerate>=0.30
+sentencepiece                    # NLLB tokenizer for the transformers SONAR ports
+sentence-transformers>=3.0      # EmbeddingGemma (optional)
+# fairseq2 + sonar-space are Linux/macOS-only. On Windows use the
+# transformers backend (configs/default.yaml -> encoders.sonar.backend: transformers)
+# sonar-space
+# fairseq2
+
+# Streaming / video I/O
+opencv-python>=4.9
+decord>=0.6
+# torchcodec                     # alternative video decoder
+
+# Evaluation
+pycocoevalcap                    # CIDEr
+# ruptures>=1.1                  # optional change-point detection; needs MSVC
+#                                  build tools on Windows/py3.14 (no wheel)
+
+# Plotting / dev
+matplotlib>=3.7
+tqdm>=4.66
+einops>=0.7
+
+# Web app (webapp/backend.py — the browser UI + backend)
+fastapi>=0.110
+uvicorn[standard]>=0.27          # includes websockets for streaming
+python-multipart>=0.0.9          # video upload handling

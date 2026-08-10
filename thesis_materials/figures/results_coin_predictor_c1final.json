@@ -1,0 +1,112 @@
+{
+  "dataset": "coin",
+  "mode": "predictor",
+  "ckpt": "checkpoints_c1_final/predictor_30000.pt",
+  "n_videos": 7,
+  "fps": 2.0,
+  "max_seconds": 180.0,
+  "gt_source": "atomic",
+  "partial": false,
+  "results": {
+    "uniform": [
+      {
+        "target_hz": 1.0,
+        "avg_hz": 0.9980638915779284,
+        "n_decodes": 1031,
+        "cider": 5.046109118408157
+      },
+      {
+        "target_hz": 0.5,
+        "avg_hz": 0.4985479186834463,
+        "n_decodes": 515,
+        "cider": 5.388134866938789
+      },
+      {
+        "target_hz": 0.35,
+        "avg_hz": 0.33204259438528555,
+        "n_decodes": 343,
+        "cider": 5.072078501365185
+      },
+      {
+        "target_hz": 0.2,
+        "avg_hz": 0.19748305905130686,
+        "n_decodes": 204,
+        "cider": 5.129058238492039
+      },
+      {
+        "target_hz": 0.1,
+        "avg_hz": 0.09874152952565343,
+        "n_decodes": 102,
+        "cider": 4.057085797395292
+      },
+      {
+        "target_hz": 0.05,
+        "avg_hz": 0.051306873184898356,
+        "n_decodes": 53,
+        "cider": 3.385483072977217
+      },
+      {
+        "target_hz": 0.02,
+        "avg_hz": 0.01936108422071636,
+        "n_decodes": 20,
+        "cider": 3.4227607241348323
+      },
+      {
+        "target_hz": 0.01,
+        "avg_hz": 0.00968054211035818,
+        "n_decodes": 10,
+        "cider": 3.4999179108198484
+      }
+    ],
+    "adaptive": [
+      {
+        "target_hz": 1.0,
+        "avg_hz": 0.9980638915779284,
+        "n_decodes": 1031,
+        "cider": 5.3590656374952825
+      },
+      {
+        "target_hz": 0.5,
+        "avg_hz": 0.4985479186834463,
+        "n_decodes": 515,
+        "cider": 5.008983316120669
+      },
+      {
+        "target_hz": 0.35,
+        "avg_hz": 0.33204259438528555,
+        "n_decodes": 343,
+        "cider": 5.043408793524248
+      },
+      {
+        "target_hz": 0.2,
+        "avg_hz": 0.19748305905130686,
+        "n_decodes": 204,
+        "cider": 4.9088937770247725
+      },
+      {
+        "target_hz": 0.1,
+        "avg_hz": 0.09874152952565343,
+        "n_decodes": 102,
+        "cider": 4.486437775484901
+      },
+      {
+        "target_hz": 0.05,
+        "avg_hz": 0.051306873184898356,
+        "n_decodes": 53,
+        "cider": 3.114983016877277
+      },
+      {
+        "target_hz": 0.02,
+        "avg_hz": 0.01936108422071636,
+        "n_decodes": 20,
+        "cider": 2.3723632866130417
+      },
+      {
+        "target_hz": 0.01,
+        "avg_hz": 0.00968054211035818,
+        "n_decodes": 10,
+        "cider": 2.1586643248267765
+      }
+    ]
+  }
+}

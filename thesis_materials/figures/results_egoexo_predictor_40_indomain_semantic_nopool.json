@@ -1,0 +1,183 @@
+{
+  "metric": "time-aligned SONAR cosine",
+  "ckpt": "checkpoints_egoexo/predictor_20000.pt",
+  "gt_source": "atomic",
+  "n_videos": 40,
+  "max_seconds": 360.0,
+  "results": {
+    "uniform": [
+      {
+        "target_hz": 1.0,
+        "avg_hz": 0.9982355847272214,
+        "n_decodes": 7072,
+        "semantic_cos": 0.6045353921902106,
+        "semantic_cos_shuffled_align": 0.5715260153717139
+      },
+      {
+        "target_hz": 0.5,
+        "avg_hz": 0.499258945585433,
+        "n_decodes": 3537,
+        "semantic_cos": 0.6075489244959474,
+        "semantic_cos_shuffled_align": 0.5754583012772391
+      },
+      {
+        "target_hz": 0.35,
+        "avg_hz": 0.332698143835133,
+        "n_decodes": 2357,
+        "semantic_cos": 0.604703998751799,
+        "semantic_cos_shuffled_align": 0.574898361419965
+      },
+      {
+        "target_hz": 0.2,
+        "avg_hz": 0.19930834921307078,
+        "n_decodes": 1412,
+        "semantic_cos": 0.6052439142138367,
+        "semantic_cos_shuffled_align": 0.5758535303370491
+      },
+      {
+        "target_hz": 0.1,
+        "avg_hz": 0.09965417460653539,
+        "n_decodes": 706,
+        "semantic_cos": 0.5979630711308013,
+        "semantic_cos_shuffled_align": 0.572335960799041
+      },
+      {
+        "target_hz": 0.05,
+        "avg_hz": 0.05039170019055685,
+        "n_decodes": 357,
+        "semantic_cos": 0.5976338187872071,
+        "semantic_cos_shuffled_align": 0.5780685887509704
+      },
+      {
+        "target_hz": 0.02,
+        "avg_hz": 0.019761451055120335,
+        "n_decodes": 140,
+        "semantic_cos": 0.5778069916218185,
+        "semantic_cos_shuffled_align": 0.571244958336775
+      },
+      {
+        "target_hz": 0.01,
+        "avg_hz": 0.010727644858493895,
+        "n_decodes": 76,
+        "semantic_cos": 0.5811993363247202,
+        "semantic_cos_shuffled_align": 0.577529144907341
+      }
+    ],
+    "adaptive": [
+      {
+        "target_hz": 1.0,
+        "avg_hz": 0.9982355847272214,
+        "n_decodes": 7072,
+        "semantic_cos": 0.6410371263176425,
+        "semantic_cos_shuffled_align": 0.609557081005559
+      },
+      {
+        "target_hz": 0.5,
+        "avg_hz": 0.499258945585433,
+        "n_decodes": 3537,
+        "semantic_cos": 0.6400795367030216,
+        "semantic_cos_shuffled_align": 0.6069836280014012
+      },
+      {
+        "target_hz": 0.35,
+        "avg_hz": 0.332698143835133,
+        "n_decodes": 2357,
+        "semantic_cos": 0.6392707176333768,
+        "semantic_cos_shuffled_align": 0.607665017138534
+      },
+      {
+        "target_hz": 0.2,
+        "avg_hz": 0.19930834921307078,
+        "n_decodes": 1412,
+        "semantic_cos": 0.6380669826066306,
+        "semantic_cos_shuffled_align": 0.6044018236473035
+      },
+      {
+        "target_hz": 0.1,
+        "avg_hz": 0.09965417460653539,
+        "n_decodes": 706,
+        "semantic_cos": 0.6351963625768048,
+        "semantic_cos_shuffled_align": 0.6042092306791577
+      },
+      {
+        "target_hz": 0.05,
+        "avg_hz": 0.05039170019055685,
+        "n_decodes": 357,
+        "semantic_cos": 0.6289838635618328,
+        "semantic_cos_shuffled_align": 0.6023477613319912
+      },
+      {
+        "target_hz": 0.02,
+        "avg_hz": 0.019761451055120335,
+        "n_decodes": 140,
+        "semantic_cos": 0.6173553004465223,
+        "semantic_cos_shuffled_align": 0.5974977867916037
+      },
+      {
+        "target_hz": 0.01,
+        "avg_hz": 0.010727644858493895,
+        "n_decodes": 76,
+        "semantic_cos": 0.6129680769051311,
+        "semantic_cos_shuffled_align": 0.6043214414076477
+      }
+    ],
+    "random": [
+      {
+        "target_hz": 1.0,
+        "avg_hz": 0.9982355847272214,
+        "n_decodes": 7072,
+        "semantic_cos": 0.6063561648006426,
+        "semantic_cos_shuffled_align": 0.5732620081515313
+      },
+      {
+        "target_hz": 0.5,
+        "avg_hz": 0.499258945585433,
+        "n_decodes": 3537,
+        "semantic_cos": 0.603864542359769,
+        "semantic_cos_shuffled_align": 0.5734856161696414
+      },
+      {
+        "target_hz": 0.35,
+        "avg_hz": 0.332698143835133,
+        "n_decodes": 2357,
+        "semantic_cos": 0.6055265162592905,
+        "semantic_cos_shuffled_align": 0.574172993290197
+      },
+      {
+        "target_hz": 0.2,
+        "avg_hz": 0.19930834921307078,
+        "n_decodes": 1412,
+        "semantic_cos": 0.5974374349934669,
+        "semantic_cos_shuffled_align": 0.5707496146691675
+      },
+      {
+        "target_hz": 0.1,
+        "avg_hz": 0.09965417460653539,
+        "n_decodes": 706,
+        "semantic_cos": 0.5921926435637626,
+        "semantic_cos_shuffled_align": 0.5733745672775568
+      },
+      {
+        "target_hz": 0.05,
+        "avg_hz": 0.05039170019055685,
+        "n_decodes": 357,
+        "semantic_cos": 0.594640736049494,
+        "semantic_cos_shuffled_align": 0.5758256381760695
+      },
+      {
+        "target_hz": 0.02,
+        "avg_hz": 0.019761451055120335,
+        "n_decodes": 140,
+        "semantic_cos": 0.5793010992100414,
+        "semantic_cos_shuffled_align": 0.5664538129016189
+      },
+      {
+        "target_hz": 0.01,
+        "avg_hz": 0.010727644858493895,
+        "n_decodes": 76,
+        "semantic_cos": 0.5867388471557007,
+        "semantic_cos_shuffled_align": 0.582738069463563
+      }
+    ]
+  }
+}

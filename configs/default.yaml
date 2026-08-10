@@ -1,0 +1,76 @@
+# LiveJEPA configuration — all knobs in one place.
+# Edit here, not in code.
+
+project:
+  name: livejepa
+  seed: 42
+  device: cuda            # cuda | cpu
+  use_stubs: false        # true = synthetic embeddings (no heavy models needed)
+                          # real V-JEPA 2 + SONAR are installed and verified (Phase 0)
+
+encoders:
+  vision:
+    hf_id: facebook/vjepa2-vitl-fpc64-256
+    dtype: float16
+    frames_per_window: 16     # K frames per sliding window
+    resolution: 256
+    subsample_to: 16          # subsample the 64-frame checkpoint to this many frames
+  sonar:
+    # fairseq2 pipeline names (used when use_stubs=false and backend=fairseq2)
+    encoder: text_sonar_basic_encoder
+    decoder: text_sonar_basic_decoder
+    lang: eng_Latn
+    embed_dim: 1024
+    native_norm: 0.196        # mean L2 norm of SONAR embeddings; predictions are
+                              # rescaled to this before decoding (decoder rejects
+                              # off-scale vectors -> empty strings)
+    max_seq_len: 64
+    beam_size: 5
+    backend: transformers     # fairseq2 | transformers (fairseq2 is Linux/macOS-only)
+    # transformers-format fallback ports:
+    hf_encoder: cointegrated/SONAR_200_text_encoder
+    hf_decoder: raxtemur/SONAR_200_text_decoder
+
+predictor:
+  vis_dim: 1024             # V-JEPA 2 ViT-L token dim
+  hidden_dim: 768
+  out_dim: 1024             # must match sonar.embed_dim
+  depth: 4
+  heads: 8
+  dropout: 0.1
+
+train:
+  data_root: ./data_cache          # where cached features live (see data/cache.py)
+  batch_size: 32           # transformer over up to 256 tokens/clip; 256 OOMs a 15GB T4
+  lr: 3.0e-4
+  weight_decay: 0.05
+  warmup_steps: 500
+  max_steps: 20000
+  infonce_temp: 0.07
+  cosine_loss_weight: 1.0
+  log_every: 50
+  ckpt_every: 1000
+  ckpt_dir: ./checkpoints
+
+selective:
+  # offline (Ward clustering)
+  default_n_segments: 24
+  linkage: ward
+  # online (windowed-variance trigger)
+  window: 8
+  tau: 0.15                 # cosine-shift threshold to fire a decode
+  min_gap: 4                # min steps between decodes (anti-burst)
+  pool: mean                # mean | none — pool segment before decoding (denoises)
+  smoothing_window: 3       # moving-average smoothing on the stream (1 = off)
+
+eval:
+  dataset: egoexo           # egoexo | youcook2 | activitynet
+  data_root: ./eval_data
+  # frequency sweep for the Pareto curve (Hz)
+  freq_sweep_hz: [2.0, 1.0, 0.5, 0.35, 0.2, 0.1, 0.05, 0.02, 0.01]
+  fps: 2.0                  # stream sampling rate used to convert Hz <-> stride
+
+demo:
+  source: 0                 # 0 = webcam; or a path to a video file / RTSP url
+  display_fps: 2.0
+  show_decode_indicator: true

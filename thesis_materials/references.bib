@@ -1,0 +1,101 @@
+% ===========================================================================
+%  LiveJEPA — bibliography
+%
+%  VERIFIED 2026-08-10 against arxiv.org / CVF Open Access. Titles, full author
+%  lists, arXiv identifiers and venues below were each checked on the paper's
+%  own page — they are no longer from memory. Two things were WRONG in the
+%  first draft of this file and are fixed here:
+%    * the VL-JEPA title was invented ("Selective Decoding for Streaming Video
+%      Captioning"); the real subtitle is "Joint Embedding Predictive
+%      Architecture for Vision-language", and the author list was a stub;
+%    * LiveCC had a placeholder venue — it is CVPR 2025, arXiv:2504.16030.
+%  If you re-verify anything, note that Ego-Exo4D's arXiv submission is 2023
+%  while the proceedings year is 2024; both are given below.
+% ===========================================================================
+
+@inproceedings{vljepa2025,
+  title        = {{VL-JEPA}: Joint Embedding Predictive Architecture for
+                  Vision-language},
+  author       = {Chen, Delong and Shukor, Mustafa and Moutakanni, Theo and
+                  Chung, Willy and Yu, Jade and Kasarla, Tejaswi and
+                  Bang, Yejin and Bolourchi, Allen and LeCun, Yann and
+                  Fung, Pascale},
+  journal      = {arXiv preprint arXiv:2512.10942},
+  year         = {2025},
+  note         = {Submitted 11 December 2025; revised 2 February 2026.
+                  Code and weights unreleased at the time of writing}
+}
+
+@article{vjepa2,
+  title        = {{V-JEPA} 2: Self-Supervised Video Models Enable Understanding,
+                  Prediction and Planning},
+  author       = {Assran, Mido and Bardes, Adrien and Fan, David and
+                  Garrido, Quentin and Howes, Russell and others},
+  journal      = {arXiv preprint arXiv:2506.09985},
+  year         = {2025},
+  note         = {Submitted 11 June 2025}
+}
+
+@article{sonar2023,
+  title        = {{SONAR}: Sentence-Level Multimodal and Language-Agnostic
+                  Representations},
+  author       = {Duquenne, Paul-Ambroise and Schwenk, Holger and
+                  Sagot, Beno{\^i}t},
+  journal      = {arXiv preprint arXiv:2308.11466},
+  year         = {2023},
+  note         = {Submitted 22 August 2023}
+}
+
+@inproceedings{cider2015,
+  title        = {{CIDEr}: Consensus-Based Image Description Evaluation},
+  author       = {Vedantam, Ramakrishna and Zitnick, C. Lawrence and
+                  Parikh, Devi},
+  booktitle    = {Proceedings of the IEEE Conference on Computer Vision and
+                  Pattern Recognition (CVPR)},
+  pages        = {4566--4575},
+  year         = {2015},
+  note         = {arXiv:1411.5726}
+}
+
+@inproceedings{coin2019,
+  title        = {{COIN}: A Large-Scale Dataset for Comprehensive Instructional
+                  Video Analysis},
+  author       = {Tang, Yansong and Ding, Dajun and Rao, Yongming and
+                  Zheng, Yu and Zhang, Danyang and Zhao, Lili and Lu, Jiwen and
+                  Zhou, Jie},
+  booktitle    = {Proceedings of the IEEE/CVF Conference on Computer Vision and
+                  Pattern Recognition (CVPR)},
+  year         = {2019},
+  note         = {arXiv:1903.02874. 11,827 videos, 180 tasks, 12 domains}
+}
+
+@inproceedings{egoexo4d2024,
+  title        = {{Ego-Exo4D}: Understanding Skilled Human Activity from First-
+                  and Third-Person Perspectives},
+  author       = {Grauman, Kristen and others},
+  booktitle    = {Proceedings of the IEEE/CVF Conference on Computer Vision and
+                  Pattern Recognition (CVPR)},
+  year         = {2024},
+  note         = {arXiv:2311.18259, submitted 30 November 2023}
+}
+
+% Cited in Future Work as the deferred token-generative baseline.
+@inproceedings{livecc2025,
+  title        = {{LiveCC}: Learning Video {LLM} with Streaming Speech
+                  Transcription at Scale},
+  author       = {Chen, Joya and Zeng, Ziyun and Lin, Yiqi and Li, Wei and
+                  Ma, Zejun and Shou, Mike Zheng},
+  booktitle    = {Proceedings of the IEEE/CVF Conference on Computer Vision and
+                  Pattern Recognition (CVPR)},
+  pages        = {29083--29095},
+  year         = {2025},
+  note         = {arXiv:2504.16030}
+}
+
+% Software actually used in the pipeline — include if the institute expects
+% tooling to be cited; drop otherwise.
+@misc{pycocoevalcap,
+  title        = {{pycocoevalcap}: {MS-COCO} Caption Evaluation Metrics},
+  howpublished = {\url{https://github.com/salaniz/pycocoevalcap}},
+  note         = {CIDEr-D implementation used for all caption scoring}
+}

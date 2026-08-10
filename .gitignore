@@ -1,0 +1,74 @@
+# ===========================================================================
+#  LiveJEPA — what must never reach the repository
+#
+#  The working directory is ~120 GB. Almost all of it is data and weights that
+#  are either redistributable-only-by-their-owners, or far past GitHub's limits.
+#  Committed: source, configs, docs, thesis materials, and the small results
+#  .json/.png files the thesis cites.
+#
+#  NOTE: git has NO inline comments in .gitignore. A trailing "# ..." becomes
+#  part of the pattern and silently matches nothing. Keep every comment on its
+#  own line. (The first draft of this file lost *.zip and cloudflared.exe to
+#  exactly that bug — 340 MB would have been pushed.)
+# ===========================================================================
+
+# --- benchmark data -------------------------------------------------------
+# EgoExo4D video (~63 GB): licensed to the individual granted access;
+# redistributing it would violate that agreement.
+eval_data/
+# COIN / Action100M / EgoExo feature caches (~24 GB) — derived data.
+data_cache*/
+backups/
+data_cache_quarantine/
+
+# --- model weights (~11.6 GB) ---------------------------------------------
+# To publish the final model, attach ONE .pt to a GitHub Release instead:
+# checkpoints_c1_final/predictor_30000.pt is the deployed one.
+checkpoints*/
+
+# --- large binaries / bundles ---------------------------------------------
+# 52 MB third-party binary; users download their own.
+webapp/cloudflared.exe
+# livejepa_cloud.zip (286 MB), livejepa_kaggle.zip
+*.zip
+*.tar
+*.pt
+*.npz
+*.parquet
+
+# --- machine-local state ---------------------------------------------------
+# contains the local demo token
+.claude/settings.local.json
+logs/
+webapp/server.log
+# regenerated on demand from sample videos
+webapp/thumbs/
+
+# --- python ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+.venv/
+venv/
+
+# --- editor / OS -----------------------------------------------------------
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- LaTeX build artifacts -------------------------------------------------
+*.aux
+*.bbl
+*.blg
+*.lof
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+thesis_materials/*.pdf

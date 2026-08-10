@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LiveJEPA — video that speaks when something happens</title>
+<style>
+  :root { --bg:#0a0d12; --panel:#12161d; --panel2:#161b24; --line:#232b37; --fg:#e8eef5;
+          --muted:#8b98a5; --acc:#39c2ff; --acc2:#8b5cf6; --green:#3fdc78; --red:#ff5252;
+          --amber:#ffc53d; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font:15px/1.55 system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+  a { color:var(--acc); text-decoration:none; }
+  .wrap { max-width:1120px; margin:0 auto; padding:0 22px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding:64px 0 40px; background:
+          radial-gradient(900px 380px at 20% -10%, rgba(57,194,255,.14), transparent 60%),
+          radial-gradient(700px 320px at 85% 0%, rgba(139,92,246,.13), transparent 60%); }
+  .badge { display:inline-block; font-size:12px; letter-spacing:.4px; color:var(--acc);
+           border:1px solid rgba(57,194,255,.35); border-radius:999px; padding:4px 12px; margin-bottom:18px; }
+  h1 { font-size:clamp(30px,5vw,50px); line-height:1.12; margin:0 0 14px; font-weight:800; }
+  h1 .grad { background:linear-gradient(90deg,var(--acc),var(--acc2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color:var(--muted); font-size:17px; max-width:640px; margin:0 0 26px; }
+  .cta { display:flex; gap:12px; flex-wrap:wrap; }
+  .btn { display:inline-block; padding:12px 22px; border-radius:9px; font-weight:600; font-size:15px;
+         border:1px solid var(--line); background:var(--panel); color:var(--fg); cursor:pointer; }
+  .btn.primary { background:linear-gradient(90deg,#1273a8,#6d43d8); border:none; color:#fff; }
+  .btn.primary:hover { filter:brightness(1.15); }
+  .btn:hover { border-color:var(--acc); }
+
+  /* hero animation */
+  .demo-anim { margin-top:40px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px; }
+  .lane { display:flex; align-items:center; gap:10px; margin:10px 0; }
+  .lane .lbl { min-width:150px; font-size:13px; color:var(--muted); text-align:right; }
+  .cells { display:flex; gap:4px; flex:1; }
+  .cell { flex:1; height:22px; border-radius:4px; background:#1b222c; transition:background .25s, box-shadow .25s; }
+  .cell.seen { background:#26303d; }
+  .cell.fire { background:var(--acc); box-shadow:0 0 12px rgba(57,194,255,.8); }
+  .cell.fire2 { background:#584a86; }
+  .lane .count { min-width:110px; font-size:13px; font-variant-numeric:tabular-nums; }
+  .lane .count b { font-size:16px; }
+  #animCap { min-height:26px; font-size:15px; color:var(--green); padding-left:160px; font-style:italic; }
+  @media (max-width:700px){ .lane .lbl{min-width:90px;font-size:11px} #animCap{padding-left:0} .lane .count{min-width:70px;font-size:11px} }
+
+  /* ---------- stat chips ---------- */
+  .chips { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:34px 0 8px; }
+  .chip { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+  .chip b { display:block; font-size:26px; background:linear-gradient(90deg,var(--acc),var(--acc2));
+            -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .chip span { color:var(--muted); font-size:13px; }
+  .foot-note { color:var(--muted); font-size:12px; margin-top:6px; }
+
+  /* ---------- sections ---------- */
+  section { padding:46px 0; }
+  h2 { font-size:26px; margin:0 0 6px; }
+  .lead { color:var(--muted); margin:0 0 24px; max-width:640px; }
+  .cards3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; }
+  .card .ico { font-size:26px; }
+  .card h3 { margin:8px 0 6px; font-size:16px; }
+  .card p { margin:0; color:var(--muted); font-size:14px; }
+  .card .step { color:var(--acc); font-size:12px; letter-spacing:1px; }
+
+  /* ---------- playground ---------- */
+  #play { background:var(--panel2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .pg { display:grid; grid-template-columns:360px 1fr; gap:18px; }
+  @media (max-width:880px){ .pg { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  label { display:block; font-size:13px; color:var(--muted); margin:13px 0 6px; }
+  select, input[type=number], button.ctrl { width:100%; padding:9px 10px; border-radius:7px;
+          border:1px solid var(--line); background:#0d1116; color:var(--fg); font-size:14px; }
+  .row { display:flex; gap:8px; } .row > * { flex:1; }
+  .seg { display:flex; gap:8px; }
+  .seg button { flex:1; padding:9px; border-radius:7px; border:1px solid var(--line); background:#0d1116; color:var(--fg); cursor:pointer; font-size:14px; }
+  .seg button.on { border-color:var(--acc); background:#0e2b3b; color:#cbe9fa; }
+  .gallery { display:grid; grid-template-columns:1fr 1fr; gap:8px; max-height:250px; overflow:auto; margin-top:4px; padding-right:2px; }
+  .g-item { position:relative; border:2px solid transparent; border-radius:8px; overflow:hidden; cursor:pointer; background:#000; aspect-ratio:16/10; }
+  .g-item img { width:100%; height:100%; object-fit:cover; display:block; opacity:.85; }
+  .g-item:hover img { opacity:1; }
+  .g-item.sel { border-color:var(--acc); box-shadow:0 0 10px rgba(57,194,255,.4); }
+  .g-item .nm { position:absolute; left:0; right:0; bottom:0; font-size:10px; padding:3px 6px;
+                background:linear-gradient(transparent,rgba(0,0,0,.85)); color:#cdd7e0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #start { margin-top:16px; width:100%; padding:13px; border:none; border-radius:9px; font-weight:700; font-size:15px;
+           background:linear-gradient(90deg,#1273a8,#6d43d8); color:#fff; cursor:pointer; }
+  #start:disabled { opacity:.5; cursor:not-allowed; }
+  #start.stop { background:var(--red); }
+  .hint { color:var(--muted); font-size:12px; margin-top:10px; }
+  #cam { width:100%; border-radius:8px; margin-top:8px; display:none; background:#000; }
+
+  #current { font-size:24px; min-height:40px; padding:16px 18px; background:#0d1116; border:1px solid var(--line);
+             border-radius:10px; color:var(--green); }
+  #current.idle { color:var(--muted); font-size:16px; font-style:italic; }
+  .meterbox { margin-top:14px; }
+  .meterbox .mrow { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:5px; }
+  .meter { position:relative; height:14px; background:#0d1116; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .meter > i { display:block; height:100%; width:0; background:linear-gradient(90deg,#1e5f7f,var(--acc)); transition:width .5s; }
+  .meter .tau { position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--amber); left:40%; }
+  .meter.hot > i { background:linear-gradient(90deg,#7f1e3a,var(--red)); }
+  .stats { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+  .stat { flex:1; min-width:110px; background:#0d1116; border:1px solid var(--line); border-radius:9px; padding:10px 12px; text-align:center; }
+  .stat b { font-size:24px; display:block; font-variant-numeric:tabular-nums; }
+  .stat span { font-size:11px; color:var(--muted); }
+  .stat.save b { color:var(--green); }
+  .flash { display:inline-block; width:10px; height:10px; border-radius:50%; background:#333; margin-left:6px; }
+  .flash.on { background:var(--red); box-shadow:0 0 10px var(--red); }
+  .timeline { display:flex; gap:2px; margin-top:14px; min-height:16px; flex-wrap:wrap; }
+  .tl { width:8px; height:16px; border-radius:2px; background:#1e2631; }
+  .tl.dec { background:var(--acc); box-shadow:0 0 6px rgba(57,194,255,.7); }
+  .bar { height:6px; background:#0d1116; border-radius:4px; overflow:hidden; margin-top:12px; border:1px solid var(--line); }
+  .bar > i { display:block; height:100%; width:0; background:var(--acc2); transition:width .3s; }
+  #status { color:var(--muted); font-size:13px; margin:10px 0 0; }
+  .loghead { display:flex; justify-content:space-between; align-items:center; margin-top:16px; }
+  .loghead h4 { margin:0; font-size:13px; color:var(--muted); font-weight:600; }
+  #srtBtn { width:auto; font-size:12px; padding:5px 12px; display:none; }
+  ul#log { list-style:none; margin:8px 0 0; padding:0; max-height:260px; overflow:auto; }
+  ul#log li { padding:8px 10px; border-bottom:1px solid var(--line); font-size:14px; display:flex; gap:10px; }
+  ul#log li .t { color:var(--muted); font-variant-numeric:tabular-nums; min-width:56px; }
+
+  /* ---------- use cases ---------- */
+  .uc { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .uc .card { border-top:2px solid transparent; }
+  .uc .card:hover { border-top-color:var(--acc); }
+  .uc .try { display:inline-block; margin-top:10px; font-size:12px; color:var(--acc); cursor:pointer; }
+
+  footer { padding:26px 0 40px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<div class="hero">
+  <div class="wrap">
+    <span class="badge">LiveJEPA · selective video captioning · runs 100% locally</span>
+    <h1>Video that speaks<br><span class="grad">only when something happens.</span></h1>
+    <p class="sub">Most systems caption every few seconds — burning compute to repeat themselves.
+      LiveJEPA watches a video in <b>embedding space</b> and decodes a sentence only when the
+      <b>meaning</b> of the scene changes. Silence is a feature.</p>
+    <div class="cta">
+      <button class="btn primary" onclick="location.hash='#play'">▶ Try it on a real video</button>
+      <button class="btn" onclick="jumpWebcam()">📷 Point your camera at it</button>
+      <button class="btn" onclick="location.href='/about'">🧠 How it works — architecture &amp; results</button>
+    </div>
+
+    <div class="demo-anim">
+      <div class="lane">
+        <div class="lbl">LiveJEPA (adaptive)</div>
+        <div class="cells" id="laneA"></div>
+        <div class="count"><b id="cntA">0</b> decodes</div>
+      </div>
+      <div id="animCap">&nbsp;</div>
+      <div class="lane">
+        <div class="lbl">caption every window</div>
+        <div class="cells" id="laneB"></div>
+        <div class="count"><b id="cntB">0</b> decodes</div>
+      </div>
+    </div>
+
+    <div class="chips">
+      <div class="chip"><b id="chipRate">~5–10%</b><span>of windows decoded — the rest is skipped decoder compute</span></div>
+      <div class="chip"><b>up to 9.9×</b><span>fewer decoder calls than fixed-interval captioning, at equal-or-better caption quality*</span></div>
+      <div class="chip"><b>0 cloud calls</b><span>frozen V-JEPA&nbsp;2 → trained predictor → SONAR decoder, all on this machine</span></div>
+      <div class="chip"><b>16 frames</b><span>per window at 2 fps — it reasons over motion, not single images</span></div>
+    </div>
+    <p class="foot-note">*budget-matched, time-aligned CIDEr-D. 9.9&times; on EgoExo4D atomic descriptions
+    through the full predicted pipeline with an in-domain predictor (40 held-out takes, significant at
+    every budget); 2.5&times; on EgoExo4D keysteps and 1.6&times; on COIN using ground-truth embedding
+    streams. Full numbers, controls &amp; reproduce commands in RESULTS.md.</p>
+  </div>
+</div>
+
+<!-- ================= HOW ================= -->
+<section>
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="lead">A reconstruction of VL-JEPA's selective decoding idea from released components.</p>
+    <div class="cards3">
+      <div class="card"><span class="step">STEP 1 — WATCH</span><div class="ico">👁️</div>
+        <h3>V-JEPA 2 encodes motion</h3>
+        <p>A frozen video encoder turns each 16-frame window into visual tokens. It never gets retrained — it just watches.</p></div>
+      <div class="card"><span class="step">STEP 2 — PREDICT</span><div class="ico">🧭</div>
+        <h3>A small head predicts meaning</h3>
+        <p>Our 30M-parameter predictor (the only trained part) maps vision into SONAR — a language embedding space where every point <i>is</i> a sentence.</p></div>
+      <div class="card"><span class="step">STEP 3 — SPEAK</span><div class="ico">💬</div>
+        <h3>Decode only on change</h3>
+        <p>A trigger tracks the predicted meaning over time. Flat line → stay silent. Jump past τ → decode one sentence for the whole segment.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLAYGROUND ================= -->
+<section id="play">
+  <div class="wrap">
+    <h2>Playground</h2>
+    <p class="lead">These are real held-out videos from <b>COIN</b> (instructional tasks the predictor never saw in training).
+      Pick one, press Start, and watch the <b>semantic change meter</b> — the model speaks when the needle crosses the line.</p>
+    <div class="pg">
+      <div class="panel">
+        <label>Input source</label>
+        <div class="seg" id="src">
+          <button data-src="file" class="on">🎬 video</button>
+          <button data-src="webcam">📷 webcam</button>
+        </div>
+
+        <div id="fileControls">
+          <label>Pick a challenge <span id="galleryCount"></span></label>
+          <div class="gallery" id="gallery"></div>
+          <label>…or upload your own (mp4/avi/mov/mkv/webm)</label>
+          <input type="file" id="file" accept="video/*" />
+        </div>
+
+        <video id="cam" autoplay muted playsinline></video>
+        <canvas id="grab" style="display:none"></canvas>
+
+        <label>Decoding strategy</label>
+        <div class="seg" id="modeSel">
+          <button data-mode="adaptive" class="on">✨ adaptive</button>
+          <button data-mode="uniform">⏱ uniform</button>
+        </div>
+        <p class="hint" id="modeHint">adaptive = decode only on semantic change (the thesis). Switch to uniform to feel the difference.</p>
+        <div class="row">
+          <div><label>uniform Hz</label><input type="number" id="hz" value="0.2" step="0.05" min="0.01"></div>
+          <div id="maxwWrap"><label>max windows (0=all)</label><input type="number" id="maxw" value="40" min="0"></div>
+        </div>
+        <button id="start">▶ Start</button>
+        <p class="hint" id="hint">Each window is ~11 s of GPU time on this T1000 — captions stream in progressively. 40 windows ≈ 20 s of video.</p>
+      </div>
+
+      <div class="panel">
+        <div id="current" class="idle">Waiting to start — the caption box stays quiet until the meaning moves…</div>
+
+        <div class="meterbox">
+          <div class="mrow"><span>semantic shift — the trigger's own signal: 1 − cos(newest, recent-window centroid)</span><span>— τ threshold</span></div>
+          <div class="meter" id="meter"><i id="meterFill"></i><span class="tau" id="tauMark"></span></div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b id="steps">0</b><span>windows watched</span></div>
+          <div class="stat"><b id="dec">0</b><span>captions spoken <i class="flash" id="flash"></i></span></div>
+          <div class="stat save"><b id="saved">—</b><span>decoder calls skipped</span></div>
+        </div>
+
+        <div class="timeline" id="timeline"></div>
+        <div class="bar"><i id="prog"></i></div>
+        <p id="status">idle</p>
+
+        <div class="loghead">
+          <h4>CAPTION TRACK</h4>
+          <button class="ctrl" id="srtBtn">⬇ download .srt</button>
+        </div>
+        <ul id="log"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= USE CASES ================= -->
+<section>
+  <div class="wrap">
+    <h2>What would you build with it?</h2>
+    <p class="lead">Anywhere video runs longer than anyone wants to watch, selective captioning turns hours into a handful of sentences.</p>
+    <div class="uc">
+      <div class="card"><div class="ico">🦯</div><h3>Assistive narration</h3>
+        <p>Describe the world to a blind user only when it changes — no chatter while nothing happens, words exactly when they matter.</p>
+        <span class="try" onclick="jumpWebcam()">try it with your webcam →</span></div>
+      <div class="card"><div class="ico">📚</div><h3>Lecture &amp; how-to indexing</h3>
+        <p>Turn an hour-long tutorial into a step-by-step text track. That's literally the COIN samples above — press Start on one.</p>
+        <span class="try" onclick="location.hash='#play'">index a COIN video →</span></div>
+      <div class="card"><div class="ico">📹</div><h3>Smart monitoring</h3>
+        <p>A camera that logs "a person entered, put down a bag" instead of 24 h of identical frames. The trigger is the alarm.</p>
+        <span class="try" onclick="jumpWebcam()">watch it notice you move →</span></div>
+      <div class="card"><div class="ico">🥽</div><h3>Egocentric assistants</h3>
+        <p>Wearables can't decode language every second on-battery. Predict-in-embedding-space, speak-on-change is the power budget that fits.</p>
+        <span class="try" onclick="location.hash='#play'">see the compute savings →</span></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap" id="foot">LiveJEPA</div></footer>
+
+<script>
+const $ = s => document.querySelector(s);
+let mode = "adaptive", src = "file", ws = null, camStream = null, camTimer = null, running = false, done = false;
+let TAU = 0.15, selectedSample = null, track = [];
+const TOKEN = new URLSearchParams(location.search).get("token") || "";
+
+/* ---------- hero animation: sparse vs dense decoding ---------- */
+(function heroAnim(){
+  const N = 24, fireAt = {5:"pour the noodles into boiling water",13:"stir in the sauce and spices",20:"plate the noodles and serve"};
+  const laneA = $("#laneA"), laneB = $("#laneB");
+  for (let i = 0; i < N; i++) { laneA.appendChild(document.createElement("div")).className = "cell";
+                                laneB.appendChild(document.createElement("div")).className = "cell"; }
+  let i = 0, a = 0, b = 0;
+  setInterval(() => {
+    if (i >= N) { i = 0; a = 0; b = 0;
+      laneA.childNodes.forEach(c => c.className = "cell"); laneB.childNodes.forEach(c => c.className = "cell");
+      $("#animCap").innerHTML = "&nbsp;"; return; }
+    laneA.childNodes[i].classList.add("seen"); laneB.childNodes[i].classList.add("seen", "fire2"); b++;
+    if (fireAt[i] !== undefined) { laneA.childNodes[i].classList.add("fire"); a++;
+      $("#animCap").textContent = "“" + fireAt[i] + "”"; }
+    $("#cntA").textContent = a; $("#cntB").textContent = b;
+    i++;
+  }, 260);
+})();
+
+/* ---------- config / footer / tau ---------- */
+fetch("/config").then(r => r.json()).then(c => {
+  TAU = c.tau || 0.15;
+  $("#foot").textContent = `LiveJEPA · checkpoint ${c.ckpt || "none"} · ${c.device} · τ=${c.tau} · upload limit ${c.max_upload_mb} MB` +
+    (c.token_required ? " · access token required" : "");
+}).catch(() => {});
+
+/* ---------- sample gallery with thumbnails ---------- */
+fetch("/samples").then(r => r.json()).then(d => {
+  const g = $("#gallery"), list = d.samples || [];
+  $("#galleryCount").textContent = list.length ? `(${list.length} held-out COIN videos)` : "";
+  list.forEach((v, idx) => {
+    const it = document.createElement("div"); it.className = "g-item" + (idx === 0 ? " sel" : "");
+    if (idx === 0) selectedSample = v;
+    const img = document.createElement("img"); img.loading = "lazy"; img.src = "/thumb/" + encodeURIComponent(v);
+    img.onerror = () => { img.style.display = "none"; };
+    const nm = document.createElement("div"); nm.className = "nm";
+    nm.textContent = v.replace(/^[^_]*_/, "").replace(/\.mp4$/, "");
+    it.appendChild(img); it.appendChild(nm);
+    it.onclick = () => { if (running) return;
+      document.querySelectorAll(".g-item").forEach(x => x.classList.remove("sel"));
+      it.classList.add("sel"); selectedSample = v; $("#file").value = ""; };
+    g.appendChild(it);
+  });
+}).catch(() => {});
+
+/* ---------- toggles ---------- */
+document.querySelectorAll("#modeSel button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#modeSel button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); mode = b.dataset.mode;
+  $("#modeHint").textContent = mode === "adaptive"
+    ? "adaptive = decode only on semantic change (the thesis). Switch to uniform to feel the difference."
+    : "uniform = decode on a fixed clock regardless of content — the baseline everyone else uses.";
+});
+document.querySelectorAll("#src button").forEach(b => b.onclick = () => {
+  if (running) return;
+  document.querySelectorAll("#src button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); src = b.dataset.src;
+  const cam = src === "webcam";
+  $("#fileControls").style.display = cam ? "none" : "block";
+  $("#maxwWrap").style.display = cam ? "none" : "block";
+  $("#hint").textContent = cam
+    ? "Hold up an object, switch activities, walk away — watch the meter spike right before it speaks. Captions lag ~11 s/window on this GPU."
+    : "Each window is ~11 s of GPU time on this T1000 — captions stream in progressively. 40 windows ≈ 20 s of video.";
+});
+function jumpWebcam(){ location.hash = "#play"; const b = document.querySelector('#src [data-src="webcam"]'); if (b && !running) b.click(); }
+
+/* ---------- run state / rendering ---------- */
+function resetStats() {
+  track = []; $("#srtBtn").style.display = "none";
+  $("#log").innerHTML = ""; $("#timeline").innerHTML = "";
+  const cur = $("#current"); cur.className = "idle";
+  cur.textContent = "Watching… it will speak when the meaning moves.";
+  $("#dec").textContent = "0"; $("#steps").textContent = "0"; $("#saved").textContent = "—";
+  $("#prog").style.width = "0%"; $("#meterFill").style.width = "0%";
+  $("#tauMark").style.left = "40%";           /* tau sits at 40% of scale (2.5·tau) */
+}
+function updateMeter(delta) {
+  if (delta === null || delta === undefined) return;
+  const pct = Math.min(100, (delta / (2.5 * TAU)) * 100);
+  $("#meterFill").style.width = pct + "%";
+  $("#meter").classList.toggle("hot", delta >= TAU);
+}
+function handleMsg(m) {
+  if (m.busy) { $("#status").textContent = "⏳ GPU busy — one job runs at a time. Try again in a moment."; done = true; return; }
+  if (m.error) { $("#status").textContent = "error: " + m.error; done = true; return; }
+  if (m.status) { $("#status").textContent = m.status; return; }
+  if (m.n_steps !== undefined) {
+    $("#steps").textContent = m.n_steps; $("#dec").textContent = m.n_dec;
+    $("#saved").textContent = m.n_steps ? Math.round(100 * (1 - m.n_dec / m.n_steps)) + "%" : "—";
+    updateMeter(m.delta);
+    const t = document.createElement("div"); t.className = "tl" + (m.caption ? " dec" : "");
+    const tl = $("#timeline"); tl.appendChild(t); if (tl.childNodes.length > 240) tl.removeChild(tl.firstChild);
+  }
+  if (m.caption) {
+    const cur = $("#current"); cur.className = ""; cur.textContent = m.caption;
+    const fl = $("#flash"); fl.classList.add("on"); setTimeout(() => fl.classList.remove("on"), 600);
+    const li = document.createElement("li");
+    const ts = document.createElement("span"); ts.className = "t"; ts.textContent = m.time ? m.time.toFixed(1) + "s" : "";
+    const tx = document.createElement("span"); tx.textContent = m.caption;
+    li.appendChild(ts); li.appendChild(tx); $("#log").prepend(li);
+    track.push({ t: m.time || 0, text: m.caption });
+    $("#srtBtn").style.display = "inline-block";
+  }
+  if (m.done) {
+    const pct = m.n_steps ? Math.round(100 * m.n_dec / m.n_steps) : 0;
+    $("#status").textContent = `done — spoke ${m.n_dec} time(s) across ${m.n_steps} windows → skipped ${100 - pct}% of decoder calls`;
+    done = true; finish();
+  }
+}
+function wsProto() { return location.protocol === "https:" ? "wss" : "ws"; }
+function setRunning(on, label) { running = on; const b = $("#start"); b.textContent = label; b.classList.toggle("stop", on && src === "webcam"); }
+function finish() {
+  setRunning(false, "▶ Start");
+  if (camTimer) { clearInterval(camTimer); camTimer = null; }
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; $("#cam").style.display = "none"; }
+}
+
+/* ---------- srt download ---------- */
+$("#srtBtn").onclick = () => {
+  const fmt = s => { const d = new Date(Math.max(0, s) * 1000);
+    return String(d.getUTCHours()).padStart(2,"0") + ":" + String(d.getUTCMinutes()).padStart(2,"0") + ":" +
+           String(d.getUTCSeconds()).padStart(2,"0") + "," + String(d.getUTCMilliseconds()).padStart(3,"0"); };
+  const srt = track.map((c, i) => {
+    const end = i + 1 < track.length ? track[i + 1].t : c.t + 4;
+    return `${i + 1}\n${fmt(c.t)} --> ${fmt(end)}\n${c.text}\n`;
+  }).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([srt], { type: "text/plain" }));
+  a.download = "livejepa_captions.srt"; a.click(); URL.revokeObjectURL(a.href);
+};
+
+/* ---------- video flow ---------- */
+async function resolveVideo() {
+  const f = $("#file").files[0];
+  if (f) {
+    $("#status").textContent = "uploading…";
+    const fd = new FormData(); fd.append("file", f);
+    const r = await fetch("/upload", { method: "POST", body: fd, headers: TOKEN ? { "X-Token": TOKEN } : {} });
+    const d = await r.json();
+    if (!r.ok) { $("#status").textContent = "upload failed: " + (d.error || r.status); return null; }
+    return d.video_id;
+  }
+  return selectedSample;
+}
+async function startVideo() {
+  const video = await resolveVideo();
+  if (!video) { if (!$("#status").textContent.startsWith("upload failed")) $("#status").textContent = "pick a sample or upload a video first."; return; }
+  resetStats(); done = false; setRunning(true, "running…"); $("#start").disabled = true;
+  const maxw = parseInt($("#maxw").value || "0", 10);
+  ws = new WebSocket(`${wsProto()}://${location.host}/ws`);
+  ws.onopen = () => { $("#status").textContent = "connected — watching in embedding space…";
+    ws.send(JSON.stringify({ video, mode, hz: parseFloat($("#hz").value || "0.2"), max_windows: maxw, token: TOKEN })); };
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data); handleMsg(m);
+    if (maxw && m.n_steps) $("#prog").style.width = Math.min(100, 100 * m.n_steps / maxw) + "%";
+  };
+  ws.onerror = () => { $("#status").textContent = "websocket error"; };
+  ws.onclose = () => {
+    if (!done) $("#status").textContent = "connection lost — press Start to retry";
+    $("#start").disabled = false; setRunning(false, "▶ Start");
+  };
+}
+
+/* ---------- webcam flow ---------- */
+async function startWebcam() {
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+  } catch (e) { $("#status").textContent = "camera access denied/unavailable: " + e; return; }
+  const v = $("#cam"); v.srcObject = camStream; v.style.display = "block";
+  resetStats(); done = false; setRunning(true, "■ Stop"); $("#prog").style.width = "0%";
+  ws = new WebSocket(`${wsProto()}://${location.host}/ws_cam`);
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ mode, hz: parseFloat($("#hz").value || "0.2"), token: TOKEN }));
+    const c = $("#grab"); c.width = 224; c.height = 168; const ctx = c.getContext("2d");
+    camTimer = setInterval(() => {
+      if (!ws || ws.readyState !== 1) return;
+      ctx.drawImage(v, 0, 0, c.width, c.height);
+      ws.send(JSON.stringify({ frame: c.toDataURL("image/jpeg", 0.6) }));
+    }, 500);  // ~2 fps
+  };
+  ws.onmessage = ev => handleMsg(JSON.parse(ev.data));
+  ws.onerror = () => { $("#status").textContent = "websocket error"; };
+  ws.onclose = () => { if (!done && running) $("#status").textContent = "connection lost — press Start to retry"; finish(); };
+}
+
+$("#start").onclick = () => {
+  if (running && src === "webcam") { if (ws) try { ws.send(JSON.stringify({ stop: true })); } catch (e) {} finish(); $("#status").textContent = "stopped — final segment flushing…"; return; }
+  if (running) return;
+  if (src === "webcam") startWebcam(); else startVideo();
+};
+</script>
+</body>
+</html>

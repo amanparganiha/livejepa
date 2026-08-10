@@ -1,0 +1,74 @@
+% ===========================================================================
+%  LiveJEPA — Master's thesis, main file
+%
+%  Build:  pdflatex thesis && bibtex thesis && pdflatex thesis && pdflatex thesis
+%
+%  SWAPPING IN THE INSTITUTE'S TEMPLATE
+%  ------------------------------------
+%  Everything above \begin{document} is scaffolding you are meant to replace.
+%  The chapter body lives in thesis_body.tex, which is GENERATED from
+%  docs/THESIS.md by scripts/md_to_latex.py — do not hand-edit it; edit the
+%  markdown and re-run the script, or it will be overwritten. If the institute
+%  template uses \chapter instead of \section, change SECTIONLEVEL below.
+% ===========================================================================
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}          % \toprule \midrule \bottomrule in the tables
+\usepackage{graphicx}
+\usepackage{xcolor}            % must precede \lstset below (it uses \color)
+\usepackage{listings}          % the pipeline diagram + command appendix
+\usepackage{amsmath,amssymb}   % \approx \times \Delta \tau used inline
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=fullflexible,
+  frame=single,
+  rulecolor=\color{black!25},
+  xleftmargin=1em,
+  showstringspaces=false,
+}
+
+% Tables in the body are wrapped in \begin{center}\small ... \end{center};
+% give them a little more room to breathe.
+\renewcommand{\arraystretch}{1.15}
+
+\title{\textbf{LiveJEPA: Reconstructing and Stress-Testing Selective Decoding\\
+       for Streaming Video Captioning}}
+\author{Aman Parganiha}      % <-- confirm spelling/format against institute rules
+\date{\today}                % <-- replace with the submission date
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+% --- front matter the institute template usually mandates -------------------
+% \begin{center}\textit{Declaration / Certificate / Acknowledgements go here,}\\
+% \textit{in whatever order the institute specifies.}\end{center}
+% \newpage
+
+\tableofcontents
+\newpage
+
+% --- the thesis body (GENERATED — see header) ------------------------------
+\input{thesis_body}
+
+% --- bibliography ----------------------------------------------------------
+% The body is generated from markdown and carries no \cite commands, so
+% \nocite{*} is what puts the entries on the page. If the institute requires
+% inline citations, add \cite{vljepa2025} etc. to docs/THESIS.md (the script
+% passes unknown LaTeX through untouched) and then drop this line.
+\nocite{*}
+\newpage
+\bibliographystyle{plain}      % <-- swap for the institute's required style
+\bibliography{references}
+
+\end{document}

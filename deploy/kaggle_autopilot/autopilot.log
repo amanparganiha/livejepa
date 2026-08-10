@@ -1,0 +1,1003 @@
+[2026-07-17 07:29:17] === autopilot run starting ===
+[2026-07-17 07:29:19] push: Kernel version 10 successfully pushed.  Please check progress at https://www.kaggle.com/code/amanparganiha/notebook3308534b33
+[2026-07-17 07:34:21] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.ERROR"
+[2026-07-17 07:34:21] run did not complete cleanly (status: KernelWorkerStatus) - no download
+[2026-07-17 07:36:23] === autopilot run starting ===
+[2026-07-17 07:36:26] push: Kernel version 11 successfully pushed.  Please check progress at https://www.kaggle.com/code/amanparganiha/notebook3308534b33
+[2026-07-21 12:00:02] === download driver starting ===
+[2026-07-21 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-21 12:15:00] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-07-21 12:15:00] banked: coin_cache_p7.tar -> backups\
+[2026-07-21 12:15:00] === download driver done ===
+[2026-07-22 12:00:02] === download driver starting ===
+[2026-07-22 12:00:05] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-23 12:00:02] === download driver starting ===
+[2026-07-23 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-23 12:14:58] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-07-23 12:14:58] banked: coin_cache_p7.tar -> backups\
+[2026-07-23 12:14:58] === download driver done ===
+[2026-07-24 12:00:02] === download driver starting ===
+[2026-07-24 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-24 12:19:14] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-07-24 12:19:15] banked: coin_cache_p7.tar -> backups\
+[2026-07-24 12:19:15] === download driver done ===
+[2026-07-25 12:00:02] === download driver starting ===
+[2026-07-25 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-26 12:00:02] === download driver starting ===
+[2026-07-26 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-26 12:14:49] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-07-26 12:14:49] banked: coin_cache_p7.tar -> backups\
+[2026-07-26 12:14:49] === download driver done ===
+[2026-07-27 12:00:02] === download driver starting ===
+[2026-07-27 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-27 12:12:59] output: kaggle : ('Connection broken: IncompleteRead(4268670691 bytes read, 961091869 more expected)', 
+IncompleteRead(4268670691 bytes read, 961091869 more expected))
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (('Connection br...more expected)):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+[2026-07-27 12:13:00] banked: coin_cache_p7.tar -> backups\
+[2026-07-27 12:13:00] === download driver done ===
+[2026-07-28 12:00:02] === download driver starting ===
+[2026-07-28 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-28 12:18:08] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-07-28 12:18:08] banked: coin_cache_p7.tar -> backups\
+[2026-07-28 12:18:08] === download driver done ===
+[2026-07-29 12:00:02] === download driver starting ===
+[2026-07-29 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-29 12:15:02] output: kaggle : ('Connection broken: IncompleteRead(5073580748 bytes read, 156181812 more expected)', 
+IncompleteRead(5073580748 bytes read, 156181812 more expected))
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (('Connection br...more expected)):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+[2026-07-29 12:15:02] banked: coin_cache_p7.tar -> backups\
+[2026-07-29 12:15:02] === download driver done ===
+[2026-07-30 12:00:02] === download driver starting ===
+[2026-07-30 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-30 12:15:08] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-07-30 12:15:08] banked: coin_cache_p7.tar -> backups\
+[2026-07-30 12:15:08] === download driver done ===
+[2026-07-31 12:00:01] === download driver starting ===
+[2026-07-31 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-07-31 12:16:13] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-07-31 12:16:14] banked: coin_cache_p7.tar -> backups\
+[2026-07-31 12:16:14] === download driver done ===
+[2026-08-01 12:00:01] === download driver starting ===
+[2026-08-01 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-01 12:14:02] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-08-01 12:14:03] banked: coin_cache_p7.tar -> backups\
+[2026-08-01 12:14:03] === download driver done ===
+[2026-08-02 12:00:01] === download driver starting ===
+[2026-08-02 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-02 12:12:51] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-08-02 12:12:52] banked: coin_cache_p7.tar -> backups\
+[2026-08-02 12:12:52] === download driver done ===
+[2026-08-03 12:00:01] === download driver starting ===
+[2026-08-03 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-03 12:14:05] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-08-03 12:14:05] banked: coin_cache_p7.tar -> backups\
+[2026-08-03 12:14:05] === download driver done ===
+[2026-08-04 12:00:01] === download driver starting ===
+[2026-08-04 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-04 12:18:43] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-08-04 12:18:44] banked: coin_cache_p7.tar -> backups\
+[2026-08-04 12:18:44] === download driver done ===
+[2026-08-05 12:00:01] === download driver starting ===
+[2026-08-05 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-05 12:09:51] output: kaggle : ('Connection broken: IncompleteRead(4199998360 bytes read, 1029764200 more expected)', 
+IncompleteRead(4199998360 bytes read, 1029764200 more expected))
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (('Connection br...more expected)):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+[2026-08-05 12:09:52] banked: coin_cache_p7.tar -> backups\
+[2026-08-05 12:09:52] === download driver done ===
+[2026-08-06 12:00:01] === download driver starting ===
+[2026-08-06 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-06 12:09:02] output: kaggle : ('Connection broken: IncompleteRead(2977570531 bytes read, 2252192029 more expected)', 
+IncompleteRead(2977570531 bytes read, 2252192029 more expected))
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (('Connection br...more expected)):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+[2026-08-06 12:09:02] banked: coin_cache_p7.tar -> backups\
+[2026-08-06 12:09:02] === download driver done ===
+[2026-08-07 12:00:01] === download driver starting ===
+[2026-08-07 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-07 12:15:28] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-08-07 12:15:28] banked: coin_cache_p7.tar -> backups\
+[2026-08-07 12:15:28] === download driver done ===
+[2026-08-08 12:00:01] === download driver starting ===
+[2026-08-08 12:00:04] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-08 12:14:46] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-08-08 12:14:46] banked: coin_cache_p7.tar -> backups\
+[2026-08-08 12:14:46] === download driver done ===
+[2026-08-09 12:00:01] === download driver starting ===
+[2026-08-09 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-09 12:12:04] output: kaggle : ('Connection broken: IncompleteRead(5228732131 bytes read, 1030429 more expected)', IncompleteRead(5228732131 
+bytes read, 1030429 more expected))
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (('Connection br...more expected)):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+[2026-08-09 12:12:04] banked: coin_cache_p7.tar -> backups\
+[2026-08-09 12:12:04] === download driver done ===
+[2026-08-10 12:00:01] === download driver starting ===
+[2026-08-10 12:00:03] status: amanparganiha/notebook3308534b33 has status "KernelWorkerStatus.COMPLETE"
+[2026-08-10 12:15:42] output: kaggle : 'charmap' codec can't encode characters in position 1230-1269: character maps to <undefined>
+At C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\deploy\kaggle_autopilot\run_daily.ps1:32 char:1
++ kaggle kernels output $kernel -p $outDir 2>&1 | Out-String | ForEach- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\coin_cache_p7.tar
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/colab.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/configs/default.yaml
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/COIN.json
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/2mn-mTa6ans.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/58GJpSCFLTg.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/coin_chunk/qHBDGw0Yb8s.mp4.part
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/eval_data/frozen_val_uids.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/cache.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/__pycache__/coin.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/coin.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/data/egoexo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/demo.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/__init__.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/sonar.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/__pycache__/vision.cpython-312.pyc
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/sonar.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/encoders/vision.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/eval_pareto.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/infer.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/losses.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/predictor/model.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/run_eval.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/__init__.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/offline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/online.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/selective/pooling.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/livejepa/train.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/notebooks/kaggle_c1_full_coin.ipynb
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/requirements.txt
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/ablations.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_action100m_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/build_coin_cache.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/coin_full_pipeline.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_action100m.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_coin_subset.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.ps1
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/download_egoexo_subset.sh
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_pilot.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/eval_predictor.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/extract_features.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_c1_notebook.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/make_cloud_bundle.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/sanity_phase0.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/tune_adaptive.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/scripts/validate_selective_gt.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_data_engine.py
+Output file downloaded to C:\Users\HP\Downloads\livejepa_repo\livejepa_repo\backups\kaggle_daily\repo/tests/test_selective.py
+[2026-08-10 12:15:42] banked: coin_cache_p7.tar -> backups\
+[2026-08-10 12:15:42] === download driver done ===

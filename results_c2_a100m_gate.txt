@@ -1,0 +1,5 @@
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+ckpt: checkpoints_c2/predictor_20000.pt  |  val: /root/cache/data_cache_a100m_val (160 samples)
+  mean cos(pred,target): 0.348   (higher = better direction)
+  pred-pred cos:         0.328   (lower = more diverse; ~1 = collapsed)

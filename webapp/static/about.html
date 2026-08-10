@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LiveJEPA — architecture &amp; results</title>
+<style>
+  :root { --bg:#0a0d12; --panel:#12161d; --panel2:#161b24; --line:#232b37; --fg:#e8eef5;
+          --muted:#8b98a5; --acc:#39c2ff; --acc2:#8b5cf6; --green:#3fdc78; --red:#ff5252;
+          --amber:#ffc53d; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.6 system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+  a { color:var(--acc); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .wrap { max-width:980px; margin:0 auto; padding:0 22px; }
+  header { padding:26px 0 8px; }
+  .back { font-size:13px; color:var(--muted); }
+  .back:hover { color:var(--acc); }
+  h1 { font-size:clamp(28px,4.5vw,42px); margin:14px 0 8px; font-weight:800; }
+  h1 .grad { background:linear-gradient(90deg,var(--acc),var(--acc2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color:var(--muted); font-size:16px; max-width:700px; }
+  section { padding:34px 0 6px; }
+  h2 { font-size:22px; margin:0 0 4px; }
+  .lead { color:var(--muted); margin:0 0 20px; max-width:700px; font-size:14px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:14px; }
+
+  /* headline KPI strip */
+  .kpirow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:22px 0 6px; }
+  .kpicard { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .kpicard .n { font-size:26px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums;
+                background:linear-gradient(90deg,var(--acc),var(--acc2));
+                -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .kpicard .l { font-size:12px; color:var(--muted); margin-top:4px; display:block; }
+
+  /* pipeline */
+  .pipe { display:flex; flex-wrap:wrap; gap:10px; align-items:stretch; margin:18px 0 6px; }
+  .stage { flex:1 1 190px; background:var(--panel2); border:1px solid var(--line); border-radius:12px;
+           padding:14px 16px; position:relative; }
+  .stage .tag { font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--acc); }
+  .stage.frozen .tag { color:var(--muted); }
+  .stage.trained { border-color:rgba(63,220,120,.5); }
+  .stage.trained .tag { color:var(--green); }
+  .stage b { display:block; font-size:15px; margin:4px 0 2px; }
+  .stage .p { font-size:12px; color:var(--muted); }
+  .stage .params { margin-top:8px; font-size:13px; font-variant-numeric:tabular-nums;
+                   background:linear-gradient(90deg,var(--acc),var(--acc2));
+                   -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:700; }
+  .arrow { align-self:center; color:var(--muted); font-size:20px; }
+  .note { font-size:12px; color:var(--muted); margin-top:8px; }
+
+  table { border-collapse:collapse; width:100%; font-size:14px; font-variant-numeric:tabular-nums; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.4px; }
+  td b { color:var(--green); }
+  .hl td { background:rgba(57,194,255,.06); }
+  /* inline bar behind a number, so the scaling trend is visible not just readable */
+  .barcell { position:relative; }
+  .barcell .fill { position:absolute; left:0; top:4px; bottom:4px; border-radius:4px;
+                   background:linear-gradient(90deg,rgba(57,194,255,.30),rgba(139,92,246,.30)); }
+  .barcell span { position:relative; }
+
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+  .kpi { font-size:24px; font-weight:800; background:linear-gradient(90deg,var(--acc),var(--acc2));
+         -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .muted { color:var(--muted); }
+
+  /* findings, now with an explicit verdict badge */
+  .finding { border-left:3px solid var(--amber); padding-left:14px; margin:16px 0; }
+  .finding.win { border-color:var(--green); }
+  .finding.neg { border-color:var(--red); }
+  .badge { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.8px;
+           text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-bottom:6px;
+           border:1px solid currentColor; }
+  .badge.w { color:var(--green); } .badge.b { color:var(--amber); } .badge.n { color:var(--red); }
+
+  figure { margin:0; }
+  figcaption { font-size:12px; color:var(--muted); margin-top:10px; }
+  .chart { width:100%; height:auto; display:block; }
+  .chart .lbl { fill:#c7d2dd; font:12px system-ui,Segoe UI,Roboto,sans-serif; }
+  .chart .val { fill:#8b98a5; font:12px/1 system-ui,Segoe UI,Roboto,sans-serif; font-variant-numeric:tabular-nums; }
+  .chart .ours { fill:#e8eef5; font-weight:700; }
+
+  footer { padding:36px 0 40px; color:var(--muted); font-size:13px; border-top:1px solid var(--line); margin-top:36px; }
+  code { background:var(--panel2); border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <a class="back" href="/">&larr; back to the live demo</a>
+  <h1>Inside <span class="grad">LiveJEPA</span></h1>
+  <p class="sub">A Master's-thesis reconstruction of VL-JEPA's <b>selective decoding</b>:
+  a video model that watches continuously, predicts meaning in embedding space,
+  and spends its expensive language decoder <i>only when something actually changes</i>.</p>
+
+  <div class="kpirow">
+    <div class="kpicard"><span class="n">9.9&times;</span>
+      <span class="l">fewer decoder calls at equal-or-better caption quality</span></div>
+    <div class="kpicard"><span class="n">87%</span>
+      <span class="l">of a provable upper bound on any trigger</span></div>
+    <div class="kpicard"><span class="n">7 / 8</span>
+      <span class="l">decode budgets won, significant at every one</span></div>
+    <div class="kpicard"><span class="n">1.2%</span>
+      <span class="l">of the 2.5B-parameter system is trained</span></div>
+  </div>
+</header>
+
+<section>
+  <h2>The architecture</h2>
+  <p class="lead">Four stages. Only one of them is trained — everything else is a frozen,
+  publicly released model. That 1.2% is the whole thesis.</p>
+  <div class="pipe">
+    <div class="stage frozen">
+      <span class="tag">frozen &middot; watch</span>
+      <b>V-JEPA 2 encoder</b>
+      <span class="p">16 frames @ 2 fps &rarr; visual embedding tokens</span>
+      <span class="params">326.0M params</span>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="stage trained">
+      <span class="tag">trained &middot; predict</span>
+      <b>Predictor</b>
+      <span class="p">maps vision tokens into sentence-embedding space</span>
+      <span class="params">29.9M params — the only trained part</span>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="stage frozen">
+      <span class="tag">frozen &middot; decide</span>
+      <b>SegmentTrigger</b>
+      <span class="p">fires when semantic shift 1&minus;cos exceeds &tau; = 0.15</span>
+      <span class="params">0 params</span>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="stage frozen">
+      <span class="tag">frozen &middot; speak</span>
+      <b>SONAR decoder</b>
+      <span class="p">turns the embedding into an English sentence</span>
+      <span class="params">1,370.6M params</span>
+    </div>
+  </div>
+  <p class="note">Total system &asymp; 2.5B parameters; 1.2% trained. The 1.37B decoder sleeps
+  through ~90% of video windows — <b>that asymmetry is why selective decoding pays</b>.
+  (SONAR's 766M text <i>encoder</i> is used only at training time to build targets.)</p>
+</section>
+
+<section>
+  <h2>The goal</h2>
+  <div class="card">
+    VL-JEPA (arXiv:2512.10942) introduced selective decoding but released neither code nor
+    weights. LiveJEPA rebuilds the mechanism end-to-end from released components and asks the
+    scientific question honestly: <b>when does decoding "only on change" beat decoding on a
+    fixed clock?</b> The answer — it depends on the temporal redundancy of the stream — is
+    mapped with budget-matched, time-aligned CIDEr on public benchmarks, plus a live system
+    the original paper never shipped.
+  </div>
+</section>
+
+<section>
+  <h2>Data scaling — measured, not assumed</h2>
+  <p class="lead">Same 29.9M architecture, same recipe, same frozen validation sets.
+  Only the training data grows. (cos = cosine similarity of predicted vs true
+  sentence embeddings on held-out videos; higher is better.)</p>
+  <div class="card">
+    <table>
+      <tr><th>training clips</th><th>source</th><th>frozen 137-val cos</th><th>diverse 956-val cos</th></tr>
+      <tr><td>2,962</td><td>COIN, 3 videos &times; 180 classes</td><td>0.772</td>
+          <td class="barcell"><div class="fill" style="width:44%"></div><span>0.667</span></td></tr>
+      <tr><td>5,529</td><td>COIN, first fleet sessions</td><td>0.883</td>
+          <td class="barcell"><div class="fill" style="width:60%"></div><span>0.733</span></td></tr>
+      <tr class="hl"><td><b>26,360</b></td><td><b>COIN, 99.6% of the full training split</b></td><td><b>0.897</b></td>
+          <td class="barcell"><div class="fill" style="width:92%"></div><span><b>0.846</b></span></td></tr>
+    </table>
+    <p class="note">The 26k-clip cache was built by a three-lane extraction fleet (Kaggle T4 +
+    Colab + local T1000 working one shared video list from both ends), resolving 8,984 of
+    COIN's 9,023 training videos (99.6%) around YouTube rate limits. The curve had
+    <i>not</i> flattened when the data ran out &mdash; data, not architecture, was the
+    binding constraint.</p>
+  </div>
+</section>
+
+<section>
+  <h2>What we found (the honest version)</h2>
+  <p class="lead">Four results, in the order they happened — including the one that went the
+  wrong way, and what it took to explain it.</p>
+
+  <div class="finding win">
+    <span class="badge w">result</span><br/>
+    <b>Selective decoding wins where meaning is redundant.</b> On COIN instructional videos
+    it matches uniform decoding's quality with ~1.6&times; fewer decoder calls; on EgoExo4D
+    keysteps ~2.5&times; (the paper's own headline form was 2.85&times;).
+  </div>
+
+  <div class="finding">
+    <span class="badge b">boundary</span><br/>
+    <b>…but not where meaning changes constantly.</b> On EgoExo4D <i>atomic</i> descriptions —
+    a semantic event roughly every two seconds — uniform decoding wins at every budget, because
+    there is nothing redundant to skip. On COIN's predicted stream, uniform also holds the
+    0.2&nbsp;Hz band, which happens to match COIN's own step cadence. Mapping this boundary is a
+    contribution, not a failure.
+  </div>
+
+  <div class="finding win">
+    <span class="badge w">the headline</span><br/>
+    <b>The resolution: selective decoding needs a <i>predicted</i> stream, not dense labels.</b>
+    Re-running that same hyper-dense benchmark through the full pipeline — with a predictor
+    trained in-domain — flips the result decisively: <b>9.9&times; fewer decoder calls at
+    equal-or-better caption quality</b>, winning 7 of 8 decode budgets. The predictor smooths a
+    saturated annotation stream into segmentable plateaus, which is exactly the structure the
+    mechanism consumes. The negative above and this positive are the <i>same benchmark</i>,
+    differing only in whether the stream is annotated or predicted — that pairing is the core
+    finding.
+  </div>
+
+  <div class="card">
+    <figure>
+      <svg class="chart" viewBox="0 0 700 196" role="img"
+           aria-label="Bar chart: uniform 0.595, decode-every-window 0.604, LiveJEPA adaptive 0.673, upper bound 0.772">
+        <!-- baseline -->
+        <line x1="200" y1="12" x2="200" y2="172" stroke="#232b37" stroke-width="1"/>
+        <!-- ceiling marker -->
+        <line x1="617" y1="12" x2="617" y2="172" stroke="#d95f02" stroke-width="1.4"
+              stroke-dasharray="5 4" opacity="0.85"/>
+
+        <text class="lbl" x="190" y="38" text-anchor="end">fixed-interval decoding</text>
+        <rect x="200" y="24" width="146" height="22" rx="4" fill="#4a5563"/>
+        <text class="val" x="354" y="39">0.595</text>
+
+        <text class="lbl" x="190" y="76" text-anchor="end">decode EVERY window</text>
+        <rect x="200" y="62" width="160" height="22" rx="4" fill="#4a5563"/>
+        <text class="val" x="368" y="77">0.604 &nbsp;·&nbsp; 40&times; the compute</text>
+
+        <text class="lbl ours" x="190" y="114" text-anchor="end">LiveJEPA (selective)</text>
+        <rect x="200" y="100" width="265" height="22" rx="4" fill="#2c7fb8"/>
+        <text class="val ours" x="473" y="115">0.673</text>
+
+        <text class="lbl" x="190" y="152" text-anchor="end">provable upper bound</text>
+        <rect x="200" y="138" width="417" height="22" rx="4" fill="#d95f02" opacity="0.85"/>
+        <text class="val" x="625" y="153">0.772</text>
+      </svg>
+      <figcaption>How closely each caption's embedding matches the human reference, on 40
+      held-out EgoExo4D takes. Selective decoding <b>beats decoding every single window</b>
+      while using ~40&times; less decoder compute — and lands at 87% of a bound no decoding
+      schedule can exceed.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding win">
+    <span class="badge w">result</span><br/>
+    <b>It is not just cheaper — it is better.</b> Measured by how closely each caption's
+    embedding matches the reference, decoding <i>every single window</i> scores <i>worse</i>
+    than selective decoding running at ~40&times; lower cost — because averaging over a detected
+    segment cancels predictor noise that a single window carries. Against a provable upper bound
+    on what any trigger could achieve, ours reaches <b>87%</b>; a trigger handed the human
+    annotators' own boundaries does no better. The remaining headroom belongs to the predictor,
+    not to the trigger.
+  </div>
+
+  <div class="finding win">
+    <span class="badge w">result</span><br/>
+    <b>Data was the bottleneck, not the architecture.</b> The scaling table above climbed
+    +0.18 cos on the diverse val without touching a single hyperparameter.
+  </div>
+
+  <div class="finding neg">
+    <span class="badge n">negative</span><br/>
+    <b>Two clean negatives, reported not buried.</b> Training on Action100M — the corpus the
+    original paper used — <i>lost</i> to COIN-trained models on Action100M's own validation set
+    at matched scale, and adding it as extra data made the model slightly worse. The cause is
+    target-vocabulary entropy: COIN has 747 recurring captions seen ~36&times; each, Action100M's
+    preview has 6,096 seen ~once. Predicting open-vocabulary sentences from one example each is
+    a far harder problem than mapping into a closed set.
+  </div>
+</section>
+
+<section>
+  <h2>Use it</h2>
+  <div class="grid2">
+    <div class="card"><span class="kpi">Live demo</span><br/>
+      <span class="muted">Upload any how-to/activity video (or use a sample) on the
+      <a href="/">main page</a> — watch the semantic-shift meter cross &tau; exactly when a
+      caption fires, and count the decoder calls it skipped. Download the result as
+      <code>.srt</code> subtitles.</span></div>
+    <div class="card"><span class="kpi">Where it fits</span><br/>
+      <span class="muted">Always-on wearable assistants, kitchen/workshop copilots, sports
+      commentary, CCTV summarisation — anywhere video runs for hours but meaning changes
+      rarely, and every decoder call costs power, latency, or money. Runs fully local:
+      zero cloud calls.</span></div>
+  </div>
+</section>
+
+<footer>
+  LiveJEPA &middot; Master's thesis project &middot; built on V-JEPA 2 (Meta),
+  SONAR (Meta), COIN &amp; Ego-Exo4D benchmarks &middot; all numbers reproducible from
+  <code>RESULTS.md</code> in the repository.
+</footer>
+
+</div>
+</body>
+</html>
