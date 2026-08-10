@@ -36,6 +36,21 @@ webapp/cloudflared.exe
 *.npz
 *.parquet
 
+# --- generated results at the repo ROOT ------------------------------------
+# The eval commands write results_*.{json,png} and demo_*.mp4 to the root; the
+# curated, thesis-cited copies live in thesis_materials/figures/ and ARE
+# committed. Tracking both made ~38% of the repo exact duplicates. Leading "/"
+# so this applies to the root only, never to thesis_materials/figures/.
+/results_*.json
+/results_*.png
+/results_*.txt
+/demo_*.mp4
+
+# --- run artifacts ---------------------------------------------------------
+deploy/kaggle_autopilot/*.log
+# byte-identical to notebooks/kaggle_c1_full_coin.ipynb
+deploy/kaggle_autopilot/notebook*.ipynb
+
 # --- machine-local state ---------------------------------------------------
 # contains the local demo token
 .claude/settings.local.json

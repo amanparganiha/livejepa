@@ -27,6 +27,15 @@ for the why.
 > earlier checkpoint as their baseline; the current best is
 > `checkpoints_c1_final/predictor_30000.pt` (cos 0.846).
 
+> **Where the result files are (2026-08-10).** The reproduce commands below write
+> `results_*.{json,png}` to the repo **root**, which is where you will find them
+> after a run. Those root copies are *not* committed — the curated, thesis-cited
+> copies live in **`thesis_materials/figures/`** and are the ones in git. So
+> `results_egoexo_rigor.json` in a command means the file you generate; the
+> reference copy is `thesis_materials/figures/results_egoexo_rigor.json`. Every
+> result named anywhere in this document has a committed copy there, including
+> the superseded first oracle run kept as provenance for the §5b post-mortem.
+
 ---
 
 ## 1. Mechanism result — adaptive vs uniform on clean GT streams
