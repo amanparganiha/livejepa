@@ -49,6 +49,34 @@ Ego-Exo4D (2311.18259 submitted 2023, proceedings CVPR 2024 - both noted).
 - No `gh` CLI on this box, so the user creates the repo and authenticates; I
   wire the remote and push.
 
+### PUSHED to github.com/amanparganiha/livejepa (PRIVATE)
+4 commits, branch `main`, local and remote in sync. Verified privacy rather than
+assuming it: an unauthenticated fetch of the repo URL returns **404**, which is
+what a private repo does for anyone not signed in as the owner.
+- Credentials were already cached by Git Credential Manager - the push printed a
+  "Cannot prompt because user interactivity has been disabled" line and then
+  succeeded with exit 0. Noise, not failure; check the exit code, not the stderr.
+- `git init` defaulted to `master` on git 2.53 here; renamed to `main`.
+
+### Repo pruned to what matters (user: "only push those files which are important")
+**171 -> 135 files, 4.05 -> 2.41 MB. 38% of tracked bytes were EXACT duplicates.**
+Found by hashing every tracked file, not by eyeballing: the eval commands write
+`results_*.{json,png}` to the repo ROOT, and `thesis_materials/figures/` holds
+the curated thesis-cited copies of the same files - both were committed. Same
+for the two demo mp4s.
+- Root copies now gitignored with a **leading slash** (`/results_*.json`) so
+  `thesis_materials/figures/` is untouched; figures/ is the single committed home.
+- **Rescued 4 root files that had NO twin in figures/ before untracking**: the
+  superseded buggy oracle run (provenance for the 5b post-mortem), the atomic
+  pilot json/png, and the C2 gate output.
+- Verified mechanically that every `results_*` filename referenced in RESULTS.md,
+  THESIS.md or INDEX.md resolves to a committed copy. Zero duplicate bytes left.
+- Also dropped `deploy/kaggle_autopilot/autopilot.log` (run log) and
+  `notebook3308534b33.ipynb` (byte-identical to notebooks/kaggle_c1_full_coin).
+- All `git rm --cached` - nothing deleted from disk.
+- Added a RESULTS.md note explaining the root-vs-figures split, since the
+  reproduce commands still say `--out results_egoexo_rigor`.
+
 ### Migration: user is leaving the college machine
 Measured what is actually irreplaceable rather than copying 120 GB:
 - **`data_cache_coin_full` (12.6 GB) is the single least-replaceable artifact** -
