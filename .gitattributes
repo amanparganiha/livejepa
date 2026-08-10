@@ -1,0 +1,27 @@
+# ===========================================================================
+#  Line endings.
+#
+#  This repo is written on Windows but several files are consumed by POSIX
+#  tools: deploy/*.sh run on rented Linux GPU pods, and the Kaggle/Colab
+#  notebooks run on Linux. A CRLF that reaches those fails as
+#  "bash: \r: command not found" -- a confusing failure a long way from its
+#  cause. So: LF everywhere by default, with CRLF only where Windows expects it.
+# ===========================================================================
+
+* text=auto eol=lf
+
+# Windows-native scripts keep CRLF
+*.ps1  text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# Never touch these
+*.png  binary
+*.jpg  binary
+*.mp4  binary
+*.npz  binary
+*.pt   binary
+*.zip  binary
+*.tar  binary
+*.exe  binary
+*.parquet binary
