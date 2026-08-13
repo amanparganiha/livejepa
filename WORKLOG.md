@@ -6,6 +6,61 @@ backfilled summaries.
 
 ---
 
+## 2026-08-13 (Thursday)
+
+**Theme: the 94 GB Google Drive archive landed and was VERIFIED - not just
+"the copy finished". Migration off this machine is now complete on both legs.**
+
+### Archive verified against MANIFEST.txt, folder by folder
+The user reported the upload done. Verified rather than accepted, four ways:
+
+1. **Free space delta.** `G:` went 520.63 -> 425.33 GB free = **95.3 GB
+   written**, against 94.45 GB expected. Right order, right magnitude.
+2. **Per-folder file counts and byte sizes.** All 14 top-level folders match
+   the manifest **exactly** - not approximately. 101,101 files, 94.24 GB.
+   `eval_data`'s 11 manifest sub-entries sum to exactly 7,295 files /
+   62,365.7 MB, which is what is on disk.
+3. **SHA256 on the files that matter.** Byte-identical, source vs Drive:
+   `checkpoints_c1_final/predictor_30000.pt` (the deployed ckpt),
+   `checkpoints_egoexo/predictor_20000.pt` (the 9.9x headline),
+   `data_cache_coin_full/pipeline_state.json`, all three `*/VAL_UIDS.txt`,
+   `frozen_val_uids.txt`, `egoexo_takes_pred40.txt`. Robocopy compares size
+   and timestamp, **not content** - so size parity alone would not have caught
+   a truncated or corrupted checkpoint.
+4. **Proof the bytes reached Google, not just `G:`.** DriveFS local cache is
+   **0.51 GB** while `G:` presents **94.24 GB**. Drive is in stream mode, so
+   the content cannot be sitting in a local upload queue - it is server-side
+   and being streamed back on demand. The 228 MB of checkpoint hashing above
+   was served through that path.
+
+**94.46 vs 94.24 GB is not a shortfall.** The manifest lists the two hero `.pt`
+files twice - once individually in P1 (so an interrupted transfer would still
+have moved them), then again inside their parent folder in P4. 228.4 MB of
+deliberate double-counting. 94.46 - 0.22 = 94.24, exactly what is on Drive.
+
+Two file paths I guessed at while spot-checking were wrong and are recorded so
+the next session does not repeat them: there is **no `eval_data/streams/.keep`**,
+and **`VAL_UIDS.txt` does not live in `data_cache_coin_full`** - it lives in the
+three `*_val` dirs (`a100m_val` 527 B, `coin_full_val` 4,470 B, `egoexo_val`
+924 B), which is what CLAUDE.md's `*/VAL_UIDS.txt` glob has always said.
+`data_cache_coin2_val` has no such file; its uid list is elsewhere.
+
+### Migration status: both legs done
+- **Code/docs/thesis** -> private `github.com/amanparganiha/livejepa`, 135 files,
+  2.41 MB, 5 commits, clean tree, verified private (unauthenticated fetch 404s).
+- **Data/weights/video** -> Drive `livejepa_archive`, 94.24 GB, verified above.
+- `data_cache_coin_full` (12.34 GB, 53,727 files) is the least replaceable thing
+  in the project - COIN's YouTube links keep dying (1,650 were already dead
+  during extraction), so it cannot be rebuilt to this coverage. It is now on
+  Drive with matching counts and a hash-verified `pipeline_state.json`.
+
+**Queued next:** Overleaf compile + institute template swap
+(`thesis_materials/BUILD.md`); user review of the rewritten THESIS.md
+sections 7/8/9 and the `/about` copy. Still PARKED at the user's request: the
+live-webcam GPU demo, pending possible access to the institute's machine.
+
+---
+
 ## 2026-08-10 (Monday)
 
 **Theme: references VERIFIED (two were wrong), repo prepared for GitHub, and a
