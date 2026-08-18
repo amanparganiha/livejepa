@@ -1,5 +1,3 @@
-\emph{Master's thesis draft --- LiveJEPA. All experimental numbers are reproducible from this repository (\texttt{RESULTS.md} gives the commands). This document is written in Markdown for easy conversion to LaTeX/Word; figures referenced are the PNGs in the repo root.}
-
 \medskip
 
 \begin{abstract}
@@ -125,6 +123,13 @@ On \textbf{GT streams}, selective decoding Pareto-dominates uniform.
 
 Adaptive holds CIDEr $\approx$ 7.7 at 0.20 Hz, which uniform reaches only near 0.31 Hz $\rightarrow$ \textbf{$\approx$1.6$\times$ fewer decodes at equal quality}.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_coin_gt.png}
+\caption{COIN validation, ground-truth stream (26 videos). Time-aligned CIDEr-D against decode rate for uniform and adaptive schedules. Adaptive holds CIDEr $\approx$ 7.7 at 0.20~Hz, a rate uniform does not reach until $\approx$ 0.31~Hz: $\approx 1.6\times$ fewer decoder invocations at equal quality.}
+\label{fig:coin-gt}
+\end{figure}
+
 \emph{EgoExo4D val keysteps, 10 takes (the paper's own benchmark):}
 
 \begin{center}\small
@@ -143,9 +148,23 @@ Adaptive holds CIDEr $\approx$ 7.7 at 0.20 Hz, which uniform reaches only near 0
 
 Adaptive holds the 8.20 plateau down to 0.20 Hz vs uniform's \textasciitilde{}0.50 Hz $\rightarrow$ \textbf{$\approx$2.5$\times$ fewer decodes} (the paper reports 2.85$\times$). Both show an honest low-frequency \textbf{crossover} ($\leq$0.05 Hz), where uniform's even spacing wins --- so this is \emph{mid-band} dominance, not strict full-range Pareto. \textbf{Granularity finding:} the same segmenter fails on EgoExo4D \emph{atomic} descriptions (too dense) --- selective decoding needs temporally-stable meaning.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_egoexo_keystep.png}
+\caption{EgoExo4D validation keysteps (10 takes) -- the benchmark VL-JEPA reports on. Adaptive holds the 8.20 plateau down to 0.20~Hz where uniform needs $\approx$ 0.50~Hz ($\approx 2.5\times$; the paper reports $2.85\times$). Note the honest crossover at $\leq$ 0.05~Hz, where uniform's even spacing wins: this is mid-band dominance, not strict full-range Pareto dominance.}
+\label{fig:egoexo-keystep}
+\end{figure}
+
 \subsection{Online trigger correction}
 
-At \textasciitilde{}0.10 Hz on EgoExo4D keysteps: uniform 6.06, offline Ward 6.72, \textbf{naive online \textasciitilde{}3.5}, \textbf{corrected \texttt{SegmentTrigger} 7.2--7.7}. The correction closes the gap between naive streaming and the offline oracle and even edges it out --- the real-time path works. (9/9 unit tests pass, including the trigger.)
+At \textasciitilde{}0.10 Hz on EgoExo4D keysteps: uniform 6.06, offline Ward 6.72, \textbf{naive online \textasciitilde{}3.5}, \textbf{corrected \texttt{SegmentTrigger} 7.2--7.7}. The correction closes the gap between naive streaming and the offline oracle and even edges it out --- the real-time path works. (13/13 unit tests pass, including the trigger.)
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_ablation_methods.png}
+\caption{Method ablation at $\approx$ 0.10~Hz on EgoExo4D keysteps. The naive online trigger ($\approx 3.5$) falls well below uniform (6.06); the corrected \texttt{SegmentTrigger} (7.2--7.7) recovers the offline Ward result (6.72) and edges past it, which is what makes the real-time path viable.}
+\label{fig:ablation-methods}
+\end{figure}
 
 \subsection{Full predicted pipeline}
 
@@ -170,6 +189,13 @@ At \textasciitilde{}0.10 Hz on EgoExo4D keysteps: uniform 6.06, offline Ward 6.7
 \end{center}
 
 Two things stand out. First, absolute CIDEr is now \textbf{2.6--3.0}, versus $\leq$1.2 for the pre-retrain narrow predictor --- the retrain, not the selective layer, drove that. Second, \textbf{adaptive no longer cleanly dominates}: it wins at high ($\geq$0.5 Hz) and sparse (0.1 Hz) rates, but \textbf{uniform peaks at 0.20 Hz (2.96)} and wins the mid-band. The reliable band is 0.2--1.0 Hz (n = 200--1000 decodes); the low-Hz tail (n = 10--53) is noise. N = 7 videos.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_coin_predictor.png}
+\caption{Predictor-in-the-loop Pareto on 7 held-out COIN validation videos (the full pipeline, no ground-truth stream). Adaptive wins at high ($\geq$ 0.5~Hz) and sparse (0.1~Hz) rates, but uniform peaks at 0.20~Hz and takes the mid-band -- the erosion of the mechanism's advantage as the upstream signal degrades.}
+\label{fig:coin-predictor}
+\end{figure}
 
 \textbf{(c) Is the mid-band loss a tuning artifact? No.} We swept the trigger's \texttt{smoothing\_window $\in$ \{1,3,5,7\}} $\times$ \texttt{linkage $\in$ \{ward, average\}} on the cached streams, using the \emph{identical} SONAR decoder and CIDEr (the harness self-validates: the \texttt{smooth=1, ward} cell reproduces (b) to 3 decimals). \textbf{Every} smoothing setting made the mid-band \emph{worse}; the best config is the un-smoothed baseline (mean $\Delta$ = $-$0.061 vs uniform). At 0.20 Hz, uniform (2.96) beats \textbf{all eight} adaptive configurations. The attenuation is therefore \textbf{fundamental to predictor-stream noise}, not a mis-tuned trigger --- a clean negative result.
 
@@ -196,6 +222,15 @@ Because \S6.3 identified predictor caption quality (a \emph{data} property) as t
 \end{center}
 
 On the diverse 956-sample validation set (240 held-out videos) accuracy rose \textbf{+0.113 cos over the final 4.8$\times$ of data and had not saturated}; predictions grew \emph{more} diverse (pred--pred 0.527 $\rightarrow$ 0.408), excluding collapse. This isolates \textbf{data, not architecture or the selective layer, as the binding constraint} on caption quality, and motivates training on the paper's own data distribution (Action100M) as the next rung. It is also, to our knowledge, the first reported data-scaling curve for a VL-JEPA-style predictor.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.48\linewidth]{figures/results_coin_predictor_c1final.png}
+\hfill
+\includegraphics[width=0.48\linewidth]{figures/results_coin_predictor_c1old.png}
+\caption{Identical protocol, two predictors: the final 26{,}360-clip checkpoint (left, cos 0.846) against the earlier 2{,}962-clip one (right, cos 0.772). The absolute lift comes from training data, not from the selective layer -- which is why the binding constraint is identified as data rather than architecture.}
+\label{fig:coin-scaling}
+\end{figure}
 
 \subsection{Training on the paper's own data (Action100M): a controlled negative}
 
@@ -257,6 +292,13 @@ We finally ran the paper's exact headline benchmark: EgoExo4D validation, \textb
 
 \textbf{Uniform wins at every frequency} --- there is no iso-quality speedup for adaptive on atomic descriptions. Far from contradicting the mechanism, this \textbf{completes} the picture from \S6.1: keysteps (\textasciitilde{}1 event / 15 s) are redundant and adaptive wins \textasciitilde{}2.5$\times$; atomic descriptions (\textasciitilde{}1 event / 2 s) are saturated with change and adaptive loses. The benefit tracks temporal redundancy monotonically. The gap to the paper's positive atomic result is instructive and honest: our measurement is a clean \textbf{gt-mode} stream that isolates the segmenter on raw annotation density, whereas the paper's number comes from their \emph{predicted} (denoised) stream. Whether a denoised predicted stream recovers an advantage at atomic density is the precise question our next rung (predictor-mode on these takes) is designed to answer; the result here is the baseline it will be measured against.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_egoexo_atomic_218.png}
+\caption{EgoExo4D atomic descriptions on 218 density-matched validation takes, ground-truth stream. \textbf{Uniform wins at every frequency.} At $\approx$ 1 event / 2~s the stream is saturated with change and offers nothing to segment -- the redundancy boundary of the mechanism, and the negative that Figure~\ref{fig:egoexo-indomain} resolves.}
+\label{fig:egoexo-atomic}
+\end{figure}
+
 \medskip
 
 \subsection{The predicted stream restores dominance on the paper's own benchmark}
@@ -280,15 +322,49 @@ We therefore trained an in-domain predictor on 11,556 (window, caption) pairs dr
 
 Adaptive wins 7 of 8 budgets, and absolute quality rises \textbf{25$\times$} (0.012 $\rightarrow$ 0.33) purely from correcting the domain. In the paper's reporting form: the best uniform score anywhere is 0.310 (0.499 Hz, 3537 decodes), which adaptive exceeds at 0.050 Hz using 357 decodes --- \textbf{$\approx$9.9$\times$ fewer decoder invocations at equal-or-better quality} (the paper reports 2.85$\times$).
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_egoexo_predictor_40_indomain.png}
+\caption{\textbf{Headline result.} The same atomic-description benchmark as Figure~\ref{fig:egoexo-atomic}, differing only in that the stream is \emph{predicted} rather than annotated, with an in-domain predictor. Adaptive wins 7 of 8 budgets; the best uniform score anywhere (0.310 at 3537 decodes) is exceeded by adaptive at 357 decodes -- $\approx 9.9\times$ fewer decoder invocations at equal-or-better quality.}
+\label{fig:egoexo-indomain}
+\end{figure}
+
 \textbf{Three controls distinguish this from the artifact we rejected.} An earlier out-of-domain attempt appeared to show adaptive winning on a semantic metric; its controls revealed the effect was denoising, not selection. Repeating those controls here: the metric's sensitivity to \emph{timing} rises from +0.0012 (out-of-domain, effectively blind) to \textbf{+0.0225--0.0284}; disabling mean-pooling leaves a \textbf{flat +0.031--0.040 advantage at every frequency} (versus collapse previously), isolating temporal selection from averaging; and adaptive beats random placement at \textbf{8/8} budgets while uniform is statistically indistinguishable from random placement (0.605 vs 0.606) --- establishing that the gain arises from \emph{where} decodes are placed.
 
-\textbf{Interpretation.} This resolves the apparent contradiction with \S6.7. A raw atomic-annotation stream is saturated with change and offers nothing to segment; the predictor, being a smooth function of video, converts it into a stream with genuine semantic plateaus. Selective decoding is therefore not a property of dense supervision but of \emph{predicted} representations --- a distinction the original paper does not draw explicitly, and one that our negative and positive results together isolate. We do not claim magnitude parity: our predictor is in-domain whereas VL-JEPA's was cross-domain, and EgoExo takes are internally repetitive (mean pairwise caption similarity 0.669), both of which favour sparse adaptive decoding.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.48\linewidth]{figures/results_egoexo_predictor_40_indomain_semantic.png}
+\hfill
+\includegraphics[width=0.48\linewidth]{figures/results_egoexo_predictor_40_indomain_semantic_nopool.png}
+\caption{Controls for the headline. Left: the style-robust semantic metric on the same takes. Right: the same run with mean-pooling disabled, which leaves a flat $+0.031$--$0.040$ advantage at every frequency and so isolates temporal \emph{selection} from averaging.}
+\label{fig:egoexo-indomain-controls}
+\end{figure}
+
+\textbf{Interpretation.} This resolves the apparent contradiction with \S6.7. A raw atomic-annotation stream is saturated with change and offers nothing to segment; the predictor, being a smooth function of video, converts it into a stream with genuine semantic plateaus. Selective decoding is therefore not a property of dense supervision but of \emph{predicted} representations --- a distinction the original paper does not draw explicitly, and one that our negative and positive results
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.48\linewidth]{figures/results_egoexo_predictor_40_semantic.png}
+\hfill
+\includegraphics[width=0.48\linewidth]{figures/results_egoexo_predictor_40_semantic_nopool.png}
+\caption{The rejected artifact, retained because the controls chapter needs it. An out-of-domain predictor appeared to show adaptive winning 8/8 on the semantic metric (left), but with pooling disabled the advantage collapses (right): the effect was denoising, not selection. The contrast with Figure~\ref{fig:egoexo-indomain-controls} is what licenses the headline claim.}
+\label{fig:egoexo-rejected}
+\end{figure}
+
+together isolate. We do not claim magnitude parity: our predictor is in-domain whereas VL-JEPA's was cross-domain, and EgoExo takes are internally repetitive (mean pairwise caption similarity 0.669), both of which favour sparse adaptive decoding.
 
 \subsection{Significance, and how much headroom remains}
 
 Two questions a reader will put to \S6.8: \emph{is the margin real across only 40 videos}, and \emph{how close to optimal is the trigger?}
 
 \textbf{Significance.} We score every take separately and bootstrap the \textbf{paired} difference (adaptive $-$ uniform) over 5,000 resamples; pairing is the correct design because both methods see the identical take, so take-difficulty variance cancels. The semantic margin is significant at \textbf{all eight} budgets, with \textbf{40/40 takes favouring adaptive} at seven of them ($\Delta$ = +0.040 at 1 Hz rising to +0.106 at 0.02 Hz). Per-take CIDEr agrees in direction at every budget and is significant at seven of eight; the exception is the degenerate 0.011 Hz point (\textasciitilde{}2 decodes per take). CIDEr has visibly lower statistical power here --- n-gram overlap over \textasciitilde{}100 events is high-variance, whereas cosine similarity is smooth --- which is itself an argument for reporting the semantic metric alongside it.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_egoexo_rigor.png}
+\caption{Paired bootstrap over 5{,}000 resamples: the per-take difference (adaptive $-$ uniform) with 95\% confidence intervals at each budget. Pairing is the correct design because both methods see the identical take, so take-difficulty variance cancels. All eight semantic budgets clear zero; the single non-significant CIDEr cell (the degenerate 0.011~Hz point, $\approx$ 2 decodes per take) is circled.}
+\label{fig:egoexo-rigor}
+\end{figure}
 
 \textbf{Headroom.} We then bound what any trigger could achieve. The \emph{best-window ceiling} takes, for each annotation, the maximum over all contiguous ranges of cos(mean(stream[a:b]), gt); since every method in this work decodes a pooled mean of a contiguous span, this upper-bounds every row of the Pareto table. It is deliberately loose --- each annotation may choose its own window under no budget --- so the fraction of it a real schedule attains is a \emph{conservative} measure of trigger quality.
 
@@ -306,6 +382,13 @@ best-frame ceiling & 0.7541 [0.7396, 0.7692] & 97.7\% \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/results_egoexo_ceiling.png}
+\caption{How much headroom remains. The best-window ceiling is a provable upper bound on any method that decodes a pooled mean of a contiguous span, which includes every row of the Pareto table. Adaptive at 0.05~Hz reaches \textbf{87.1\%} of it -- above decode-everything at $\approx 40\times$ lower cost, and above a trigger handed the annotators' own boundaries. The residual gap therefore belongs to the predictor, not the trigger.}
+\label{fig:egoexo-ceiling}
+\end{figure}
 
 Three findings follow.
 
@@ -373,7 +456,7 @@ python -m livejepa.run_eval --dataset coin --mode gt
 python -m livejepa.run_eval --dataset egoexo --mode gt --gt-source keystep --max-videos 10 --max-seconds 300
 # Ablations + tests                                                     -> 6.2
 python scripts/ablations.py
-python -m pytest tests/ -q                      # 9/9
+python -m pytest tests/ -q                      # 13/13
 # Predictor quality, data-scaling rungs                                 -> 6.5
 python scripts/eval_predictor.py --ckpt checkpoints_c1_final/predictor_30000.pt --val data_cache_coin2_val --decode
 python scripts/eval_predictor.py --ckpt checkpoints_c1_final/predictor_30000.pt --val data_cache_coin_full_val
@@ -412,7 +495,7 @@ python -m livejepa.demo --source <video.mp4> --ckpt checkpoints_c1_final/predict
 
 \section{Figures and artifacts}
 
-All are collected in \texttt{thesis\_materials/figures/}, indexed by \texttt{thesis\_materials/INDEX.md}; every \texttt{.png} ships with the \texttt{.json} it was plotted from, and \texttt{thesis\_materials/TABLES.md} holds every table in this chapter.
+Every figure listed here is placed inline in the section named beside it; this table is the index, not the figures themselves. All are collected in \texttt{thesis\_materials/figures/}, catalogued by \texttt{thesis\_materials/INDEX.md}; every \texttt{.png} ships with the \texttt{.json} it was plotted from, and \texttt{thesis\_materials/TABLES.md} holds every table in this chapter. The two \texttt{.mp4} demo recordings cannot be embedded in a PDF and are referenced by name only.
 
 \begin{center}\small
 \begin{tabular}{lp{0.42\linewidth}}
@@ -421,7 +504,7 @@ All are collected in \texttt{thesis\_materials/figures/}, indexed by \texttt{the
 \midrule
 6.1 & \texttt{results\_coin\_gt.png}, \texttt{results\_egoexo\_keystep.png} \\
 6.2 & \texttt{results\_ablation\_methods.png} \\
-6.3 & \texttt{results\_adaptive\_tuning.json} (tuning sweep, table only) \\
+6.3 & \texttt{results\_coin\_predictor.png} (predictor-in-the-loop Pareto), \texttt{results\_adaptive\_tuning.json} (tuning sweep, table only) \\
 6.4 & \texttt{demo\_adaptive.mp4}, \texttt{demo\_uniform.mp4} \\
 6.5 & \texttt{results\_coin\_predictor\_c1final.png}, \texttt{results\_coin\_predictor\_c1old.png} \\
 6.7 & \texttt{results\_egoexo\_atomic\_218.png} \\

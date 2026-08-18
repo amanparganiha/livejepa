@@ -7,7 +7,8 @@ changes. Re-run this after any edit to THESIS.md.
 It targets the markdown subset that document actually uses (verified by
 inventory): ATX headings, pipe tables, fenced code, bullet/numbered lists,
 inline code, bold, italic, horizontal rules, and a fixed set of non-ASCII
-symbols. It deliberately does NOT try to be a general markdown engine.
+symbols. A ```latex fence is passed through raw, which is how figure
+environments are carried from the markdown into the generated body. It deliberately does NOT try to be a general markdown engine.
 
 Section numbering: the markdown carries manual numbers ("## 6. Results",
 "### 6.9 ..."). Those are STRIPPED and LaTeX numbers the sections itself --
@@ -168,12 +169,35 @@ def convert(md):
         if state["stop"]:
             break
 
+        if line.strip().startswith("<!--"):                       # markdown-only
+            # An HTML comment is editorial scaffolding for people reading the
+            # .md -- build notes, TODOs -- and must not be typeset. THESIS.md
+            # opens with one ("this document is written in Markdown for easy
+            # conversion..."), which was appearing as the thesis's first
+            # sentence until this branch existed.
+            flush_para()
+            j = i
+            while j < len(lines) and "-->" not in lines[j]:
+                j += 1
+            i = j + 1
+            continue
+
         if line.strip().startswith("```"):                       # fenced code
             flush_para()
+            info = line.strip()[3:].strip().lower()
             j = i + 1
             while j < len(lines) and not lines[j].strip().startswith("```"):
                 j += 1
-            out += emit_verbatim(lines[i + 1:j]) + [""]
+            block = lines[i + 1:j]
+            # ```latex is a RAW passthrough: emitted byte-for-byte, neither
+            # escaped nor wrapped in lstlisting. This is how figures reach the
+            # generated body. A figure environment cannot survive inline():
+            # bare commands like \centering carry no braces, so the raw-LaTeX
+            # regex misses them and esc() turns the backslash into
+            # \textbackslash{}. Block-level passthrough sidesteps that
+            # entirely -- and keeps the figures in the markdown, which is the
+            # file the author edits.
+            out += (block if info == "latex" else emit_verbatim(block)) + [""]
             i = j + 1
             continue
 

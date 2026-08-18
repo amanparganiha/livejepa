@@ -6,6 +6,89 @@ backfilled summaries.
 
 ---
 
+## 2026-08-18 (Tuesday)
+
+**Theme: the thesis COMPILES. 24-page PDF, zero errors, 14 figures placed - and
+two silent defects caught by reading the PDF that no build log mentioned.**
+
+### It had never been compiled; now it has
+No TeX toolchain on this box was the reason. Fixed by downloading **Tectonic
+0.17.0** (a single 51 MB self-contained binary that fetches packages on demand)
+into the scratch dir - no install, nothing added to the repo. Result:
+**exit 0, zero errors, zero overfull boxes**, BibTeX resolving all 8 entries,
+**24 pages** (3 unnumbered front matter + 21 numbered). Sections come out 1-9
+with 6.1-6.9 nested and appendices A-B, so the ~54 "6.8"-style cross-references
+still land correctly.
+
+### Figures: the body had none at all
+`\includegraphics` appeared **nowhere** - BUILD.md's checklist had "insert
+figures" open. Now **14 images in 11 figure environments**, captioned and
+cross-referenced, placed per **Appendix B of THESIS.md** (which is the accurate
+map; I wrongly called INDEX.md stale mid-session - `c1final`/`c1old` at 6.5 is
+right, since that pair *is* the data-scaling contrast). One figure is genuinely
+new to both maps: `results_coin_predictor.png` at 6.3, confirmed by matching its
+JSON to the section's table (ckpt `checkpoints_kaggle/predictor_20000.pt`, 7
+videos, CIDEr 2.611 at 1.0 Hz). Recorded in Appendix B and INDEX.md.
+
+**Why this needed a converter change.** Figures belong in `docs/THESIS.md`, since
+`thesis_body.tex` is generated and hand edits are lost. But a figure environment
+could not survive `inline()`: the raw-LaTeX regex requires braces, so bare
+`\centering` was escaped to `\textbackslash{}centering`, and `\caption{...}`
+containing `\emph{...}` broke on the nested braces. Added a **```latex fence =
+byte-for-byte passthrough** to `scripts/md_to_latex.py`, plus **HTML comments are
+now skipped entirely**.
+
+### Two defects the logs did not catch, found by reading the PDF
+1. **A broken cross-reference, caused by my own fix.** Repairing "Section~\ref"
+   to "Figure~\ref" with `re.sub`, the *replacement* template was interpreted by
+   `re` - `\r` became a carriage return - so the markdown held CR + "ef{...}".
+   LaTeX compiled it silently and the PDF read *"the negative that Figure
+   effig:egoexo-indomain resolves"*. Also a violation of the repo's LF-only rule.
+2. **An editorial note was being typeset as the thesis's first sentence**:
+   *"This document is written in Markdown for easy conversion to LaTeX/Word;
+   figures referenced are the PNGs in the repo root"* - meaningless in a PDF and
+   by then factually wrong. Now inside an HTML comment.
+
+Both are the reason `scripts/check_thesis_tex.py` now exists: it verifies figure
+paths resolve, every `\ref` has a `\label`, environments balance, the body is
+pure ASCII, and **no stray control characters** are in the markdown. Exit 0/1 so
+it can gate a commit. It strips TeX comments before counting, or `thesis.tex`'s
+own header prose ("everything above \begin{document}") reads as an unclosed
+environment.
+
+### Margins: 48 overfull warnings -> 0
+Appendix B tabulates long file names in `\texttt{}`, which TeX will not break;
+the worst row ran **133.20pt (~4.6 cm)** past the right margin. Fixed with
+`\usepackage[htt]{hyphenat}` + `\setlength{\emergencystretch}{3em}`. Measured
+properly, compiling with and without: **48 -> 0**. (First attempt at that
+measurement was invalid - a heredoc mangled the edit so both arms compiled the
+*same* file and both read 0. Redone with sed.)
+
+### Deliverable
+`scripts/make_overleaf_zip.py` -> **`livejepa_thesis_overleaf.zip`, 0.85 MB**:
+`thesis.tex` + `thesis_body.tex` + `references.bib` flat at the archive root
+(nested folders are why Overleaf's "Main document" comes up empty) + all 16 PNGs,
+14 placed and 2 spare. The `.json` plot sources and demo `.mp4`s are excluded.
+**Validated by extracting the zip into an empty directory and compiling that** -
+exit 0 - rather than trusting the file list.
+
+Also: `titlepage` class option (contents no longer start halfway down page 1),
+and `thesis_materials/*.log` added to `.gitignore` - `build.log` was untracked
+and would have been committed.
+
+**Standing gotcha, reconfirmed hard today:** Git Bash here **halves backslashes**
+in heredocs *and* in `python -c` strings. It burned me three times - a `\t` that
+became a real tab inside a source comment, a self-test whose assertions passed
+only because input and expectation were mangled identically, and the invalid
+margin measurement above. **Write backslash-heavy content to a file with the
+editor tool, then run the file.** Never through the shell.
+
+**Left for the user:** upload the zip to Overleaf (pdfLaTeX), swap the institute
+template, replace `\date{\today}` with the real submission date, add the
+declaration/certificate, and re-read 7-9 plus the abstract in their own voice.
+
+---
+
 ## 2026-08-13 (Thursday)
 
 **Theme: the 94 GB Google Drive archive landed and was VERIFIED - not just

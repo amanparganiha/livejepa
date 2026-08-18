@@ -87,3 +87,8 @@ desktop.ini
 *.fls
 *.fdb_latexmk
 thesis_materials/*.pdf
+# engine output captured while checking the build (tectonic/pdflatex)
+thesis_materials/*.log
+# the Overleaf upload archive: regenerate with scripts/make_overleaf_zip.py
+# (also matched by *.zip above; named here so its absence is not a mystery)
+/livejepa_thesis_overleaf.zip

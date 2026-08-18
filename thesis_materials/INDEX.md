@@ -41,6 +41,7 @@ not the trigger.
 | `results_coin_gt.png` | §6.1 | COIN gt-mode Pareto: adaptive vs uniform (≈1.6×) |
 | `results_egoexo_keystep.png` | §6.1 | EgoExo4D keysteps Pareto (≈2.5×; paper's benchmark) |
 | `results_ablation_methods.png` | §6.2 | Method ablation incl. the online-trigger correction |
+| `results_coin_predictor.png` | §6.3 | Predictor-in-the-loop Pareto: the mid-band where uniform wins |
 | `results_coin_predictor_c1final.png` | §6.5 | Full predicted pipeline, final checkpoint |
 | `results_coin_predictor_c1old.png` | §6.5 | Same protocol, weaker checkpoint — the data-scaling contrast |
 | `demo_adaptive.mp4` / `demo_uniform.mp4` | §6.4 | Live demo: adaptive 5% vs uniform 10% decodes |

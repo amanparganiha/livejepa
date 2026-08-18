@@ -11,7 +11,9 @@
 %  markdown and re-run the script, or it will be overwritten. If the institute
 %  template uses \chapter instead of \section, change SECTIONLEVEL below.
 % ===========================================================================
-\documentclass[12pt,a4paper]{article}
+% "titlepage" gives the title its own page, as a thesis expects; without it the
+% table of contents starts halfway down page 1, under the author's name.
+\documentclass[12pt,a4paper,titlepage]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -24,6 +26,14 @@
 \usepackage{microtype}
 \usepackage[hidelinks]{hyperref}
 \usepackage{caption}
+
+% Appendix B tabulates file names in \texttt{}. TeX will not break inside a
+% typewriter word, so without these the longest row ran 133pt (~4.6cm) past the
+% right margin. [htt] lets tt text hyphenate; \emergencystretch lets TeX loosen
+% a line rather than overrun. Measured on this document, with and without these
+% two lines: 48 overfull warnings across the build (worst 133.20pt) -> 0.
+\usepackage[htt]{hyphenat}
+\setlength{\emergencystretch}{3em}
 
 \lstset{
   basicstyle=\ttfamily\footnotesize,
