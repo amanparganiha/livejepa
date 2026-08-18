@@ -45,8 +45,25 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_DIR = os.environ.get("LIVEJEPA_UPLOAD_DIR") or os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "uploads")
 SAMPLE_DIR = os.path.join(ROOT, "eval_data", "coin_videos")
-DEFAULT_CKPT = os.environ.get("LIVEJEPA_CKPT") or os.path.join(
-    ROOT, "checkpoints_kaggle", "predictor_20000.pt")
+def _default_ckpt():
+    """The checkpoint the thesis reports, preferred over the one it superseded.
+
+    checkpoints_c1_final/predictor_30000.pt is the deployed model (COIN, 26,360
+    clips, held-out cos 0.846). checkpoints_kaggle/predictor_20000.pt is the
+    earlier 2,962-clip run (cos 0.636) that section 6.5's scaling study measures
+    *against* -- serving it here made the demo look materially worse than the
+    numbers in the write-up. Fall back to it only if the final one is absent,
+    since both directories are gitignored and a fresh clone has neither.
+    """
+    for rel in (("checkpoints_c1_final", "predictor_30000.pt"),
+                ("checkpoints_kaggle", "predictor_20000.pt")):
+        p = os.path.join(ROOT, *rel)
+        if os.path.exists(p):
+            return p
+    return os.path.join(ROOT, "checkpoints_c1_final", "predictor_30000.pt")
+
+
+DEFAULT_CKPT = os.environ.get("LIVEJEPA_CKPT") or _default_ckpt()
 MAX_UPLOAD_MB = int(os.environ.get("LIVEJEPA_MAX_UPLOAD_MB", "500"))
 TOKEN = os.environ.get("LIVEJEPA_TOKEN", "")  # empty -> auth disabled (localhost use)
 ALLOWED_EXT = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
