@@ -18,6 +18,14 @@ against its source at the printed precision. Changes made:
   on the fixed 956 set).
 - The Table 9 and 13 takeaways are rewritten to match the thesis.
 
+**Corrected 2026-11-17 — the headline changed.** Tables 9–12 add the
+pooling-matched uniform baseline (**uniform+pool**) that VL-JEPA's protocol implies
+(it pools both schedules) and ours had lacked, plus a one-decode-per-take
+reference. Against uniform+pool, adaptive's advantage on the predicted stream
+disappears (6/8 ties, one significant win each way), so the ≈9.9× headline and the
+"87% of the ceiling ⇒ the trigger is near-exhausted" reading are withdrawn; the
+gain on a predicted stream is averaging, not placement.
+
 `configs/default.yaml` pre-smooths the stream (`smoothing_window = 3`). Every adaptive
 number here from §6.5 onward uses that setting; Tables 1–3 and the §6.3(b) run
 predate it and are un-smoothed.
@@ -131,7 +139,7 @@ Source: `results_adaptive_tuning.json`. Thesis §6.3. Mid-band mean Δ vs unifor
 
 Takeaway: smoothing makes the mid-band *worse*; the un-smoothed baseline is best.
 Read together with Table 12: trigger tuning is the wrong lever. (The released
-configuration nonetheless keeps `smoothing_window = 3`; on the EgoExo headline,
+configuration nonetheless keeps `smoothing_window = 3`; on the EgoExo predicted stream,
 disabling it changes the key 0.05 Hz CIDEr cell by +0.0001, see thesis §6.8.)
 
 ---
@@ -182,122 +190,136 @@ stream's temporal redundancy.*
 
 ---
 
-## Table 9 — Same benchmark, **predicted stream**, in-domain predictor ★ HEADLINE
-Source: `results_egoexo_predictor_40_indomain.json`. Thesis §6.8. 40 held-out
-takes (excluded from predictor training), `--max-seconds 360`. Predictor gate:
-cos **0.599**, pred–pred 0.325 on 25 further held-out takes.
+## Table 9 — Same benchmark, **predicted stream**, three schedules ★ HEADLINE (corrected 2026-11-17)
+Source: `results_egoexo_predictor_40_indomain_pooled.json` (its uniform and adaptive
+cells are identical to the earlier two-schedule `results_egoexo_predictor_40_indomain.json`).
+Thesis §6.8. 40 held-out takes (excluded from predictor training),
+`--max-seconds 360`. Predictor gate: cos **0.599**, pred–pred 0.325 on 25 further
+held-out takes. **uniform+pool** = uniform's decode points, each decoded from the
+mean of its fixed block of the same 3-step-smoothed stream adaptive segments — the
+like-for-like baseline (VL-JEPA §4.6 pools both schedules).
 
-| avg Hz | decodes | uniform | adaptive | Δ |
+| avg Hz | decodes | uniform | adaptive | uniform+pool |
 |---:|---:|---:|---:|---:|
-| 0.998 | 7072 | 0.296 | **0.330** | +0.035 |
-| 0.499 | 3537 | 0.310 | **0.348** | +0.038 |
-| 0.333 | 2357 | 0.299 | **0.340** | +0.041 |
-| 0.199 | 1412 | 0.287 | **0.333** | +0.046 |
-| 0.100 | 706 | 0.282 | **0.331** | +0.049 |
-| 0.050 | 357 | 0.278 | **0.338** | +0.059 |
-| 0.020 | 140 | 0.249 | **0.312** | +0.063 |
-| 0.011 | 76 | **0.305** | 0.302 | −0.003 |
+| 0.998 | 7072 | 0.296 | 0.330 | **0.335** |
+| 0.499 | 3537 | 0.310 | **0.348** | 0.342 |
+| 0.333 | 2357 | 0.299 | 0.340 | **0.358** |
+| 0.199 | 1412 | 0.287 | 0.333 | **0.341** |
+| 0.100 | 706 | 0.282 | 0.331 | **0.338** |
+| 0.050 | 357 | 0.278 | **0.338** | 0.319 |
+| 0.020 | 140 | 0.249 | 0.312 | **0.314** |
+| 0.011 | 76 | 0.305 | 0.302 | **0.322** |
 
-Takeaway: adaptive wins **7/8**; absolute CIDEr rose **25×** (0.012 → ~0.33) from
-training in-domain (partly same-session familiarity: the 40 takes are disjoint by
-take only — 40/40 share a participant and 39/40 a recording session with training
-takes). Best uniform anywhere = 0.310 (0.499 Hz, 3537 decodes); adaptive reaches
-0.338 at 0.050 Hz on **357** decodes → **≈9.9× fewer decoder invocations at
-equal-or-better quality** (paper: 2.85×). This anchor is conservative: the paper
-anchors on uniform at 1 Hz, and by that rule even adaptive's 76-decode budget
-(0.302) beats uniform's 0.296 — a ~93× figure that only reflects uniform's flat
-curve. Adaptive also edges the best uniform at 0.020 Hz (0.312 on 140 decodes,
-≈25.3×), but by +0.002, within noise, so that figure is *not* quoted. The 0.011 Hz
-row (~2 decodes/take) is the one uniform win.
+One decode per take (`take_mean`, the whole stream's mean, 40 decodes in all):
+**0.284**.
+
+Takeaway: against **plain** uniform adaptive wins **7/8**, and absolute CIDEr rose
+**25×** (0.012 → ~0.33) from training in-domain (partly same-session familiarity:
+the 40 takes are disjoint by take only — 40/40 share a participant and 39/40 a
+recording session with training takes). Anchored on plain uniform's best (0.310 at
+3537 decodes), adaptive matches it at 0.050 Hz on 357 decodes — the **≈9.9×** of
+the earlier draft. **Against uniform+pool that advantage is gone:** pooling alone
+lifts uniform by +5% to +26% at every budget, uniform+pool is higher at **6/8**,
+and its best (0.358 at 2357 decodes) exceeds adaptive's best anywhere (0.348), so
+no efficiency multiple survives. The gain on a predicted stream is averaging, not
+placement. And one caption per take (0.284) scores about what plain uniform gets
+with 1,412 decodes — the benchmark barely rewards timing.
 
 Same-takes control (2026-09-20): on exactly these 40 takes the **ground-truth**
 stream favours uniform at 7/8 budgets. Adaptive edges it only at 0.20 Hz (2.381 vs
 2.352); for comparison, 1 Hz is 4.505 vs 3.685 uniform. All values come from the
-218-take run's decode cache. The reversal belongs to the stream, not to the take
-sample.
+218-take run's decode cache. The reversal against plain uniform belongs to the
+stream, not to the take sample.
 
 ---
 
-## Table 10 — Controls: why Table 9 is trusted and the earlier attempt was not
-Source: `results_egoexo_predictor_40_indomain_semantic{,_nopool}.json` vs
-`results_egoexo_predictor_40_semantic{,_nopool}.json`. Thesis §6.8.
+## Table 10 — Controls: what the original three tested, and what they missed
+Source: `results_egoexo_predictor_40_indomain_semantic{,_nopool}_pooled.json` and
+`..._semantic_pooled_smooth1.json` vs `results_egoexo_predictor_40_semantic{,_nopool}.json`.
+Thesis §6.8. Semantic metric, corpus mean over all annotations.
 
-| control | out-of-domain (REJECTED) | in-domain (accepted) |
-|---|---|---|
-| metric responds to timing (nearest vs random alignment) | +0.0012 — effectively blind | **+0.0225 … +0.0284** |
-| survives pooling removal | +0.0051 (59% was denoising) | **+0.0345** (53% survives) |
-| beats random placement | — | **8/8 budgets** |
+| control | out-of-domain (REJECTED) | in-domain, as published | **in-domain, matched (2026-11-17)** |
+|---|---|---|---|
+| metric responds to timing (nearest vs shuffled alignment) | +0.0012 — effectively blind | **+0.0225 … +0.0284** | unchanged (a metric property) |
+| lead with mean-pooling disabled | +0.0051 (59% was denoising) | +0.031 … +0.040, flat | **−0.0025 … +0.0028** vs uniform given the same 3-step smoothing |
+| beats random placement | — | 8/8 budgets | random points were unpooled too |
+| adaptive − uniform+pool, no smoothing at all | — | — | **−0.0164 … −0.0086** (uniform+pool ahead at 8/8) |
 
-Without pooling adaptive's lead is a **flat +0.031 … +0.040 at every frequency**
-(pure temporal selection). **Uniform ≈ random placement (0.605 vs 0.606 at 1 Hz;
-0.597 vs 0.596 averaged over budgets)** — the gain comes from *where* decodes land,
-not from spreading them evenly. With pre-smoothing disabled, adaptive still leads
-at 8/8 budgets on the semantic metric (+0.013 at 1 Hz rising to +0.102 at 0.02 Hz)
-and wins the same 7/8 on CIDEr; the 9.9× cell is unchanged (0.3379 vs 0.3378) and
-only the two highest rates narrow (≈+0.035 → ≈+0.010).
-
----
-
-## Table 11 — Statistical significance: paired bootstrap over 40 takes
-Source: `results_egoexo_rigor.json`, figure `results_egoexo_rigor.png`. Thesis
-§6.9. Per-take scores, 5,000 resamples of the **paired** difference (both methods
-see the identical take, so take-difficulty variance cancels).
-
-| target Hz | semantic Δ (95% CI) | takes favouring adaptive | per-take CIDEr Δ (95% CI) | takes |
-|---:|---|---:|---|---:|
-| 1.00 | **+0.0397** [+0.0350, +0.0443] | **40/40** | **+0.0193** [+0.0073, +0.0325] | 26/40 |
-| 0.50 | **+0.0419** [+0.0361, +0.0478] | **40/40** | **+0.0212** [+0.0095, +0.0330] | 26/40 |
-| 0.35 | **+0.0484** [+0.0423, +0.0542] | **40/40** | **+0.0255** [+0.0111, +0.0410] | 28/40 |
-| 0.20 | **+0.0523** [+0.0458, +0.0593] | **40/40** | **+0.0263** [+0.0056, +0.0491] | 23/40 |
-| 0.10 | **+0.0675** [+0.0584, +0.0765] | **40/40** | **+0.0300** [+0.0110, +0.0499] | 28/40 |
-| 0.05 | **+0.0776** [+0.0666, +0.0886] | 39/40 | **+0.0279** [+0.0074, +0.0500] | 27/40 |
-| 0.02 | **+0.1057** [+0.0904, +0.1212] | **40/40** | **+0.0365** [+0.0086, +0.0683] | 27/40 |
-| 0.01 | **+0.1057** [+0.0861, +0.1260] | **40/40** | −0.0017 [−0.0366, +0.0311] *ns* | 19/40 |
-
-Takeaway: significant at **8/8** budgets on the semantic metric and **7/8** on
-CIDEr; the sole exception is the degenerate 0.011 Hz point. The semantic metric
-has far higher power (40/40 vs 23–28/40 takes) because n-gram overlap over ~100
-events is high-variance while cosine is smooth — an argument for reporting both.
-*(Per-take CIDEr ≈0.15–0.20 is numerically below the corpus CIDEr of Table 9
-because TF-IDF is computed within a take; only paired differences are interpreted.)*
+Takeaway: every original control compared adaptive with an **unpooled** baseline.
+Disabling pooling left the 3-step pre-smoothing on the adaptive stream only, so its
+"exact" points were still three-step averages — the flat lead read as "pure
+temporal selection" was the smoothing. Against **plain** uniform the result is
+robust to smoothing: with it disabled adaptive still leads at 8/8 budgets on the
+semantic metric (+0.013 at 1 Hz rising to +0.102 at 0.02 Hz) and wins the same 7/8
+on CIDEr; the 9.9× cell is unchanged (0.3379 vs 0.3378).
 
 ---
 
-## Table 12 — Headroom: how much is left for the trigger?
-Source: `results_egoexo_ceiling.json`, `results_egoexo_rigor_oracle_fixed.json`;
-figure `results_egoexo_ceiling.png`. Thesis §6.9. Same 40 takes, semantic metric.
+## Table 11 — Statistical significance: paired bootstrap over 40 takes, both baselines
+Source: `results_egoexo_rigor_pooled.json` (its adaptive − uniform rows are identical
+to `results_egoexo_rigor.json`), figure `results_egoexo_rigor.png`. Thesis §6.9.
+Per-take scores, 5,000 resamples of the **paired** difference adaptive − baseline.
+Bold = 95% CI excludes zero; brackets = takes favouring adaptive, of 40.
+
+| target Hz | vs uniform: semantic | vs uniform: CIDEr | vs uniform+pool: semantic | vs uniform+pool: CIDEr |
+|---:|---:|---:|---:|---:|
+| 1.00 | **+0.0397** (40) | **+0.0193** (26) | **−0.0013** (12) | −0.0055 (21) |
+| 0.50 | **+0.0419** (40) | **+0.0212** (26) | **−0.0017** (12) | −0.0004 (24) |
+| 0.35 | **+0.0484** (40) | **+0.0255** (28) | **−0.0027** (7) | **−0.0113** (11) |
+| 0.20 | **+0.0523** (40) | **+0.0263** (23) | **−0.0043** (3) | −0.0026 (15) |
+| 0.10 | **+0.0675** (40) | **+0.0300** (28) | **−0.0070** (2) | −0.0062 (21) |
+| 0.05 | **+0.0776** (39) | **+0.0279** (27) | **−0.0066** (5) | **+0.0143** (29) |
+| 0.02 | **+0.1057** (40) | **+0.0365** (27) | **−0.0099** (5) | −0.0035 (13) |
+| 0.01 | **+0.1057** (40) | −0.0017 (19) | **−0.0111** (1) | −0.0076 (9) |
+
+Takeaway: against plain uniform, significant at **8/8** budgets on the semantic
+metric and **7/8** on CIDEr (null at the degenerate 0.011 Hz point, where the two
+metrics also disagree in direction). Against uniform+pool, the semantic metric
+favours **uniform+pool** significantly at **8/8**, and CIDEr is tied at **6/8** with
+one significant cell each way (0.05 Hz +0.0143 [+0.0057, +0.0229];
+0.35 Hz −0.0113 [−0.0203, −0.0024]). *(Per-take CIDEr ≈0.15–0.20 is numerically
+below the corpus CIDEr of Table 9 because TF-IDF is computed within a take; only
+paired differences are interpreted.)*
+
+---
+
+## Table 12 — Headroom on the semantic metric, and what it cannot show
+Source: `results_egoexo_ceiling.json`, `results_egoexo_rigor_oracle_fixed.json`,
+`results_egoexo_rigor_pooled.json`; figure `results_egoexo_ceiling.png`. Thesis
+§6.9. Same 40 takes, per-take semantic means.
 
 | reference | what it is | score (95% CI) | % of ceiling |
 |---|---|---|---:|
-| uniform @0.05 Hz | budget-matched baseline | 0.5949 [0.5740, 0.6167] | 77.1% |
-| **dense** | decode **every** timestep (2 Hz) — infinite budget, no selection | 0.6037 [0.5854, 0.6243] | 78.2% |
-| GT-boundary | segment the *ground-truth caption* stream, decode the predicted stream there | 0.6684 [0.6522, 0.6851] | 86.6% |
-| **adaptive @0.05 Hz** | ours | **0.6725** [0.6560, 0.6898] | **87.1%** |
+| uniform @0.05 Hz | single raw step per decode | 0.5949 [0.5740, 0.6167] | 77.1% |
+| **dense** | decode **every** timestep (2 Hz), no pooling | 0.6037 [0.5854, 0.6243] | 78.2% |
+| GT-boundary | pool the predicted stream over the *ground-truth* segments | 0.6684 [0.6522, 0.6851] | 86.6% |
+| adaptive @0.05 Hz | Ward segments, pooled | 0.6725 [0.6560, 0.6898] | 87.1% |
+| uniform+pool @0.05 Hz | fixed blocks, pooled | 0.6791 [0.6626, 0.6963] | 88.0% |
+| **one decode per take** | the whole stream's mean, no timing at all | **0.6950** [0.6791, 0.7117] | **90.0%** |
 | best-frame ceiling | max over all timesteps of cos(stream[j], gt) | 0.7541 [0.7396, 0.7692] | 97.7% |
 | **best-window ceiling** | max over all contiguous ranges of cos(mean(stream[a:b]), gt) — upper-bounds every row (see note) | **0.7720** [0.7577, 0.7867] | 100% |
 
-Note (2026-09-20): with `smoothing_window = 3`, adaptive pools the *smoothed*
-stream, which the raw-stream ceiling does not strictly cover. The same ceiling on
-the smoothed stream is 0.7661, and the per-annotation maximum over both streams is
-0.7721, a bound on every row that differs from 0.7720 by 0.0001. No percentage
-changes at the precision shown.
+Note (2026-09-20): with `smoothing_window = 3`, the pooled schedules average the
+*smoothed* stream, which the raw-stream ceiling does not strictly cover. The same
+ceiling on the smoothed stream is 0.7661, and the per-annotation maximum over both
+streams is 0.7721, a bound on every row that differs from 0.7720 by 0.0001. No
+percentage changes at the precision shown.
 
-Three takeaways:
+Three takeaways (the third corrected 2026-11-17):
 
-1. **Decoding more does not help.** Uniform is flat in decode rate: 0.5949
-   (0.05 Hz) → 0.6054 (0.5 Hz) → 0.6037 (dense). **Adaptive at 0.05 Hz beats
-   decode-everything** at ~40× fewer decoder calls — here selective decoding is not
-   a quality/compute trade-off but a strict improvement. Pooling denoises: the
-   best-*window* ceiling sits +0.018 above the best-*frame* ceiling.
-2. **Perfect boundary knowledge is not the missing piece.** A trigger handed the
-   annotators' own boundaries scores at/below adaptive, because annotation
-   boundaries are homogeneous in *caption* space while adaptive's are homogeneous
-   in *predictor* space. Timing has little left to give.
-3. **The residue is representational.** 87.1% of a bound no real schedule can
-   reach (each annotation may pick its own window, under no budget), so 87% is a
-   *conservative* reading. The remaining gap belongs to the **predictor** — which
-   is why Table 6's trigger tuning failed and Table 7's still-climbing curve is
-   the live lever.
+1. **Pooling beats decoding more.** Single-point decoding is flat in rate: 0.5949
+   (0.05 Hz) → 0.6054 (0.5 Hz) → 0.6037 (dense). Every pooled schedule beats
+   decode-everything at a fraction of its decoder calls; the best-*window* ceiling
+   sits +0.018 above the best-*frame* ceiling.
+2. **Where the boundaries fall barely matters.** Ward (0.6725), the annotators'
+   boundaries (0.6684) and fixed blocks (0.6791) are within 0.011 of one another.
+3. **The bound cannot rank triggers.** One mean per take — no trigger at all —
+   reaches 90.0%, above every adaptive budget, because EgoExo takes are repetitive
+   enough that a take-level summary sits close to most captions. The earlier
+   reading ("adaptive at 87% ⇒ trigger near-exhausted, residue is the predictor")
+   does not follow. The predictor is still the lever for absolute quality, but on
+   other evidence: the 25× in-domain gain (Table 9) and Table 7's still-climbing
+   curve.
 
 ---
 

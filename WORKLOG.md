@@ -179,16 +179,110 @@ institute's format, taken from a colleague's IIIT-NR paper:
   Naya Raipur, gaurav@iiitnr.edu.in. He is now listed by his full name, "Kumar
   Gaurav Atram".
 
+### Later still: Step 2, the reframe, drafted for review
+The user approved committing Step 1 (`35f7b01`) and starting Step 2. The Step 2
+work is **uncommitted** on `thesis-reframe`, waiting for review.
+
+**Thesis** (`docs/THESIS.md` -> `thesis_body.tex`):
+- **Rewritten:** the abstract and contributions 5-6.
+- **New material:**
+  - §2 now states that VL-JEPA pools under both schedules.
+  - §3 gains a caveat on the semantic metric.
+  - §4.3 defines the baselines (uniform+pool, and one decode per take).
+- **Cross-references fixed** in §5, §6.1, §6.3 and §6.7.
+- **§6.8 rewritten** as "The predicted stream: averaging, not placement", with
+  a three-schedule table and a "why the original controls missed this"
+  paragraph.
+- **§6.9 rewritten:**
+  - a new paired table against both baselines;
+  - the ceiling table gains two rows;
+  - its third finding is now "the bound cannot rank triggers".
+- **§7-9 rewritten.** The methodological note now lists four positive results
+  that failed their controls. Future work adds an evaluation that rewards timing.
+- **Appendix A:** new commands, and tests 16/16.
+- **Appendix B:** the figure map is updated.
+- `check_thesis_tex.py` PASS: 14 figures, 22 labels, 30 refs, 11 tables, 28
+  citations.
+
+**IEEE paper:**
+- Rewritten: the abstract, the contributions, the method (baselines defined,
+  Fig. 2 caption), the headline section, the controls, the significance section
+  (new `tab:sigpool`), the headroom section, and the discussion, limitations,
+  future work and conclusion.
+- `fig:ablation`, `fig:rigor` and `fig:ceiling` were never referenced (they
+  weren't in the snapshot either); they are now.
+- A scratch static check passes: 40 labels, 36 refs, 13 figure files, 27
+  citation keys, balanced environments and braces, ASCII.
+
+**Supporting docs:**
+- RESULTS.md §5b is rewritten. Its intro claim, the §5 forward reference, the
+  stale §3b C2 note, the §6b label-noise framing and §7 are fixed.
+- README: the headline is rewritten.
+- TABLES.md: Tables 9-12 are rewritten.
+- INDEX.md is rewritten.
+- BUILD.md status: last compiled 09-20 (32 pp, 28 refs); a rebuild is needed.
+- HANDOFF.md gets an update block, and its stale lines are fixed.
+- All five audit doc errors from this morning are now gone.
+
+**Web app:**
+- `index.html`: the "up to 9.9x" chip is now "up to 2.5x" on redundant streams,
+  and its footnote is rewritten.
+- `about.html`: new KPI cards, a rewritten headline finding, a 5-bar chart that
+  adds fixed-interval pooled, and a rewritten result finding.
+
+**Figures:**
+- `make_thesis_figures.py`:
+  - the paired figure plots both baselines;
+  - the headroom figure adds uniform+pool and one decode per take;
+  - the ceiling bars are recoloured purple to stay distinct from uniform+pool's
+    orange.
+- New curated files in `figures/`:
+  - `*_pooled.{json,png}`;
+  - `results_egoexo_rigor_pooled.json`;
+  - `..._semantic_pooled_smooth1.{json,png}`.
+
+**Verification:**
+- **368 numeric cells** across THESIS, RESULTS, TABLES and the paper were
+  machine-checked against their JSON sources at the printed precision. All
+  match.
+- **Negative control:** four perturbations were injected into the sources, and
+  each was caught in every document that prints that value. The first version of
+  the checker silently skipped the bold `take_mean` row; it now reports any row
+  it cannot find.
+- Old-headline phrases grep clean everywhere except the WORKLOG.
+
+**PDF build.** The first Tectonic download was denied by the permission system.
+The user then approved it, and Tectonic 0.17.0 went into the scratchpad (nothing
+installed, nothing in the repo).
+- **Thesis:** the first build of the new text exited 0, but the new paired table
+  overran the page by **169.8pt**: five long bold headers. It is now a raw-LaTeX
+  block with a two-level header ("vs uniform" / "vs uniform+pool" over
+  semantic / CIDEr) in `\small`. The checker was taught to read it, and the
+  negative control still catches perturbations there.
+- **Final thesis build:** exit 0, **0 overfull**, 0 undefined, 0 errors,
+  **34 pages**. The remaining underfull warnings are cosmetic, mostly Appendix
+  B's long file names.
+- **Paper:** exit 0, 0 overfull, 0 undefined, **13 pages** (was 12; the extra
+  page is the new table).
+- **Extracted PDF text:** no `??`, no leaked LaTeX, no control characters, and
+  every remaining "9.9x" is in its corrected context.
+- **Page by page:** I read thesis pp. 15-23 and paper pp. 1 and 8-12. The tables,
+  the three-curve headline figure, the controls, the significance and headroom
+  figures, the author block and the conclusion all render correctly.
+- **Overleaf zips:** both were rebuilt (thesis 1.15 MB, paper 0.78 MB). Each was
+  compiled from an empty directory; exit 0, and the PDF text is identical to the
+  main build.
+- **Gotcha, once more:** Git Bash halves backslashes in heredocs, which mangled
+  `\best` and `\textbf` in a generator's printout. Only the display was
+  affected; the rows were rebuilt by hand from the printed values. Scripts with
+  LaTeX go in files, via the Write tool.
+
 **Queued next (the user decides):**
-1. Commit Step 1 (the code plus the author block) on `thesis-reframe`.
-2. Step 2, the reframe. Rewrite the abstract, contributions 5-6, sections 6.8,
-   6.9, 7, 8 and 9 and the matching paper sections. Add the three-curve figure
-   and the paired table. Restate the 87% ceiling as a metric caveat. Update
-   RESULTS 5b and the README.
-3. The small doc fixes listed above.
-4. Paperwork: template, date and declaration.
-5. The viva deck.
-6. Disable the autopilot task.
+1. Review the draft (the PDFs in `thesis_materials/`) and commit Step 2 when
+   happy.
+2. Paperwork: template, date and declaration.
+3. The viva deck.
+4. Disable the autopilot task.
 
 ---
 

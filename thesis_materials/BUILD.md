@@ -2,16 +2,25 @@
 
 ## Status — read this first
 
-**The document compiles.** Last built 2026-09-20, after the thesis fix pass, with
-Tectonic 0.17.0 (a self-contained TeX engine). The build is clean:
-- exit 0, with **zero errors and zero overfull boxes**;
-- BibTeX reports no warnings, and all **16 entries are cited in the text**;
-- no reference or citation is undefined.
+**The document compiles.** Last built **2026-11-17**, after the reframe for the
+pooling-matched baseline (see WORKLOG 2026-11-17), with Tectonic 0.17.0 (a
+self-contained TeX engine). The build is clean:
+- exit 0, with **zero errors and zero overfull boxes** (the first build of the
+  new text overran by 170pt in the new paired table; it now uses a two-level
+  header in a raw-LaTeX block and fits);
+- all **28 bibliography entries are cited in the text**;
+- no reference or citation is undefined, and the extracted PDF text has no
+  `??`, no leaked LaTeX and no control characters.
 
-The content is 14 images in 11 figure environments and 10 numbered, captioned
-tables, with a List of Figures and a List of Tables. That makes **30 pages**: 4
-unnumbered front-matter pages (title, contents, the two lists, abstract) plus 26
-numbered, ending with the references.
+The content is 14 images in 11 figure environments and 11 numbered, captioned
+tables, with a List of Figures and a List of Tables: **34 pages**, unnumbered
+front matter (title, contents, the two lists, abstract) plus the numbered body,
+ending with the references. The remaining warnings are underfull boxes, mostly
+the long file names in Appendix B's table — cosmetic.
+
+The Overleaf zip was validated by extracting it into an empty directory and
+compiling that; its text matches the main build exactly. (Earlier builds:
+2026-08-18, 24 pages; 2026-09-20, 32 pages.)
 
 The PDF was read page by page and checked mechanically from its extracted text,
 not just declared clean by a log. The Overleaf zip was validated by extracting it
@@ -26,20 +35,22 @@ missing package) has already been found and fixed here.
 
 ## The IEEE paper
 
-`paper_ieee.tex` is a **12-page IEEEtran journal-format** (two-column) paper
-distilled from the same results, sharing this directory's `figures/` and
-`references.bib`. It carries 16 tables, 13 figures and 27 references. Build it the
-same way (`tectonic -k paper_ieee.tex`, or pdfLaTeX + BibTeX twice), or package it
-for Overleaf with:
+`paper_ieee.tex` is an **IEEEtran journal-format** (two-column) paper distilled
+from the same results, sharing this directory's `figures/` and `references.bib`.
+It is **13 pages** (built 2026-11-17: exit 0, zero overfull boxes, no undefined
+references; its Overleaf zip compiles from an empty directory to identical text).
+It carries 18 tables, 13 plots plus 2 figures drawn in TikZ, and 27 references. Build it the same way (`tectonic -k
+paper_ieee.tex`, or pdfLaTeX + BibTeX twice), or package it for Overleaf with:
 
 ```bash
 python scripts/make_overleaf_zip.py --paper   # -> livejepa_paper_ieee_overleaf.zip (0.72 MB)
 ```
 
 Three things to know. It is **hand-maintained**, not generated, so a number
-changed in `docs/THESIS.md` must be changed here too. Its author block carries
-`TODO` placeholders (department, institute, city, second author's e-mail) — fill
-those in before submitting. The running head is deliberately empty
+changed in `docs/THESIS.md` must be changed here too. Its author block is complete
+(2026-11-17): A. Parganiha, Department of Computer Science and Engineering, and
+K. G. Atram, Department of Data Science and Artificial Intelligence, both IIIT
+Naya Raipur, with institute e-mails. The running head is deliberately empty
 (`\markboth{}{}`), so pages carry only a page number; the commented line above it
 shows how to print a venue banner if a journal asks for one. And for a conference rather than a journal,
 switch the class option to `conference` and cut: the 6-page conference version was

@@ -159,14 +159,15 @@
 
     <div class="chips">
       <div class="chip"><b id="chipRate">~5–10%</b><span>of windows decoded — the rest is skipped decoder compute</span></div>
-      <div class="chip"><b>up to 9.9×</b><span>fewer decoder calls than fixed-interval captioning, at equal-or-better caption quality*</span></div>
+      <div class="chip"><b>up to 2.5×</b><span>fewer decoder calls than fixed-interval captioning on redundant streams, at equal caption quality*</span></div>
       <div class="chip"><b>0 cloud calls</b><span>frozen V-JEPA&nbsp;2 → trained predictor → SONAR decoder, all on this machine</span></div>
       <div class="chip"><b>16 frames</b><span>per window at 2 fps — it reasons over motion, not single images</span></div>
     </div>
-    <p class="foot-note">*budget-matched, time-aligned CIDEr-D. 9.9&times; on EgoExo4D atomic descriptions
-    through the full predicted pipeline with an in-domain predictor (40 held-out takes, significant at
-    every budget); 2.5&times; on EgoExo4D keysteps and 1.6&times; on COIN using ground-truth embedding
-    streams. Full numbers, controls &amp; reproduce commands in RESULTS.md.</p>
+    <p class="foot-note">*budget-matched, time-aligned CIDEr-D on ground-truth embedding streams:
+    2.5&times; on EgoExo4D keysteps and 1.6&times; on COIN. On a predicted stream the gain comes from
+    averaging the stream before decoding, not from where decodes land: fixed-interval decoding given the
+    same averaging matches adaptive (EgoExo4D atomic descriptions, 40 held-out takes). Full numbers,
+    controls &amp; reproduce commands in RESULTS.md.</p>
   </div>
 </div>
 

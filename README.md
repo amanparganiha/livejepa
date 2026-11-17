@@ -15,14 +15,17 @@ robots, procedural assistance).
 
 ## Headline result
 
-Selective decoding's benefit is a **monotone function of the stream's temporal
-redundancy**, and it needs a **predicted** stream rather than dense labels. On the
-paper's own EgoExo4D atomic-description benchmark, adaptive **loses at every budget**
-against raw annotations — but wins **7 of 8 budgets at ≈9.9× fewer decoder calls**
-once the same annotations are approached through a predicted stream from an in-domain
-predictor. Significant at every budget on a semantic metric (7 of 8 on CIDEr) over
-40 held-out takes, and at **87% of a provable upper bound** — *above* what decoding every single window achieves, at ~40×
-lower cost. Full numbers: **`RESULTS.md`**; thesis: **`docs/THESIS.md`**.
+**What selective decoding gains depends on the stream it reads.** On clean streams,
+adaptive *placement* wins across the mid-band where the stream is temporally
+redundant (COIN steps ≈1.6×, EgoExo4D keysteps ≈2.5× fewer decodes) and **loses at
+every budget** on the paper's own dense atomic-description benchmark. On the
+**predicted** stream of an in-domain predictor, adaptive beats single-point uniform
+decoding at 7 of 8 budgets — but the gain is **averaging, not placement**: a uniform
+baseline given the same pooling (as VL-JEPA's own protocol gives it) matches
+adaptive, tied at 6 of 8 budgets over 40 held-out takes with one significant win
+each way. One caption per video already scores about as well as uniform decoding at
+0.2 Hz, so this benchmark barely rewards timing. Full numbers: **`RESULTS.md`**
+(§5b); thesis: **`docs/THESIS.md`**.
 
 ---
 
@@ -54,15 +57,16 @@ both uniform and adaptive decoding — you should see adaptive hold quality at l
 ### Build order (mirrors the plan) — status as of 2026-08-02: **all phases complete**
 - **Phase 0 — sanity ✅:** load V-JEPA 2 + SONAR; confirm round-trips (`scripts/sanity_phase0.py`).
 - **Phase 1 — selective decoding ✅:** `livejepa/selective/` implemented + unit-tested
-  (13/13); mechanism validated on GT/keystep streams. See **`RESULTS.md` §1**.
+  (16/16); mechanism validated on GT/keystep streams. See **`RESULTS.md` §1**.
 - **Phase 2 — train predictor ✅ + scaled:** full-COIN data-scaling study (rung C1) —
   99.6% of the training split (26,360 clips) lifts held-out **cos 0.667 → 0.846**,
   curve still climbing → **`checkpoints_c1_final/predictor_30000.pt`** (**`RESULTS.md` §4**).
   Rungs **C2** (Action100M) and **C3** (combined) are documented *negatives* (**§6**, **§6b**),
   explained by target-vocabulary entropy.
 - **Phase 3 — evaluate ✅:** COIN + EgoExo4D sweeps, ablations, tuning sweep,
-  paper-protocol atomic at 218-take scale (**§5**), the in-domain predictor headline
-  (**§5b**), paired-bootstrap significance and the ceiling/headroom analysis.
+  paper-protocol atomic at 218-take scale (**§5**), the in-domain predictor with the
+  pooling-matched uniform baseline (**§5b**), paired-bootstrap significance and the
+  ceiling/headroom analysis.
 - **Phase 4 — demo ✅ + deployed:** headless `demo.py` (`--save-video`) **and** a
   deployed web app (`webapp/`, FastAPI + product UI + `/about`, plus a `/ws_cam`
   live-webcam path) serving the final checkpoint.
@@ -105,7 +109,7 @@ thesis_materials/       figures, 14 tables, LaTeX conversion, BUILD.md
 RESULTS.md              consolidated results + reproduce commands
 HANDOFF.md              start here: state, file map, hard-won gotchas
 WORKLOG.md              day-by-day record (newest first)
-tests/                  unit tests (run in stub mode) — 13/13
+tests/                  unit tests (run in stub mode) — 16/16
 ```
 
 ## Licenses

@@ -9,7 +9,12 @@ livejepa/run_eval.py:plot_pareto (Agg backend, same palette, dpi 130+).
                               useful" and the best-window upper bound -- the
                               headroom figure.
 
-    python scripts/make_thesis_figures.py
+With a rigor run that includes the pooling-matched baseline (2026-11-17), both
+figures add it: the paired figure plots adaptive - uniform+pool beside
+adaptive - uniform, and the headroom figure adds uniform+pool and the
+one-decode-per-take reference.
+
+    python scripts/make_thesis_figures.py --rigor results_egoexo_rigor_pooled.json
 """
 import argparse
 import json
@@ -21,31 +26,43 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-C_ADAPT, C_UNIF, C_ORACLE, C_CEIL = "#2c7fb8", "#888888", "#7fbc41", "#d95f02"
+C_ADAPT, C_UNIF, C_ORACLE, C_CEIL = "#2c7fb8", "#888888", "#7fbc41", "#8c6bb1"
+C_UPOOL, C_TAKE = "#e6550d", "#333333"
 
 
 def fig_paired(rigor_path, out_png):
-    """Paired adaptive-uniform differences with 95% CIs, both metrics."""
+    """Paired adaptive-minus-baseline differences with 95% CIs, both metrics.
+
+    Plots adaptive - uniform, and also adaptive - uniform_pool (the
+    pooling-matched baseline) when the rigor run included it."""
     d = json.load(open(rigor_path))
-    rows = d["paired_adaptive_minus_uniform"]
-    hz = np.array([r["target_hz"] for r in rows], dtype=float)
-    order = np.argsort(hz)
+    series = [("paired_adaptive_minus_uniform", "adaptive - uniform", C_ADAPT, "o-")]
+    if "paired_adaptive_minus_uniform_pool" in d:
+        series.append(("paired_adaptive_minus_uniform_pool",
+                       "adaptive - uniform+pool", C_UPOOL, "^-"))
 
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.4), sharex=True)
     for ax, key, label in ((axes[0], "semantic", "semantic (SONAR cosine)"),
                            (axes[1], "cider", "per-take CIDEr-D")):
-        m = np.array([rows[i][key]["mean_diff"] for i in order])
-        lo = np.array([rows[i][key]["ci95"][0] for i in order])
-        hi = np.array([rows[i][key]["ci95"][1] for i in order])
-        sig = np.array([rows[i][key]["significant"] for i in order])
-        x = hz[order]
         ax.axhline(0, color="k", lw=1)
-        ax.errorbar(x, m, yerr=[m - lo, hi - m], fmt="o-", color=C_ADAPT,
-                    capsize=4, lw=1.8, ms=6, label="adaptive - uniform")
-        # hollow marker = not significant, so the one ns cell is visible at a glance
-        if (~sig).any():
-            ax.plot(x[~sig], m[~sig], "o", ms=9, mfc="white", mec="#c0392b",
-                    mew=2, ls="none", label="not significant")
+        any_ns = False
+        for skey, slabel, color, fmt in series:
+            rows = d[skey]
+            hz = np.array([r["target_hz"] for r in rows], dtype=float)
+            order = np.argsort(hz)
+            m = np.array([rows[i][key]["mean_diff"] for i in order])
+            lo = np.array([rows[i][key]["ci95"][0] for i in order])
+            hi = np.array([rows[i][key]["ci95"][1] for i in order])
+            sig = np.array([rows[i][key]["significant"] for i in order])
+            x = hz[order]
+            ax.errorbar(x, m, yerr=[m - lo, hi - m], fmt=fmt, color=color,
+                        capsize=4, lw=1.8, ms=6, label=slabel)
+            # hollow marker = not significant, so ns cells are visible at a glance
+            if (~sig).any():
+                ax.plot(x[~sig], m[~sig], "o", ms=9, mfc="white", mec="#c0392b",
+                        mew=2, ls="none",
+                        label=None if any_ns else "not significant")
+                any_ns = True
         ax.set_xscale("log")
         ax.set_xlabel("target decoding frequency (Hz, log)")
         ax.set_ylabel(f"$\\Delta$ {label}")
@@ -59,26 +76,36 @@ def fig_paired(rigor_path, out_png):
     print("wrote", out_png)
 
 
-def fig_ceiling(ceiling_path, oracle_path, out_png, hz=0.05):
-    """Horizontal bars: every reference against the best-window upper bound."""
+def fig_ceiling(ceiling_path, oracle_path, out_png, hz=0.05, extra_path=None):
+    """Horizontal bars: every reference against the best-window upper bound.
+
+    `extra_path` (a rigor run that included uniform_pool / take_mean) adds the
+    pooling-matched baseline and the one-decode-per-take reference, which show
+    how much of this metric averaging alone earns."""
     ceil = json.load(open(ceiling_path))
-    orc = json.load(open(oracle_path))
+    sources = [json.load(open(oracle_path))]
+    if extra_path:
+        sources.insert(0, json.load(open(extra_path)))
 
     def at(method):
-        for row in orc["results"][method]:
-            if abs(row["target_hz"] - hz) < 1e-9:
-                return row["semantic_mean"], row["semantic_ci95"]
-        raise KeyError(f"{method} @ {hz} Hz not in {oracle_path}")
+        for src in sources:
+            for row in src["results"].get(method, []):
+                if abs(row["target_hz"] - hz) < 1e-9:
+                    return row["semantic_mean"], row["semantic_ci95"]
+        return None
 
     s = ceil["summary"]
     bars = [
-        (f"uniform @{hz} Hz", *at("uniform"), C_UNIF),
-        ("dense (decode EVERY step, 2 Hz)", s["dense"]["mean"], s["dense"]["ci95"], C_UNIF),
-        ("GT-boundary reference", *at("oracle"), C_ORACLE),
-        (f"adaptive @{hz} Hz  (ours)", *at("adaptive"), C_ADAPT),
-        ("best-frame ceiling", s["frame"]["mean"], s["frame"]["ci95"], C_CEIL),
-        ("best-window ceiling (bound)", s["window"]["mean"], s["window"]["ci95"], C_CEIL),
+        (f"uniform @{hz} Hz", at("uniform"), C_UNIF),
+        ("dense (decode EVERY step, 2 Hz)", (s["dense"]["mean"], s["dense"]["ci95"]), C_UNIF),
+        ("GT-boundary reference", at("oracle"), C_ORACLE),
+        (f"adaptive @{hz} Hz", at("adaptive"), C_ADAPT),
+        (f"uniform+pool @{hz} Hz", at("uniform_pool"), C_UPOOL),
+        ("one decode per take (whole-take mean)", at("take_mean"), C_TAKE),
+        ("best-frame ceiling", (s["frame"]["mean"], s["frame"]["ci95"]), C_CEIL),
+        ("best-window ceiling (bound)", (s["window"]["mean"], s["window"]["ci95"]), C_CEIL),
     ]
+    bars = [(lab, *v, col) for lab, v, col in bars if v is not None]
     top = s["window"]["mean"]
 
     fig, ax = plt.subplots(figsize=(8.6, 4.4))
@@ -94,7 +121,7 @@ def fig_ceiling(ceiling_path, oracle_path, out_png, hz=0.05):
     ax.invert_yaxis()
     ax.set_xlim(0.5, max(b[2][1] for b in bars) + 0.075)
     ax.set_xlabel("semantic score  (cosine to GT caption, time-aligned)")
-    ax.set_title("Headroom: adaptive reaches 87% of an unreachable upper bound\n"
+    ax.set_title("Semantic metric against its best-window bound\n"
                  "40 held-out EgoExo4D takes; dashed line = best-window ceiling",
                  fontsize=11)
     ax.grid(True, axis="x", alpha=0.3)
@@ -114,7 +141,8 @@ def main():
         if not os.path.exists(p):
             print(f"ERROR: missing {p}"); sys.exit(1)
     fig_paired(args.rigor, "results_egoexo_rigor.png")
-    fig_ceiling(args.ceiling, args.oracle, "results_egoexo_ceiling.png", args.hz)
+    fig_ceiling(args.ceiling, args.oracle, "results_egoexo_ceiling.png", args.hz,
+                extra_path=args.rigor)
 
 
 if __name__ == "__main__":

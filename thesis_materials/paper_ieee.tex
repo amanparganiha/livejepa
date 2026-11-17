@@ -62,25 +62,24 @@ weights are unreleased, so the claim cannot be scrutinised directly. We
 reconstruct the mechanism from released components: a frozen V-JEPA~2 encoder, a
 29.9M-parameter trained predictor, and the invertible SONAR embedding space as
 decoder, with an offline Ward segmenter and a corrected causal trigger as the two
-selective policies. Our central finding is that the benefit of selective decoding
-tracks the temporal redundancy of the stream it reads. On redundant ground-truth
-streams it beats uniform decoding across the mid-band of decode rates
-($\approx 1.6\times$ fewer decodes on COIN, $\approx 2.5\times$ on EgoExo4D
-keysteps), though uniform recovers at the lowest rates, where the original paper
-reports no crossover. On the paper's own benchmark --- EgoExo4D atomic
-descriptions --- the advantage inverts when the stream is raw annotation: uniform
-wins at every budget across 218 takes. Running the full predicted pipeline on the
-same takes with an in-domain predictor restores dominance: $\approx 9.9\times$
-fewer decodes than the best uniform setting at equal-or-better CIDEr, winning 7 of
-8 budgets and surviving four controls, including a same-takes control that
-isolates the stream as the only difference. Selective decoding therefore requires
-a \emph{predicted} stream, not merely dense labels. A paired bootstrap over 40
-held-out takes makes the margin significant at every budget on a semantic metric
-and at seven of eight on CIDEr, and a ceiling analysis places the trigger at 87\%
-of a provable upper bound --- above decoding every frame, at $\approx 40\times$
-lower cost --- locating the remaining headroom in the predictor rather than the
-trigger. Two controlled negatives on the corpus VL-JEPA itself trains on trace a
-further limit to target-vocabulary entropy rather than to domain match.
+selective policies. Our central finding is that what selective decoding gains
+depends on the stream it reads. On clean ground-truth streams, placement decides
+quality: adaptive decoding beats uniform across the mid-band of decode rates when
+the stream is temporally redundant ($\approx 1.6\times$ fewer decodes on COIN,
+$\approx 2.5\times$ on EgoExo4D keysteps), though uniform recovers at the lowest
+rates, where the original paper reports no crossover, and on the paper's own
+benchmark --- EgoExo4D atomic descriptions --- it loses at every budget across 218
+takes. On the full predicted pipeline with an in-domain predictor, adaptive beats
+single-point uniform decoding at 7 of 8 budgets, but the gain is averaging, not
+placement: VL-JEPA pools under both schedules, and a uniform baseline given the
+same pooling matches adaptive --- tied at six of eight budgets in a paired
+bootstrap over 40 held-out takes, with one significant win each way --- and
+reaches a higher best score. Averaging the noisy predicted stream before decoding
+lifts CIDEr by 5--26\% even on a fixed grid, so the paper's adaptive-over-uniform
+result does not replicate like for like in our reconstruction, and one caption per
+video scores about as well as uniform decoding at 0.2~Hz, so the benchmark itself
+barely rewards timing. Two controlled negatives on the corpus VL-JEPA itself trains
+on trace a further limit to target-vocabulary entropy rather than to domain match.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -112,7 +111,8 @@ streaming system must? And under what conditions does it actually pay off?
 This paper answers those questions by rebuilding the mechanism and then
 stress-testing it, deliberately including settings the original evaluation does
 not separate: ground-truth annotation streams as well as predicted ones, two
-datasets, two annotation granularities, and statistical and upper-bound controls.
+datasets, two annotation granularities, statistical controls, and a uniform
+baseline matched to the paper's own protocol.
 Our contributions are:
 
 \begin{enumerate}
@@ -125,15 +125,16 @@ averages across the event boundary it just detected; our \texttt{SegmentTrigger}
 emits the \emph{previous} segment retrospectively and recovers offline-quality
 selective decoding in a streaming setting, raising CIDEr from $\approx$3.5 to
 7.2--7.7 at a matched rate (Section~\ref{sec:trigger-results}).
-\item \textbf{A negative result and its resolution on one benchmark.} With raw
-atomic annotations, adaptive decoding loses at every budget; with a predicted
-stream over the same annotations and an in-domain predictor it wins 7 of 8 budgets
-at $\approx 9.9\times$ fewer decodes. On exactly the same 40 takes, the annotated
-stream still favours uniform, so the stream --- not the take sample --- is what
-changes the answer (Sections~\ref{sec:boundary}--\ref{sec:headline}).
-\item \textbf{Statistical and upper-bound analysis} rarely reported for this
-mechanism: a paired bootstrap over held-out takes, and a ceiling that upper-bounds
-any method decoding a pooled contiguous span (Section~\ref{sec:rigor}).
+\item \textbf{Placement versus averaging on one benchmark.} With raw atomic
+annotations, adaptive placement loses at every budget. With a predicted stream
+over the same annotations and an in-domain predictor it beats single-point uniform
+decoding at 7 of 8 budgets, but a uniform baseline given the same pooling, as
+VL-JEPA's protocol gives it, matches it: on a predicted stream the gain is
+averaging, not placement (Sections~\ref{sec:boundary}--\ref{sec:headline}).
+\item \textbf{Statistical analysis and a benchmark check}: a paired bootstrap over
+held-out takes against both baselines, and the finding that one caption per take
+scores like a 0.2~Hz uniform schedule, so the protocol is only weakly sensitive to
+timing (Section~\ref{sec:rigor}).
 \item \textbf{Two controlled negatives} on Action100M, the corpus VL-JEPA trains
 on, traced by measurement to target-vocabulary entropy rather than to label noise
 (Section~\ref{sec:a100m}).
@@ -142,8 +143,9 @@ on, traced by measurement to target-vocabulary entropy rather than to label nois
 We do \emph{not} claim absolute parity with VL-JEPA. Our decoder lives in a
 different embedding space, chosen because it is invertible off the shelf, so only
 the adaptive-versus-uniform \emph{relationship} is comparable. Throughout, we
-report the negatives beside the positives: three times in this work a positive
-result failed its own controls, and saying so is part of the contribution.
+report the negatives beside the positives: four times in this work a positive
+result failed its own controls, the last of them our own earlier headline, and
+saying so is part of the contribution.
 
 \section{Related Work}
 
@@ -169,9 +171,9 @@ agglomerative clustering under temporal-connectivity constraints into segments o
 high intra-segment monosemanticity, measured by Ward distance, and decodes the
 midpoint of each segment from either the exact embedding or the segment average.
 The paper stabilises the stream with simple smoothing before detecting a shift,
-and reports that average pooling helps both schedules by denoising embeddings
-before the decoder --- two details that our controls in
-Section~\ref{sec:headline} isolate rather than assume. It is evaluated on EgoExo4D
+and reports that average pooling gives consistent gains for both schedules by
+denoising embeddings before the decoder, so its uniform baseline pools too ---
+Section~\ref{sec:headline} shows that matching this is decisive. It is evaluated on EgoExo4D
 atomic action descriptions --- 218 validation videos averaging six minutes, with
 $\approx$143 annotations each --- where selective decoding at 0.35~Hz (a 2.85~s
 interval) matches uniform decoding at 1~Hz, and adaptive selection is reported to
@@ -323,6 +325,14 @@ offline policy is what ``adaptive'' denotes in every table below. Fig.~\ref{fig:
 shows what the two schedules do differently at an equal budget: uniform spends its
 decodes on a clock, adaptive spends them one per semantic plateau.
 
+Two baselines share adaptive's budget. \emph{Uniform} decodes the single stream
+step at each fixed-interval point. \emph{Uniform+pool} decodes, at those same
+points, the mean of a fixed block of one decode interval, taken from the same
+pre-smoothed stream adaptive segments; it differs from adaptive only in where span
+boundaries fall, and it is the like-for-like baseline, since VL-JEPA pools under
+both schedules. As a reference with no timing at all, one decode per take uses the
+mean of the whole stream.
+
 \begin{figure}[t]
 \centering
 \resizebox{\columnwidth}{!}{%
@@ -367,7 +377,9 @@ decodes on a clock, adaptive spends them one per semantic plateau.
 between semantic shifts; adaptive places its three decodes one per plateau, at the
 midpoint, while uniform places the same three on a fixed clock and can land mid
 shift. Quality is scored by matching each annotation $y_i$ to the decode nearest
-it in time, so \emph{where} the decodes land is what the metric sees.}
+it in time, so \emph{where} the decodes land is what the metric sees. This is the
+clean-stream regime in which placement pays; on a noisy predicted stream,
+averaging matters more (Section~\ref{sec:headline}).}
 \label{fig:idea}
 \end{figure}
 
@@ -571,8 +583,8 @@ crossover.}
 \subsection{The online trigger correction}
 \label{sec:trigger-results}
 A streaming system cannot use the offline segmenter, so the causal trigger decides
-whether the mechanism is deployable at all. Table~\ref{tab:ablation} compares the
-four policies on the ablation harness (the first 240~s of 6 keystep takes, with a
+whether the mechanism is deployable at all. Table~\ref{tab:ablation} and
+Fig.~\ref{fig:ablation} compare the four policies on the ablation harness (the first 240~s of 6 keystep takes, with a
 small jitter added to the ground-truth stream, which is why absolute values differ
 from Table~\ref{tab:gt}). The naive windowed-variance trigger reaches only
 $\approx$3.5 CIDEr, far below uniform at the same rate; the corrected
@@ -888,11 +900,12 @@ Hz & uniform & adaptive \\
 \centering
 \includegraphics[width=\columnwidth]{figures/results_egoexo_atomic_218.png}
 \caption{The redundancy boundary: on raw atomic annotations, uniform wins at every
-frequency. This is the negative that the predicted stream resolves.}
+frequency. Fig.~\ref{fig:headline} shows the same benchmark on the predicted
+stream.}
 \label{fig:atomic}
 \end{figure}
 
-\subsection{The predicted stream restores dominance}
+\subsection{The predicted stream: averaging, not placement}
 \label{sec:headline}
 Testing the predicted stream required a predictor that speaks EgoExo. Our
 COIN-trained model was semantically reasonable but stylistically alien --- it
@@ -903,81 +916,98 @@ result. We therefore trained an in-domain predictor on 11{,}556 (window, caption
 pairs from 627 EgoExo validation takes for 20k steps, excluding the 40 evaluation
 takes and holding out 25 more for gating (cosine 0.599, pred--pred 0.325).
 
-Adaptive then wins 7 of 8 budgets (Table~\ref{tab:headline},
-Fig.~\ref{fig:headline}), losing only the degenerate 0.011~Hz point of about two
-decodes per take, and absolute quality rises $25\times$ from training in-domain.
-Reporting the speedup needs care, because uniform's CIDEr barely depends on rate
-here: it stays between 0.278 and 0.310 at every budget except 0.02~Hz, and is
-still 0.305 at 0.011~Hz. A ratio quoted against a single uniform rate is therefore
-fragile. The original paper anchors on uniform at 1~Hz; by that rule even
-adaptive's sparsest budget (0.302 at 76 decodes) beats uniform's 0.296 at 7{,}072,
-a $\approx 93\times$ figure that reflects the flat curve rather than a real saving.
-We anchor instead on the best uniform score at any rate --- 0.310 at 3{,}537
-decodes --- which adaptive exceeds at 0.050~Hz using 357 decodes:
-$\approx 9.9\times$ fewer decoder invocations at equal-or-better quality. Adaptive
-also edges that score at 0.020~Hz with 140 decodes ($\approx 25\times$), but by
-$+0.002$, within noise, so we do not quote it.
+Adaptive decodes the mean of each segment of a pre-smoothed stream, whereas plain
+uniform decodes a single stream step. VL-JEPA pools under both schedules, so we
+score uniform+pool (Section~\ref{sec:method}) beside them at every budget, and one
+decode per take as a reference with no timing at all (Table~\ref{tab:headline},
+Fig.~\ref{fig:headline}).
+
+Against plain uniform, adaptive wins 7 of 8 budgets, losing only the degenerate
+0.011~Hz point of about two decodes per take, and absolute quality rises $25\times$
+from training in-domain. Plain uniform's CIDEr barely depends on rate here --- it
+stays between 0.278 and 0.310 at every budget except 0.02~Hz --- and, anchored on
+its best score at any rate (0.310 at 3{,}537 decodes), adaptive matches it at
+0.050~Hz with 357 decodes: $\approx 9.9\times$ fewer decoder invocations.
+
+That comparison, however, confounds placement with averaging. Pooling alone lifts
+uniform above its single-point version at every budget, by 5--26\%, and once
+pooling is matched the advantage disappears: uniform+pool scores higher than
+adaptive at six of eight budgets, and its best score (0.358 at 2{,}357 decodes)
+exceeds adaptive's best anywhere (0.348), so no efficiency multiple can be quoted
+against it. A single caption per take --- the mean of its whole stream, 40 decodes
+for the whole set --- scores 0.284, about what plain uniform reaches with 1{,}412
+decodes. EgoExo takes are repetitive enough (mean pairwise caption similarity
+0.669) that a representative caption matches many annotations wherever it is
+placed, which bounds how much any placement policy can show on this protocol.
 
 \begin{table}[t]
 \caption{Headline: EgoExo4D atomic descriptions, 40 held-out takes, predicted
-stream from the in-domain predictor.}
+stream from the in-domain predictor. Time-aligned CIDEr-D; the best schedule at
+each budget is tinted. One decode per take scores 0.284.}
 \label{tab:headline}
 \centering
 \footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{rrcc}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{rrccc}
 \toprule
-avg Hz & decodes & uniform & adaptive \\
+avg Hz & decodes & uniform & adaptive & uniform+pool \\
 \midrule
-0.998 & 7072 & 0.296 & \best{0.330} \\
-0.499 & 3537 & 0.310 & \best{0.348} \\
-0.333 & 2357 & 0.299 & \best{0.340} \\
-0.199 & 1412 & 0.287 & \best{0.333} \\
-0.100 & 706 & 0.282 & \best{0.331} \\
-0.050 & 357 & 0.278 & \best{0.338} \\
-0.020 & 140 & 0.249 & \best{0.312} \\
-0.011 & 76 & \best{0.305} & 0.302 \\
+0.998 & 7072 & 0.296 & 0.330 & \best{0.335} \\
+0.499 & 3537 & 0.310 & \best{0.348} & 0.342 \\
+0.333 & 2357 & 0.299 & 0.340 & \best{0.358} \\
+0.199 & 1412 & 0.287 & 0.333 & \best{0.341} \\
+0.100 & 706 & 0.282 & 0.331 & \best{0.338} \\
+0.050 & 357 & 0.278 & \best{0.338} & 0.319 \\
+0.020 & 140 & 0.249 & 0.312 & \best{0.314} \\
+0.011 & 76 & 0.305 & 0.302 & \best{0.322} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/results_egoexo_predictor_40_indomain.png}
-\caption{Headline result. The same atomic-description benchmark as
-Fig.~\ref{fig:atomic}, on 40 of its takes, with the stream predicted rather than
-annotated.}
+\includegraphics[width=\columnwidth]{figures/results_egoexo_predictor_40_indomain_pooled.png}
+\caption{Headline result. The atomic-description benchmark of
+Fig.~\ref{fig:atomic}, on 40 of its takes, with the stream predicted. Adaptive
+beats single-point uniform at 7 of 8 budgets, but uniform with the same pooling
+matches it; the cross is one decode per take.}
 \label{fig:headline}
 \end{figure}
 
-\subsection{Four controls}
+\subsection{Controls, and what they missed}
 An earlier out-of-domain attempt appeared to show adaptive winning on the semantic
 metric, and its controls revealed the effect was denoising rather than selection
-(Fig.~\ref{fig:rejected}). We therefore repeat those controls here, and add two.
+(Fig.~\ref{fig:rejected}). We repeated those controls in domain and added two.
+Every one of them compared adaptive with an \emph{unpooled} baseline, which is why
+none caught the confound above.
 
 \emph{Does the metric see timing at all?} Its mean lift over a shuffled alignment
-rises from $+0.0012$ out-of-domain --- effectively blind, which is why that result
-was rejected --- to $+0.0225$--$0.0284$ in-domain.
+rises from $+0.0012$ out-of-domain --- effectively blind --- to $+0.0225$--$0.0284$
+in-domain. This finding stands: the metric does register timing.
 
-\emph{Is the gain just averaging?} With mean-pooling disabled, so that each
-decode is an exact stream point, adaptive keeps a flat $+0.031$--$0.040$ advantage
-at every frequency (Fig.~\ref{fig:controls}), against a collapse to $+0.005$ in
-the rejected run. Temporal selection, not pooling, carries the margin.
+\emph{Is the gain just averaging?} With mean-pooling disabled, adaptive kept a flat
+$+0.031$--$0.040$ advantage over uniform at every frequency, which we first read as
+temporal selection. But disabling pooling left the 3-step pre-smoothing on the
+adaptive stream alone, so each ``exact'' adaptive point was still a three-step
+average. Given the same smoothing, uniform points score within 0.003 of adaptive's
+at every budget (Fig.~\ref{fig:controls}): the flat margin was the smoothing. With
+no smoothing on either side, adaptive trails uniform+pool on the semantic metric at
+all eight budgets, by 0.009--0.016.
 
 \emph{Is it just spreading decodes out?} Adaptive beats random placement at the
 same budget at 8 of 8 budgets, while uniform is indistinguishable from random
-(0.597 against 0.596 averaged over budgets). The gain comes from \emph{where}
-decodes land.
+(0.597 against 0.596 averaged over budgets). The random points were unpooled too,
+however, so this control also measured averaging.
 
-\emph{Is it the smoothing?} Table~\ref{tab:robust} disables the pre-smoothing
-entirely. Adaptive wins the same seven budgets, the cell behind the
-$9.9\times$ figure is unchanged (0.3379 against 0.3378), and only the two highest
-rates narrow, from $\approx+0.035$ to $\approx+0.010$. On the semantic metric the
-margin survives at all eight budgets ($+0.013$ at 1~Hz rising to $+0.102$).
+\emph{Is it the smoothing?} Against plain uniform, no (Table~\ref{tab:robust}).
+With the pre-smoothing disabled, adaptive wins the same seven budgets, the cell
+behind the $9.9\times$ figure is unchanged (0.3379 against 0.3378), and only the
+two highest rates narrow, from $\approx+0.035$ to $\approx+0.010$.
 
 \begin{table}[t]
-\caption{Robustness of the headline to pre-smoothing: CIDEr with the released
-$w=3$ and with smoothing disabled ($w=1$). The winners are identical.}
+\caption{Robustness of the comparison with plain uniform to pre-smoothing: CIDEr
+with the released $w=3$ and with smoothing disabled ($w=1$). The winners are
+identical.}
 \label{tab:robust}
 \centering
 \footnotesize
@@ -1000,13 +1030,14 @@ Hz & uniform & adaptive $w{=}3$ & adaptive $w{=}1$ \\
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.48\textwidth]{figures/results_egoexo_predictor_40_indomain_semantic.png}
+\includegraphics[width=0.48\textwidth]{figures/results_egoexo_predictor_40_indomain_semantic_pooled.png}
 \hfill
-\includegraphics[width=0.48\textwidth]{figures/results_egoexo_predictor_40_indomain_semantic_nopool.png}
-\caption{Controls for the headline. Left: the style-robust semantic metric on the
-same takes. Right: the same run with mean-pooling disabled, which leaves a flat
-$+0.031$--$0.040$ advantage at every frequency and so isolates temporal
-\emph{selection} from averaging.}
+\includegraphics[width=0.48\textwidth]{figures/results_egoexo_predictor_40_indomain_semantic_nopool_pooled.png}
+\caption{Controls on the semantic metric, same takes. Left: with pooling,
+uniform+pool sits just above adaptive at every budget. Right: with mean-pooling
+disabled but the pre-smoothing still applied, adaptive's flat lead over plain
+uniform vanishes against uniform points given the same smoothing --- the margin
+once read as temporal selection was the smoothing.}
 \label{fig:controls}
 \end{figure*}
 
@@ -1015,24 +1046,26 @@ $+0.031$--$0.040$ advantage at every frequency and so isolates temporal
 \includegraphics[width=0.48\textwidth]{figures/results_egoexo_predictor_40_semantic.png}
 \hfill
 \includegraphics[width=0.48\textwidth]{figures/results_egoexo_predictor_40_semantic_nopool.png}
-\caption{The rejected result, retained because the controls are defined against
-it. An out-of-domain predictor appeared to win 8/8 on the semantic metric (left),
-but with pooling disabled the advantage collapses (right): that effect was
-denoising, not selection.}
+\caption{The rejected result, retained because the original controls were defined
+against it. An out-of-domain predictor appeared to win 8/8 on the semantic metric
+(left), but with pooling disabled the advantage collapses (right): that effect was
+denoising, not selection. The in-domain run's apparent survival of the same check
+rested on smoothing applied to adaptive alone.}
 \label{fig:rejected}
 \end{figure*}
 
 \emph{Is it the takes rather than the stream?} The negative of
-Section~\ref{sec:boundary} was measured on 218 takes and the positive on 40 of
-them, so we recomputed the ground-truth stream on exactly those 40
+Section~\ref{sec:boundary} was measured on 218 takes and the predicted-stream
+result on 40 of them, so we recomputed the ground-truth stream on exactly those 40
 (Table~\ref{tab:sametakes}). Uniform still wins 7 of 8 budgets there --- adaptive
-edges it only at 0.20~Hz --- against adaptive winning 7 of 8 on the predicted
-stream. The reversal belongs to the stream, not to the take sample.
+edges it only at 0.20~Hz --- against adaptive beating plain uniform at 7 of 8 on
+the predicted stream. The reversal belongs to the stream, not to the take sample;
+what the predicted stream rewards is averaging (Table~\ref{tab:headline}).
 
 \begin{table}[t]
-\caption{Same 40 takes, two streams. Ground-truth annotations favour uniform;
-the predicted stream favours adaptive. This is the paper's central pairing with
-the take sample held fixed.}
+\caption{Same 40 takes, two streams. Ground-truth annotations favour uniform; on
+the predicted stream adaptive beats plain uniform, a reversal that
+Table~\ref{tab:headline} attributes to averaging.}
 \label{tab:sametakes}
 \centering
 \footnotesize
@@ -1057,20 +1090,24 @@ Hz & uniform & adaptive & uniform & adaptive \\
 
 \subsection{Significance and headroom}
 \label{sec:rigor}
-\emph{Is the margin real across only 40 videos?} Table~\ref{tab:sig} reports the
-paired bootstrap. The semantic margin is significant at all eight budgets, with
-40 of 40 takes favouring adaptive at seven of them, and it widens as the budget
-tightens --- from $+0.040$ at 1~Hz to $+0.106$ at 0.02~Hz --- which is the
-signature of a mechanism that matters more the less you decode. Per-take CIDEr
-favours adaptive at seven of eight budgets and is significant at all seven; at the
-degenerate 0.011~Hz point the difference is null. CIDEr has visibly lower power
-here, agreeing in direction while spanning zero more often, because n-gram overlap
-over roughly a hundred events is high-variance where cosine similarity is smooth.
+\emph{Are the margins real across only 40 videos?} Tables~\ref{tab:sig}
+and~\ref{tab:sigpool} and Fig.~\ref{fig:rigor} report the paired bootstrap against
+each baseline. Against
+plain uniform the semantic margin is significant at all eight budgets, with 40 of
+40 takes favouring adaptive at seven of them, and per-take CIDEr favours adaptive
+at seven budgets, significantly at all seven; at the degenerate 0.011~Hz point the
+difference is null. Against uniform+pool the semantic metric reverses ---
+uniform+pool is significantly ahead at all eight budgets --- and per-take CIDEr is
+tied at six, with adaptive significantly ahead at 0.05~Hz ($+0.014$) and
+significantly behind at 0.35~Hz ($-0.011$). One significant cell each way among
+eight is what no consistent effect looks like. CIDEr has visibly lower power than
+the semantic metric, because n-gram overlap over roughly a hundred events is
+high-variance where cosine similarity is smooth.
 
 \begin{table}[t]
-\caption{Paired bootstrap over 40 held-out takes, 5{,}000 resamples. $\Delta$ is
-adaptive $-$ uniform; $n^{+}$ is takes favouring adaptive. Bold marks intervals
-clear of zero.}
+\caption{Paired bootstrap against plain uniform, 40 held-out takes, 5{,}000
+resamples. $\Delta$ is adaptive $-$ uniform; $n^{+}$ is takes favouring adaptive.
+Bold marks intervals clear of zero.}
 \label{tab:sig}
 \centering
 \footnotesize
@@ -1093,40 +1130,65 @@ Hz & $\Delta$ & 95\% CI & $n^{+}$ & $\Delta$ & 95\% CI & $n^{+}$ \\
 \end{tabular}
 \end{table}
 
+\begin{table}[t]
+\caption{Paired bootstrap against uniform+pool, the pooling-matched baseline.
+$\Delta$ is adaptive $-$ uniform+pool; $n^{+}$ is takes favouring adaptive. Bold
+marks intervals clear of zero.}
+\label{tab:sigpool}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rccrccr}
+\toprule
+& \multicolumn{3}{c}{semantic} & \multicolumn{3}{c}{per-take CIDEr} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Hz & $\Delta$ & 95\% CI & $n^{+}$ & $\Delta$ & 95\% CI & $n^{+}$ \\
+\midrule
+1.00 & \textbf{$-$.001} & [$-$.002,$-$.001] & 12 & $-$.006 & [$-$.016,+.003] & 21 \\
+0.50 & \textbf{$-$.002} & [$-$.003,$-$.001] & 12 & $-$.000 & [$-$.009,+.007] & 24 \\
+0.35 & \textbf{$-$.003} & [$-$.004,$-$.002] & 7 & \textbf{$-$.011} & [$-$.020,$-$.002] & 11 \\
+0.20 & \textbf{$-$.004} & [$-$.006,$-$.003] & 3 & $-$.003 & [$-$.012,+.008] & 15 \\
+0.10 & \textbf{$-$.007} & [$-$.009,$-$.005] & 2 & $-$.006 & [$-$.018,+.005] & 21 \\
+0.05 & \textbf{$-$.007} & [$-$.009,$-$.005] & 5 & \textbf{+.014} & [+.006,+.023] & 29 \\
+0.02 & \textbf{$-$.010} & [$-$.016,$-$.005] & 5 & $-$.003 & [$-$.017,+.010] & 13 \\
+0.01 & \textbf{$-$.011} & [$-$.018,$-$.005] & 1 & $-$.008 & [$-$.021,+.006] & 9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/results_egoexo_rigor.png}
-\caption{Paired per-take difference (adaptive $-$ uniform) with 95\% intervals.
-All eight semantic budgets clear zero; the single non-significant CIDEr cell is
-the degenerate 0.011~Hz point.}
+\caption{Paired per-take difference between adaptive and each baseline, with 95\%
+intervals. Against single-point uniform adaptive is ahead on both metrics; against
+uniform+pool the semantic difference is negative at every budget and the CIDEr
+difference straddles zero. Non-significant cells are circled.}
 \label{fig:rigor}
 \end{figure}
 
-\emph{How close to optimal is the trigger?} We bound what any trigger could
-achieve. For each annotation, the \emph{best-window ceiling} takes the maximum of
+\emph{What can the ceiling show?} For each annotation, the \emph{best-window
+ceiling} takes the maximum of
 $\cos(\mathrm{mean}(S[a{:}b]), \mathrm{SONAR}(y))$ over all contiguous ranges
-$[a{:}b]$. Every policy here decodes either a stream point or a pooled contiguous
-span, so this upper-bounds every row of the Pareto table; computing it on the
-smoothed stream as well, and taking the per-annotation maximum over both, moves
-the bound by 0.0001, so the figure in Table~\ref{tab:ceiling} stands. It is
-deliberately loose --- each annotation may choose its own window under no budget
---- so the fraction a real schedule attains is a conservative measure of trigger
-quality.
+$[a{:}b]$. Every schedule here decodes either a stream point or a pooled
+contiguous span, so this upper-bounds every row of Table~\ref{tab:ceiling} and
+Fig.~\ref{fig:ceiling};
+computing it on the smoothed stream as well, and taking the per-annotation maximum
+over both, moves the bound by 0.0001, so the figure in the table stands.
 
-Three findings follow. First, \emph{decoding more does not help}: uniform is flat
-in decode rate, and adaptive at 0.05~Hz exceeds decode-everything while invoking
-the decoder about $40\times$ less often, so on a noisy predicted stream segment
-pooling is not a quality/compute trade-off but a strict improvement. The $+0.018$
-gap between the best-window and best-frame ceilings confirms that a pooled span
-carries signal no single timestep does. Second, \emph{perfect boundary knowledge
-is not the missing piece}: a trigger handed the annotators' own boundaries scores
-at or slightly below adaptive, because annotation boundaries are homogeneous in
-\emph{caption} space while adaptive's are homogeneous in \emph{predictor} space,
-and it is the latter that determines what a pooled mean represents. Third,
-\emph{the residue is representational}: at 87.1\% of a bound no real schedule can
-reach, with the boundary oracle unable to improve on it, the remaining gap belongs
-to the predictor rather than the trigger. That retro-explains why every
-trigger-tuning attempt in this work returned negative.
+Three findings follow. First, \emph{pooling beats decoding more}: single-point
+decoding is flat in rate, and every pooled schedule exceeds decode-everything at a
+fraction of its cost, so on a noisy predicted stream averaging before decoding is
+not a quality/compute trade-off but a strict improvement; the $+0.018$ gap between
+the best-window and best-frame ceilings confirms that a pooled span carries signal
+no single timestep does. Second, \emph{where the boundaries fall barely matters}:
+Ward boundaries (0.6725), the annotators' own boundaries (0.6684) and fixed blocks
+(0.6791) land within 0.011 of one another. Third, \emph{the bound cannot rank
+triggers here}: a schedule with no trigger at all --- one mean per take --- reaches
+90.0\% of it, above every adaptive budget, because a take-level summary sits close
+to most of a repetitive take's captions. Adaptive's 87.1\% therefore does not show
+a near-exhausted trigger, as an earlier version of this analysis concluded; the
+metric rewards averaging in itself, and can compare schedules only at matched
+pooling.
 
 \begin{table}[t]
 \caption{Headroom on the semantic metric (40 takes, 95\% bootstrap intervals), as
@@ -1142,7 +1204,9 @@ reference & score (95\% CI) & \% ceiling \\
 uniform @0.05~Hz & 0.5949 [.5740, .6167] & 77.1 \\
 dense (every timestep) & 0.6037 [.5854, .6243] & 78.2 \\
 GT-boundary trigger & 0.6684 [.6522, .6851] & 86.6 \\
-\textbf{adaptive @0.05~Hz} & \best{0.6725 [.6560, .6898]} & \best{87.1} \\
+adaptive @0.05~Hz & 0.6725 [.6560, .6898] & 87.1 \\
+uniform+pool @0.05~Hz & 0.6791 [.6626, .6963] & 88.0 \\
+one decode per take & 0.6950 [.6791, .7117] & 90.0 \\
 best-frame ceiling & 0.7541 [.7396, .7692] & 97.7 \\
 \textbf{best-window ceiling} & \textbf{0.7720} [.7577, .7867] & 100 \\
 \bottomrule
@@ -1152,9 +1216,10 @@ best-frame ceiling & 0.7541 [.7396, .7692] & 97.7 \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/results_egoexo_ceiling.png}
-\caption{How much headroom remains. Adaptive at 0.05~Hz reaches 87.1\% of a bound
-no real schedule can attain, above decode-everything and above a trigger given the
-annotators' own boundaries.}
+\caption{The semantic metric against its best-window bound. Every pooled schedule
+beats decoding every frame, whichever boundaries it uses, and a single whole-take
+mean, with no timing at all, scores highest of all --- so the bound measures how
+well pooled summaries match captions, not how good a trigger is.}
 \label{fig:ceiling}
 \end{figure}
 
@@ -1169,97 +1234,106 @@ one that merely ties is a finding.
 
 \section{Discussion}
 
-\subsection{Selective decoding needs a predicted stream}
-The sharpest pair of results in this work sits on one benchmark and, with the take
-sample held fixed, differs in one respect. On the raw annotation stream adaptive
-loses at every budget: an event lands every two seconds, so there is no temporal
-redundancy to exploit and even spacing is near-optimal. On the predicted stream
-over those same annotations it wins 7 of 8 budgets at $\approx 9.9\times$ fewer
-decodes. The predictor, being a smooth function of video, converts a saturated
-annotation stream into one with genuine semantic plateaus --- precisely the
-structure the mechanism consumes. Dense supervision is therefore not what
-selective decoding needs; a predicted representation is. The original paper does
-not draw that distinction explicitly, and it is visible here only because the
-negative was run first.
-
-\subsection{The benefit is still bounded by redundancy}
-The two predicted-stream results are not in tension. On COIN, uniform holds the
-mid-band even with a $2\times$ better predictor, because 0.2~Hz is COIN's
-intrinsic step cadence and even spacing matches the true event rate. On EgoExo,
-takes are internally repetitive (mean pairwise caption similarity 0.669), leaving
-long plateaus that reward sparse, well-placed decodes. Both obey the same monotone
-law: the value of selective decoding tracks the redundancy of the stream it
-operates on, and a predictor is one way --- not the only way --- to create that
-redundancy. For a practitioner the rule is operational: measure the event rate of
-the stream you actually have, and expect selective decoding to pay when events are
-sparse relative to the decode budget you can afford.
+\subsection{Placement on clean streams, averaging on predicted ones}
+On clean ground-truth streams, where decodes are placed decides quality. Adaptive
+placement beats uniform across the mid-band on COIN steps and EgoExo keysteps, and
+on the raw atomic-annotation stream, where an event lands every two seconds, it
+loses at every budget: the value of placing decodes adaptively tracks the
+redundancy of the stream it reads. On a predicted stream, averaging decides
+quality. Against single-point uniform, adaptive wins 7 of 8 budgets over the same
+40 atomic takes where the annotation stream favours uniform, but what it brings to
+the noisy predicted stream is pooling: given the same pooling, uniform decoding
+matches adaptive on CIDEr and beats it on the semantic metric. VL-JEPA reports both
+that pooling helps both schedules and that adaptive selection Pareto-dominates
+uniform; in our reconstruction the first replicates and the second does not. On
+COIN's predicted stream, where adaptive was compared with \emph{plain} uniform and
+still lost the mid-band because 0.2~Hz is COIN's intrinsic step cadence, the same
+reading applies with more force. For a practitioner the rule is operational: on a
+clean, sparse stream, place decodes on change; on a predicted stream, pool before
+decoding, and a fixed grid will do.
 
 \subsection{A predictor problem, not a mechanism problem}
 Separating the two axes is the most transferable result here. Caption correctness
 --- vocabulary, object detail, register --- is a property of the predictor and its
 training data; the selective policy decides \emph{when} to speak, not \emph{what}
-to say. The ceiling analysis says the trigger is nearly exhausted while the scaling
-curve has not flattened, and the entropy analysis says what kind of data is needed.
-Effort spent tuning thresholds was, in retrospect, misdirected: every such attempt
-in this work returned negative, and the upper bound explains why.
+to say. The evidence is direct: replacing a COIN-trained predictor with an
+in-domain one raised CIDEr $25\times$ on the same takes, the COIN scaling curve had
+not flattened at 9$\times$ the data, and on the predicted stream the choice between
+adaptive and fixed-interval spans made no consistent difference. Effort spent
+tuning thresholds was, in retrospect, misdirected: every such attempt in this work
+returned negative.
 
 \subsection{Methodological note}
-Three times a positive result failed its own controls. An out-of-domain semantic
-win proved to be denoising rather than selection and was reported as inconclusive;
-a ``noisy labels'' explanation for the Action100M negative was contradicted by
-measurement and replaced by the entropy account; and an upper bound that lost to
-the method it bounded turned out to be a time-alignment bug. Adversarial controls
---- shuffled alignment, pooling ablation, random placement, same-takes comparison,
-paired bootstrap --- did more work in this study than any individual experiment.
+Four times a positive result failed its own controls. An out-of-domain semantic
+win proved to be denoising rather than selection; a ``noisy labels'' explanation
+for the Action100M negative was contradicted by measurement and replaced by the
+entropy account; an upper bound that lost to the method it bounded turned out to
+be a time-alignment bug; and the headline of an earlier version of this paper ---
+adaptive winning 7 of 8 budgets on the predicted stream at $\approx 9.9\times$
+fewer decodes --- did not survive a uniform baseline given the pooling the original
+paper gives it, because the control meant to rule averaging out had left the
+pre-smoothing on one side only. A control is only as good as the match between its
+two arms: every difference between them other than the hypothesis is a confound
+until it is removed.
 
 \section{Limitations}
 The COIN predicted-stream evaluation rests on 7 held-out videos, since extraction
-deleted source video after caching; its low-frequency tail is noise. The headline
-uses 40 takes rather than the full 218-take pool, at about 23 minutes of encoding
-per take. The evaluation takes are disjoint from training by take but not by person
-or session: all 40 share a participant with training takes and 39 share a recording
-session, so absolute quality partly reflects that familiarity. A
-participant-disjoint retrain needs no new extraction --- filtering the existing
-cache keeps 483 takes and 8{,}822 pairs, 76\% of the data --- and is the most
-useful next control. Magnitudes are not comparable to the paper's $2.85\times$: our
-predictor is in-domain whereas VL-JEPA's was evaluated cross-domain, EgoExo takes
-are internally repetitive, and our anchor is the more conservative of the two.
-Results from the data-scaling study onward use a single pre-smoothing setting that
-was never tuned on EgoExo. CIDEr has low statistical power at these scales, which
-is why the semantic metric --- ours, not the paper's --- is reported beside it.
-The ceiling is loose by construction, so 87\% is a conservative reading rather than
-a claim that 13\% is recoverable. Finally, the pipeline is not real-time on the
-test hardware, at $\approx$11~s per window on a T1000; deployment would need a
-faster encoder or a coarser working rate.
+deleted source video after caching; its low-frequency tail is noise. The
+predicted-stream comparison uses 40 takes rather than the full 218-take pool, at
+about 23 minutes of encoding per take; more takes would tighten the ties between
+adaptive and uniform+pool. The evaluation takes are disjoint from training by take
+but not by person or session: all 40 share a participant with training takes and
+39 share a recording session, so absolute quality partly reflects that
+familiarity, although all schedules consume the same stream. A participant-disjoint
+retrain needs no new extraction --- filtering the existing cache keeps 483 takes
+and 8{,}822 pairs, 76\% of the data --- and is the most useful next control. The
+non-replication is specific to our reconstruction: our predictor (29.9M
+parameters, in-domain) and embedding space differ from VL-JEPA's (490M parameters,
+trained on Action100M), and a predictor with crisper semantic structure might
+restore a placement advantage at matched pooling; the original paper also does not
+state the window over which its uniform baseline pools, and ours --- one decode
+interval around each point --- is one reasonable choice. Results from the
+data-scaling study onward use a single pre-smoothing setting that was never tuned
+on EgoExo. The semantic metric --- ours, not the paper's --- rewards averaging in
+itself, so it compares schedules only at matched pooling, and the benchmark is
+weakly sensitive to timing: one caption per take scores about as well as uniform
+decoding at 0.2~Hz. CIDEr has low statistical power at these scales. Finally, the
+pipeline is not real-time on the test hardware, at $\approx$11~s per window on a
+T1000; deployment would need a faster encoder or a coarser working rate.
 
 \section{Future Work}
 The evidence orders the next steps. First, predictor capacity and in-domain data,
-which the ceiling identifies as the binding constraint and the scaling curve shows
-is still paying off; the entropy analysis predicts the route is one to two orders
-of magnitude more open-vocabulary data rather than a different mixing strategy.
-Second, the participant-disjoint retrain, which would close the one methodological
-gap in the headline at no data cost. Third, scaling that headline from 40 to 218
-takes to tighten the point estimate. Fourth, a hybrid policy --- a uniform floor
-plus adaptive extra decodes on detected change --- as the most plausible way to
-recover the one regime where uniform still holds. Fifth, pairing the trigger with
-a strong pretrained captioner, since the trigger is decoder-agnostic and such a
-captioner would supply the open-domain vocabulary this reconstruction lacks.
+the lever for caption quality; the entropy analysis predicts the route is one to
+two orders of magnitude more open-vocabulary data rather than a different mixing
+strategy. Second, an evaluation protocol that rewards timing --- for example,
+scoring only annotations that differ from their take's typical content, or
+reporting every schedule against the one-caption-per-take reference --- so that
+placement can show whatever value it has. Third, the participant-disjoint retrain,
+which would close the one methodological gap in the absolute numbers at no data
+cost, and scaling the predicted-stream comparison from 40 to 218 takes. Fourth, a
+hybrid policy --- a pooled uniform floor plus extra decodes on detected change ---
+as the most plausible way for placement to add to pooling. Fifth, pairing the
+trigger with a strong pretrained captioner, since the trigger is decoder-agnostic
+and such a captioner would supply the open-domain vocabulary this reconstruction
+lacks.
 
 \section{Conclusion}
 We reconstructed VL-JEPA's selective-decoding mechanism from released components,
 corrected its causal realisation, and stress-tested it against its own claims.
 Selective decoding beats uniform across the mid-band on temporally redundant
-streams, loses at every budget on raw dense annotations, and wins 7 of 8 budgets at
-$\approx 9.9\times$ fewer decodes once the same annotations are approached through
-a predicted stream --- a reversal that a same-takes control attributes to the
-stream rather than to the sample. Its benefit tracks the redundancy of whatever
-stream it is given, so it requires a predicted representation rather than merely
-dense labels. A paired bootstrap makes the margin significant at every budget on a
-semantic metric and at seven of eight on CIDEr, and a ceiling analysis places the
-trigger at 87\% of a provable upper bound, above decode-everything at
-$\approx 40\times$ lower cost. What remains belongs to the predictor: a scaling
-curve that has not flattened, and a question of target-vocabulary entropy rather
-than of domain match.
+streams and loses at every budget on raw dense annotations. On a predicted stream
+over the same annotations it beats single-point uniform decoding at 7 of 8 budgets,
+but the gain is averaging: given the same pooling, which the original paper gives
+both schedules, uniform decoding matches adaptive --- tied at six of eight budgets
+with one significant win each way --- and reaches a higher best score. In our
+reconstruction the paper's adaptive-over-uniform result therefore holds on clean,
+redundant streams but does not replicate like for like on a predicted one, where
+what pays is averaging the predictor's noise before decoding, under any schedule;
+and a benchmark on which one caption per video scores like a 0.2~Hz schedule
+leaves little room for any trigger to show its worth. What limits caption quality
+is the predictor: a scaling curve that has not flattened, a $25\times$ gain from
+in-domain data, and a question of target-vocabulary entropy rather than of domain
+match.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

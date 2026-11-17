@@ -95,12 +95,12 @@
   and spends its expensive language decoder <i>only when something actually changes</i>.</p>
 
   <div class="kpirow">
-    <div class="kpicard"><span class="n">9.9&times;</span>
-      <span class="l">fewer decoder calls at equal-or-better caption quality</span></div>
-    <div class="kpicard"><span class="n">87%</span>
-      <span class="l">of a provable upper bound on any trigger</span></div>
-    <div class="kpicard"><span class="n">7 / 8</span>
-      <span class="l">decode budgets won, significant at every one</span></div>
+    <div class="kpicard"><span class="n">2.5&times;</span>
+      <span class="l">fewer decoder calls on redundant streams, at equal caption quality</span></div>
+    <div class="kpicard"><span class="n">5&ndash;26%</span>
+      <span class="l">better captions from averaging the predicted stream before decoding</span></div>
+    <div class="kpicard"><span class="n">25&times;</span>
+      <span class="l">caption quality from training the predictor in-domain</span></div>
     <div class="kpicard"><span class="n">1.2%</span>
       <span class="l">of the 2.5B-parameter system is trained</span></div>
   </div>
@@ -202,27 +202,27 @@
 
   <div class="finding win">
     <span class="badge w">the headline</span><br/>
-    <b>The resolution: selective decoding needs a <i>predicted</i> stream, not dense labels.</b>
-    Re-running that same hyper-dense benchmark through the full pipeline — with a predictor
-    trained in-domain — flips the result decisively: <b>9.9&times; fewer decoder calls at
-    equal-or-better caption quality</b>, winning 7 of 8 decode budgets. The predictor smooths a
-    saturated annotation stream into segmentable plateaus, which is exactly the structure the
-    mechanism consumes. The negative above and this positive are the <i>same benchmark</i>,
-    differing only in whether the stream is annotated or predicted — that pairing is the core
-    finding.
+    <b>On a predicted stream, averaging &mdash; not placement &mdash; carries the gain.</b>
+    Re-running that same hyper-dense benchmark through the full pipeline, with a predictor
+    trained in-domain, adaptive beats fixed-interval decoding of single windows at 7 of 8
+    budgets. But adaptive also <i>averages</i> each segment before decoding. Give fixed-interval
+    decoding the same averaging &mdash; as VL-JEPA's own protocol does &mdash; and it matches
+    adaptive: tied at 6 of 8 budgets, with one significant win each way. The predicted stream is
+    noisy, and pooling it before decoding is what helps. That is an honest non-replication of
+    the paper's adaptive-over-uniform claim, measured like for like.
   </div>
 
   <div class="card">
     <figure>
-      <svg class="chart" viewBox="0 0 700 196" role="img"
-           aria-label="Bar chart: uniform 0.595, decode-every-window 0.604, LiveJEPA adaptive 0.673, upper bound 0.772">
+      <svg class="chart" viewBox="0 0 700 234" role="img"
+           aria-label="Bar chart: fixed-interval single window 0.595, decode-every-window 0.604, adaptive pooled 0.673, fixed-interval pooled 0.679, upper bound 0.772">
         <!-- baseline -->
-        <line x1="200" y1="12" x2="200" y2="172" stroke="#232b37" stroke-width="1"/>
+        <line x1="200" y1="12" x2="200" y2="210" stroke="#232b37" stroke-width="1"/>
         <!-- ceiling marker -->
-        <line x1="617" y1="12" x2="617" y2="172" stroke="#d95f02" stroke-width="1.4"
+        <line x1="617" y1="12" x2="617" y2="210" stroke="#8c6bb1" stroke-width="1.4"
               stroke-dasharray="5 4" opacity="0.85"/>
 
-        <text class="lbl" x="190" y="38" text-anchor="end">fixed-interval decoding</text>
+        <text class="lbl" x="190" y="38" text-anchor="end">fixed interval, single window</text>
         <rect x="200" y="24" width="146" height="22" rx="4" fill="#4a5563"/>
         <text class="val" x="354" y="39">0.595</text>
 
@@ -230,18 +230,22 @@
         <rect x="200" y="62" width="160" height="22" rx="4" fill="#4a5563"/>
         <text class="val" x="368" y="77">0.604 &nbsp;·&nbsp; 40&times; the compute</text>
 
-        <text class="lbl ours" x="190" y="114" text-anchor="end">LiveJEPA (selective)</text>
+        <text class="lbl ours" x="190" y="114" text-anchor="end">adaptive, pooled</text>
         <rect x="200" y="100" width="265" height="22" rx="4" fill="#2c7fb8"/>
         <text class="val ours" x="473" y="115">0.673</text>
 
-        <text class="lbl" x="190" y="152" text-anchor="end">provable upper bound</text>
-        <rect x="200" y="138" width="417" height="22" rx="4" fill="#d95f02" opacity="0.85"/>
-        <text class="val" x="625" y="153">0.772</text>
+        <text class="lbl" x="190" y="152" text-anchor="end">fixed interval, pooled</text>
+        <rect x="200" y="138" width="275" height="22" rx="4" fill="#e6550d"/>
+        <text class="val" x="483" y="153">0.679</text>
+
+        <text class="lbl" x="190" y="190" text-anchor="end">upper bound</text>
+        <rect x="200" y="176" width="417" height="22" rx="4" fill="#8c6bb1" opacity="0.85"/>
+        <text class="val" x="625" y="191">0.772</text>
       </svg>
       <figcaption>How closely each caption's embedding matches the human reference, on 40
-      held-out EgoExo4D takes. Selective decoding <b>beats decoding every single window</b>
-      while using ~40&times; less decoder compute — and lands at 87% of a bound no decoding
-      schedule can exceed.</figcaption>
+      held-out EgoExo4D takes at 0.05&nbsp;Hz. Averaging a span before decoding <b>beats
+      decoding every single window</b> while using ~40&times; less decoder compute &mdash;
+      whether the spans are chosen adaptively or on a fixed clock.</figcaption>
     </figure>
   </div>
 
@@ -249,11 +253,11 @@
     <span class="badge w">result</span><br/>
     <b>It is not just cheaper — it is better.</b> Measured by how closely each caption's
     embedding matches the reference, decoding <i>every single window</i> scores <i>worse</i>
-    than selective decoding running at ~40&times; lower cost — because averaging over a detected
-    segment cancels predictor noise that a single window carries. Against a provable upper bound
-    on what any trigger could achieve, ours reaches <b>87%</b>; a trigger handed the human
-    annotators' own boundaries does no better. The remaining headroom belongs to the predictor,
-    not to the trigger.
+    than pooled decoding at ~40&times; lower cost — because averaging a span cancels predictor
+    noise that a single window carries, and fixed-interval spans do it as well as adaptive ones.
+    One caveat we found ourselves: on this metric even a single caption per video scores high
+    (0.695), so it rewards averaging in itself and cannot rank triggers. What limits caption
+    quality is the predictor &mdash; in-domain training alone raised it 25&times;.
   </div>
 
   <div class="finding win">
