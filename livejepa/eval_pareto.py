@@ -21,6 +21,20 @@ def uniform_points(T, stride):
     return idxs or [T // 2]
 
 
+def uniform_blocks(T, stride):
+    """Fixed-length spans that tile [0, T) around the uniform decode points.
+
+    Block k is [k*stride, (k+1)*stride) and contains uniform_points(T, stride)[k];
+    the last block absorbs the tail, so the blocks partition the stream. Same count
+    and same decode indices as uniform_points -- what changes is that a span can be
+    pooled instead of decoding one step. Returns (idxs, [(start, end), ...])."""
+    idxs = uniform_points(T, stride)
+    stride = max(1, stride)
+    blocks = [(k * stride, min((k + 1) * stride, T)) for k in range(len(idxs))]
+    blocks[-1] = (blocks[-1][0], T)
+    return idxs, blocks
+
+
 def hz_to_stride(hz, fps):
     """Convert a target decode frequency (Hz) to a stride in stream steps."""
     return max(1, int(round(fps / max(hz, 1e-6))))

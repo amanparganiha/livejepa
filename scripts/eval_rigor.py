@@ -54,9 +54,11 @@ def main():
     ap.add_argument("--gt-emb-cache", default="eval_data/gt_emb_cache.npz")
     ap.add_argument("--boot", type=int, default=5000)
     ap.add_argument("--methods", default="uniform,adaptive,oracle",
-                    help="comma-separated. NOTE: 'oracle' picks decode points no "
-                         "cache has seen, so it pays full SONAR decode cost "
-                         "(~50 min/frequency); run it separately on few freqs")
+                    help="comma-separated; also uniform_pool (the pooling-matched "
+                         "baseline) and take_mean (one decode per take). NOTE: "
+                         "'oracle' picks decode points no cache has seen, so it pays "
+                         "full SONAR decode cost (~50 min/frequency); run it "
+                         "separately on few freqs")
     ap.add_argument("--out", default="results_egoexo_rigor")
     args = ap.parse_args()
 
@@ -176,33 +178,38 @@ def main():
                   f"[{cid_lo:.4f},{cid_hi:.4f}]", flush=True)
         results[method] = curve
 
-    # PAIRED bootstrap: adaptive - uniform, per take (variance from take difficulty cancels)
-    paired = []
-    if not ("adaptive" in results and "uniform" in results):
+    # PAIRED bootstrap: adaptive - each baseline that was run, per take (variance
+    # from take difficulty cancels). 'uniform' keeps its original output key;
+    # 'uniform_pool', the pooling-matched baseline, gets its own alongside it.
+    baselines = [b for b in ("uniform", "uniform_pool") if b in results]
+    if "adaptive" not in results or not baselines:
         json.dump({"ckpt": args.ckpt, "n_takes": len(built), "results": results},
                   open(args.out + ".json", "w"), indent=2)
         print("wrote", args.out + ".json")
         return
-    print("\n=== PAIRED adaptive - uniform (95% CI, per-take bootstrap) ===", flush=True)
-    for i, hz in enumerate(freqs):
-        row = {"target_hz": hz}
-        for key, label in (("per_take_semantic", "semantic"), ("per_take_cider", "cider")):
-            d = np.asarray(results["adaptive"][i][key]) - np.asarray(results["uniform"][i][key])
-            lo, hi = boot_ci(d, args.boot)
-            row[label] = {"mean_diff": float(d.mean()), "ci95": [lo, hi],
-                          "significant": bool(lo > 0 or hi < 0),
-                          "takes_favoring_adaptive": int((d > 0).sum()), "n_takes": len(d)}
-        s, c = row["semantic"], row["cider"]
-        print(f"  {hz:5.2f}Hz  sem {s['mean_diff']:+.4f} [{s['ci95'][0]:+.4f},{s['ci95'][1]:+.4f}] "
-              f"{'SIG' if s['significant'] else 'ns '} ({s['takes_favoring_adaptive']}/{s['n_takes']})   "
-              f"cider {c['mean_diff']:+.4f} [{c['ci95'][0]:+.4f},{c['ci95'][1]:+.4f}] "
-              f"{'SIG' if c['significant'] else 'ns '} ({c['takes_favoring_adaptive']}/{c['n_takes']})",
-              flush=True)
-        paired.append(row)
+    out = {"ckpt": args.ckpt, "n_takes": len(built), "max_seconds": args.max_seconds,
+           "bootstrap": args.boot, "results": results}
+    for base in baselines:
+        print(f"\n=== PAIRED adaptive - {base} (95% CI, per-take bootstrap) ===", flush=True)
+        paired = []
+        for i, hz in enumerate(freqs):
+            row = {"target_hz": hz}
+            for key, label in (("per_take_semantic", "semantic"), ("per_take_cider", "cider")):
+                d = np.asarray(results["adaptive"][i][key]) - np.asarray(results[base][i][key])
+                lo, hi = boot_ci(d, args.boot)
+                row[label] = {"mean_diff": float(d.mean()), "ci95": [lo, hi],
+                              "significant": bool(lo > 0 or hi < 0),
+                              "takes_favoring_adaptive": int((d > 0).sum()), "n_takes": len(d)}
+            s, c = row["semantic"], row["cider"]
+            print(f"  {hz:5.2f}Hz  sem {s['mean_diff']:+.4f} [{s['ci95'][0]:+.4f},{s['ci95'][1]:+.4f}] "
+                  f"{'SIG' if s['significant'] else 'ns '} ({s['takes_favoring_adaptive']}/{s['n_takes']})   "
+                  f"cider {c['mean_diff']:+.4f} [{c['ci95'][0]:+.4f},{c['ci95'][1]:+.4f}] "
+                  f"{'SIG' if c['significant'] else 'ns '} ({c['takes_favoring_adaptive']}/{c['n_takes']})",
+                  flush=True)
+            paired.append(row)
+        out[f"paired_adaptive_minus_{base}"] = paired
 
-    json.dump({"ckpt": args.ckpt, "n_takes": len(built), "max_seconds": args.max_seconds,
-               "bootstrap": args.boot, "results": results, "paired_adaptive_minus_uniform": paired},
-              open(args.out + ".json", "w"), indent=2)
+    json.dump(out, open(args.out + ".json", "w"), indent=2)
     print("\nwrote", args.out + ".json")
 
 

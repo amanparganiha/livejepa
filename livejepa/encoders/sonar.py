@@ -41,16 +41,24 @@ class SonarSpace:
         else:
             # transformers-format M2M100 ports (the Windows / no-fairseq2 path)
             import torch
-            from transformers import AutoTokenizer, M2M100ForConditionalGeneration
-            from transformers.models.m2m_100.modeling_m2m_100 import M2M100Encoder
-            sc = self.cfg["encoders"]["sonar"]
             self._device = torch.device(self.cfg["project"]["device"]
                                         if torch.cuda.is_available() else "cpu")
+            # Both halves load lazily on first use: decode-only work (the web
+            # app, evaluation on cached streams) never needs the encoder, and
+            # encoder + decoder together overflow an 8 GB GPU in fp32.
+            self._enc_tok = None
+            self._encoder = None
+            self._dec_tok = None
+            self._decoder = None  # ~2.6 GB — loaded lazily on first decode()
+
+    def _ensure_encoder(self):
+        if self._encoder is None:
+            from transformers import AutoTokenizer
+            from transformers.models.m2m_100.modeling_m2m_100 import M2M100Encoder
+            sc = self.cfg["encoders"]["sonar"]
             self._enc_tok = AutoTokenizer.from_pretrained(sc["hf_encoder"])
             self._enc_tok.src_lang = self.lang
             self._encoder = M2M100Encoder.from_pretrained(sc["hf_encoder"]).eval().to(self._device)
-            self._dec_tok = None
-            self._decoder = None  # ~2.6 GB — loaded lazily on first decode()
 
     def _ensure_decoder(self):
         if self._decoder is None:
@@ -62,6 +70,7 @@ class SonarSpace:
 
     def _hf_encode(self, texts) -> np.ndarray:
         import torch
+        self._ensure_encoder()
         with torch.inference_mode():
             batch = self._enc_tok(texts, return_tensors="pt", padding=True).to(self._device)
             seq = self._encoder(**batch).last_hidden_state

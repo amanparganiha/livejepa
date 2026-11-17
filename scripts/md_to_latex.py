@@ -5,10 +5,12 @@ is still the working copy -- a manual .tex would rot the first time a number
 changes. Re-run this after any edit to THESIS.md.
 
 It targets the markdown subset that document actually uses (verified by
-inventory): ATX headings, pipe tables, fenced code, bullet/numbered lists,
-inline code, bold, italic, horizontal rules, and a fixed set of non-ASCII
-symbols. A ```latex fence is passed through raw, which is how figure
-environments are carried from the markdown into the generated body. It deliberately does NOT try to be a general markdown engine.
+inventory): ATX headings, pipe tables (with an optional pandoc-style
+"Table: caption {#tab:label}" line above them), fenced code, bullet/numbered
+lists, inline code, bold, italic, horizontal rules, and a fixed set of
+non-ASCII symbols. A ```latex fence is passed through raw, which is how figure
+environments are carried from the markdown into the generated body. It
+deliberately does NOT try to be a general markdown engine.
 
 Section numbering: the markdown carries manual numbers ("## 6. Results",
 "### 6.9 ..."). Those are STRIPPED and LaTeX numbers the sections itself --
@@ -55,7 +57,11 @@ def inline(s):
     """Inline markdown -> LaTeX. Code spans are protected from escaping, and so
     are raw LaTeX commands such as \\cite{key} or \\ref{fig:x} — so citations
     can be added to the MARKDOWN and survive conversion, rather than having to
-    be patched into the generated .tex on every regeneration."""
+    be patched into the generated .tex on every regeneration.
+
+    A tie written directly before such a command ("Figure~\\ref{fig:x}",
+    "SONAR~\\cite{key}") is kept as a non-breaking space. Everywhere else ~
+    means "approximately" in this document and is still escaped."""
     spans, raw = [], []
 
     def stash(m):
@@ -67,7 +73,7 @@ def inline(s):
         return f"\x01{len(raw) - 1}\x01"
 
     s = re.sub(r"`([^`\n]+)`", stash, s)
-    s = re.sub(r"\\[a-zA-Z]+(?:\[[^\]]*\])?\{[^{}]*\}", stash_tex, s)
+    s = re.sub(r"~?\\[a-zA-Z]+(?:\[[^\]]*\])?\{[^{}]*\}", stash_tex, s)
     s = esc(s)
     if raw:
         s = re.sub(r"\x01(\d+)\x01", lambda m: raw[int(m.group(1))], s)
@@ -81,12 +87,17 @@ def inline(s):
 # --------------------------------------------------------------------------- #
 # block handling
 # --------------------------------------------------------------------------- #
-def emit_table(rows):
+def emit_table(rows, caption=None):
     """Markdown pipe table -> booktabs tabular.
 
     Alignment comes from the separator row. Columns whose widest cell is long
     become p{} columns sized by their share of the total text, so the wide
-    'what it is' explanation tables wrap instead of running off the page."""
+    'what it is' explanation tables wrap instead of running off the page.
+
+    With a caption (pandoc's "Table: text {#tab:label}" line directly above the
+    table) the tabular becomes a numbered table float, so it appears in the
+    List of Tables and can be cited as Table~\\ref{tab:label}. Without one it
+    stays an unnumbered centred block."""
     def cells(line):
         return [c.strip() for c in line.strip().strip("|").split("|")]
 
@@ -113,13 +124,24 @@ def emit_table(rows):
         t = inline(h)
         return t if t.startswith(r"\textbf{") and t.endswith("}") else r"\textbf{" + t + "}"
 
-    out = [r"\begin{center}\small", r"\begin{tabular}{" + "".join(spec) + "}",
-           r"\toprule",
-           " & ".join(hcell(h) for h in head) + r" \\",
-           r"\midrule"]
-    out += [" & ".join(inline(c) for c in r) + r" \\" for r in body]
-    out += [r"\bottomrule", r"\end{tabular}", r"\end{center}"]
-    return out
+    grid = [r"\begin{tabular}{" + "".join(spec) + "}",
+            r"\toprule",
+            " & ".join(hcell(h) for h in head) + r" \\",
+            r"\midrule"]
+    grid += [" & ".join(inline(c) for c in r) + r" \\" for r in body]
+    grid += [r"\bottomrule", r"\end{tabular}"]
+
+    if caption is None:
+        return [r"\begin{center}\small"] + grid + [r"\end{center}"]
+    label = None
+    m = re.search(r"\s*\{#([^}\s]+)\}\s*$", caption)
+    if m:
+        label, caption = m.group(1), caption[:m.start()]
+    head_lines = [r"\begin{table}[htbp]", r"\centering\small",
+                  r"\caption{" + inline(caption.strip()) + "}"]
+    if label:
+        head_lines.append(r"\label{" + label + "}")
+    return head_lines + grid + [r"\end{table}"]
 
 
 def emit_verbatim(lines):
@@ -156,6 +178,7 @@ def convert(md):
     lines = md.split("\n")
     out, state = [], {"abstract": False, "appendix": False, "stop": False}
     i, para = 0, []
+    caption = None                  # a "Table:" line waiting for its table
 
     def flush_para():
         if para:
@@ -212,14 +235,26 @@ def convert(md):
             i += 1
             continue
 
+        m = re.match(r"^Table:\s+(.+)$", line.strip())             # table caption
+        if m:
+            k = i + 1
+            while k < len(lines) and not lines[k].strip():
+                k += 1
+            if k < len(lines) and lines[k].strip().startswith("|"):
+                flush_para()
+                caption = m.group(1)
+                i = k
+                continue
+
         if line.strip().startswith("|"):                          # table
             flush_para()
             j = i
             while j < len(lines) and lines[j].strip().startswith("|"):
                 j += 1
             rows = lines[i:j]
-            out += (emit_table(rows) if len(rows) >= 2 else
+            out += (emit_table(rows, caption) if len(rows) >= 2 else
                     [inline(r) for r in rows]) + [""]
+            caption = None
             i = j
             continue
 

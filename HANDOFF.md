@@ -36,11 +36,31 @@ absolute parity with the paper is NOT the claim.
 
 ## 2. State snapshot (2026-07-19)
 
+### UPDATE 2026-11-17 — THE HEADLINE CHANGED (read this before the blocks below)
+
+The 2026-08-02 headline below ("adaptive wins 7/8 at ≈9.9× fewer decodes, 87% of
+a provable ceiling") **compared pooled adaptive against an unpooled uniform**.
+VL-JEPA §4.6 pools both schedules. With a pooling-matched baseline
+(`uniform_pool` in `select_points`), on the 40 held-out EgoExo takes:
+- corpus CIDEr: uniform+pool beats adaptive at 6/8 budgets; best uniform+pool
+  0.358 (2,357 decodes) > best adaptive 0.348;
+- paired per-take CIDEr: tied at 6/8, adaptive significantly better at 0.05 Hz,
+  significantly worse at 0.35 Hz; the semantic metric favours uniform+pool 8/8;
+- one decode per take scores CIDEr 0.284 (≈ uniform at 0.2 Hz) and 90% of the
+  semantic "ceiling" (adaptive 87.1%).
+
+So the gain on a predicted stream is **averaging, not placement**, and the
+ceiling cannot rank triggers. Clean-stream results, scaling, C2/C3, the demo and
+all training are unaffected. The rewrite lives on branch **`thesis-reframe`**
+(`main` = `origin/main` = 682c5db, untouched). Details: WORKLOG 2026-11-17,
+RESULTS.md §5b, THESIS §6.8–6.9. The demo server is **not** running (start it
+with §6's commands); the July week plan below is long finished.
+
 **DONE:**
 - Core mechanism + online trigger (`livejepa/selective/online.py`, SegmentTrigger
-  with `last_shift`), 13/13 tests green.
+  with `last_shift`), tests green (13/13 then; 16/16 since 2026-11-17).
 - Product webapp deployed (FastAPI backend + product UI, token
-  `livejepa-demo-2026`, tunnel-verified, 15/15 E2E). Server currently RUNNING,
+  `livejepa-demo-2026`, tunnel-verified, 15/15 E2E). Server was running in July (not now),
   serving `checkpoints_c1_final/predictor_30000.pt`.
 - **Full-COIN data engine CLOSED (2026-07-19 afternoon): 8,984/9,023 resolved =
   99.6%** (7,334 extracted / 1,650 dead links / 39 unreachable, abandoned).
@@ -243,4 +263,4 @@ python -c "import json;st=json.load(open('data_cache_coin_full/pipeline_state.js
 
 **The single most important sentence for a fresh model:** everything is
 verified-on-disk and reproducible; trust WORKLOG.md + this file over any stale
-doc, keep the frozen vals frozen, and finish the week plan in §2.
+doc, keep the frozen vals frozen, and read the 2026-11-17 update in §2 first.

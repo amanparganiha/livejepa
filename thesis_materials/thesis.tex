@@ -9,7 +9,8 @@
 %  The chapter body lives in thesis_body.tex, which is GENERATED from
 %  docs/THESIS.md by scripts/md_to_latex.py — do not hand-edit it; edit the
 %  markdown and re-run the script, or it will be overwritten. If the institute
-%  template uses \chapter instead of \section, change SECTIONLEVEL below.
+%  template uses \chapter instead of \section, change the two emitters in
+%  heading() in scripts/md_to_latex.py and regenerate (see BUILD.md).
 % ===========================================================================
 % "titlepage" gives the title its own page, as a thesis expects; without it the
 % table of contents starts halfway down page 1, under the author's name.
@@ -24,8 +25,13 @@
 \usepackage{listings}          % the pipeline diagram + command appendix
 \usepackage{amsmath,amssymb}   % \approx \times \Delta \tau used inline
 \usepackage{microtype}
-\usepackage[hidelinks]{hyperref}
+% hypertexnames=false: the titlepage option resets the page counter, so front
+% matter repeats page numbers and hyperref would warn about duplicate anchors.
+\usepackage[hidelinks,hypertexnames=false]{hyperref}
 \usepackage{caption}
+% Table captions sit ABOVE their tables (the generated body emits them first);
+% this tells the caption package, so the caption-to-table gap is right.
+\captionsetup[table]{position=top}
 
 % Appendix B tabulates file names in \texttt{}. TeX will not break inside a
 % typewriter word, so without these the longest row ran 133pt (~4.6cm) past the
@@ -67,16 +73,18 @@
 
 \tableofcontents
 \newpage
+\listoffigures
+\listoftables
+\newpage
 
 % --- the thesis body (GENERATED — see header) ------------------------------
 \input{thesis_body}
 
 % --- bibliography ----------------------------------------------------------
-% The body is generated from markdown and carries no \cite commands, so
-% \nocite{*} is what puts the entries on the page. If the institute requires
-% inline citations, add \cite{vljepa2025} etc. to docs/THESIS.md (the script
-% passes unknown LaTeX through untouched) and then drop this line.
-\nocite{*}
+% Every entry in references.bib is cited from docs/THESIS.md with \cite{key},
+% which the converter passes through untouched. There is deliberately no
+% \nocite{*}: check_thesis_tex.py fails if an entry is never cited, rather
+% than letting it pad the reference list.
 \newpage
 \bibliographystyle{plain}      % <-- swap for the institute's required style
 \bibliography{references}

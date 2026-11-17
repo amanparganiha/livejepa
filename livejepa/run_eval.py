@@ -29,9 +29,12 @@ import glob
 import yaml
 import numpy as np
 
-from livejepa.eval_pareto import uniform_points, hz_to_stride
+from livejepa.eval_pareto import uniform_points, uniform_blocks, hz_to_stride
 from livejepa.selective.offline import decode_points as adaptive_points
 from livejepa.selective.online import run_online
+
+# selection methods select_points understands; the first two are the published sweep
+METHODS = ("uniform", "adaptive", "uniform_pool", "take_mean")
 
 
 # --------------------------------------------------------------------------- #
@@ -215,6 +218,22 @@ def select_points(method, stream, hz, fps, sel_cfg):
         s = _smooth_stream(stream, sel_cfg.get("smoothing_window", 1))
         return adaptive_points(s, n_seg, pool=sel_cfg.get("pool", "mean"),
                                linkage=sel_cfg.get("linkage", "ward"))
+    if method == "uniform_pool":
+        # Uniform PLACEMENT given adaptive's treatment of the stream: the same
+        # pre-smoothing and the same pooling (each fixed block's mean, or the
+        # smoothed step itself when pool='none'). This is the like-for-like
+        # baseline: VL-JEPA (sec. 4.6) reports that average pooling helps both
+        # schedules, so a uniform that decodes raw single steps is handicapped.
+        s = _smooth_stream(stream, sel_cfg.get("smoothing_window", 1))
+        idxs, blocks = uniform_blocks(T, stride)
+        if sel_cfg.get("pool", "mean") == "mean":
+            return idxs, np.stack([s[a:b].mean(0) for a, b in blocks])
+        return idxs, s[idxs]
+    if method == "take_mean":
+        # A reference, not a schedule: ONE decode per video, the mean of the
+        # whole stream, timestamped mid-video; hz is ignored. It measures how
+        # much of a time-aligned score can be had with no timing at all.
+        return [T // 2], np.asarray(stream, dtype=np.float32).mean(0, keepdims=True)
     raise ValueError(method)
 
 
@@ -308,7 +327,8 @@ def iter_eval_videos(cfg, dataset, require_video=True, gt_source="atomic", uids=
 # main
 # --------------------------------------------------------------------------- #
 def run(cfg, dataset, mode, ckpt, freqs, max_videos, max_seconds, win_stride,
-        gt_noise, gt_source, out_png, out_json, uids_file=None, decode_cache=None):
+        gt_noise, gt_source, out_png, out_json, uids_file=None, decode_cache=None,
+        methods=("uniform", "adaptive")):
     uids = None
     if uids_file:
         uids = {l.strip() for l in open(uids_file) if l.strip()}
@@ -319,12 +339,10 @@ def run(cfg, dataset, mode, ckpt, freqs, max_videos, max_seconds, win_stride,
     fps = cfg["eval"]["fps"]
     sel_cfg = cfg["selective"]
 
+    # predictor mode loads V-JEPA 2 + the predictor on the first stream that is
+    # not already cached: with every stream cached they would sit idle next to
+    # the SONAR decoder and spill an 8 GB GPU into shared memory
     vision = predict = None
-    if mode == "predictor":
-        from livejepa.encoders.vision import VisionEncoder
-        from livejepa.predictor.infer import load_predictor
-        vision = VisionEncoder(cfg)
-        predict = load_predictor(cfg, ckpt)
 
     # 1. build a stream + GT for each video
     built = []
@@ -344,6 +362,11 @@ def run(cfg, dataset, mode, ckpt, freqs, max_videos, max_seconds, win_stride,
             cache_path = os.path.join(
                 stream_dir,
                 f"{dataset}_{vid}_K{K}_fps{fps}_ws{win_stride}_ms{int(max_seconds)}_{ck}.npz")
+            if vision is None and not os.path.exists(cache_path):
+                from livejepa.encoders.vision import VisionEncoder
+                from livejepa.predictor.infer import load_predictor
+                vision = VisionEncoder(cfg)
+                predict = load_predictor(cfg, ckpt)
             stream, times = build_predictor_stream(
                 path, cfg, vision, predict, fps, max_seconds, win_stride, cache_path)
         if stream is None or len(stream) < 2:
@@ -374,7 +397,7 @@ def run(cfg, dataset, mode, ckpt, freqs, max_videos, max_seconds, win_stride,
                 "n_videos": len(built), "fps": fps, "max_seconds": max_seconds,
                 "gt_source": gt_source, "partial": partial, "results": results}
 
-    for method in ("uniform", "adaptive"):
+    for method in methods:
         curve = []
         results[method] = curve            # bound early so flushes see progress
         for hz in freqs:
@@ -419,7 +442,9 @@ def plot_pareto(results, out_png, title="LiveJEPA Pareto"):
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(7, 5))
     styles = {"uniform": dict(marker="s", color="#888", ls="--"),
-              "adaptive": dict(marker="o", color="#2c7fb8", ls="-")}
+              "adaptive": dict(marker="o", color="#2c7fb8", ls="-"),
+              "uniform_pool": dict(marker="^", color="#e6550d", ls="-."),
+              "take_mean": dict(marker="x", color="#333", ls="none", ms=9)}
     for method, curve in results.items():
         xs = [c["avg_hz"] for c in curve]
         ys = [c["cider"] for c in curve]
@@ -461,7 +486,16 @@ def main():
     ap.add_argument("--decode-cache", default="eval_data/decode_cache.jsonl",
                     help="on-disk SONAR decode cache (JSONL) making long sweeps "
                          "restart-safe; pass '' to disable")
+    ap.add_argument("--methods", default="uniform,adaptive",
+                    help="comma-separated selection methods: uniform, adaptive, "
+                         "uniform_pool (uniform placement with adaptive's smoothing "
+                         "and pooling -- the like-for-like baseline), take_mean "
+                         "(one decode per video; a reference)")
     args = ap.parse_args()
+    methods = [m for m in args.methods.split(",") if m]
+    bad = [m for m in methods if m not in METHODS]
+    if bad:
+        ap.error(f"unknown method(s) {bad}; choose from {list(METHODS)}")
 
     cfg = yaml.safe_load(open(args.config))
     cfg["project"]["use_stubs"] = False
@@ -474,7 +508,8 @@ def main():
     run(cfg, args.dataset, args.mode, args.ckpt, freqs,
         args.max_videos, args.max_seconds, args.win_stride, args.gt_noise,
         args.gt_source, out_png=base + ".png", out_json=base + ".json",
-        uids_file=args.uids_file, decode_cache=args.decode_cache or None)
+        uids_file=args.uids_file, decode_cache=args.decode_cache or None,
+        methods=methods)
 
 
 if __name__ == "__main__":

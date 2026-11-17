@@ -13,6 +13,7 @@ two demo .mp4s, and the markdown notes. LaTeX reads none of them, and Overleaf's
 free tier counts files. Every .png ships, not just the 14 currently placed, so
 figures can be added in Overleaf without a re-upload.
 """
+import argparse
 import io
 import os
 import re
@@ -21,23 +22,41 @@ import zipfile
 
 SRC = "thesis_materials"
 OUT = "livejepa_thesis_overleaf.zip"
+PAPER_OUT = "livejepa_paper_ieee_overleaf.zip"
 TEXT = (".tex", ".bib")
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--paper", action="store_true",
+                    help="package the IEEE conference paper (paper_ieee.tex) "
+                         "instead of the thesis; ships only the figures it uses")
+    args = ap.parse_args()
+
     if not os.path.isdir(SRC):
         print("run from the repo root: %s not found" % SRC)
         return 1
 
-    body = os.path.join(SRC, "thesis_body.tex")
+    if args.paper:
+        return build(["paper_ieee.tex", "references.bib"], PAPER_OUT,
+                     scan="paper_ieee.tex", only_used=True)
+    return build(["thesis.tex", "thesis_body.tex", "references.bib"], OUT,
+                 scan="thesis_body.tex", only_used=False)
+
+
+def build(members, out, scan, only_used):
     used = set()
-    if os.path.exists(body):
-        s = io.open(body, encoding="utf-8").read()
+    scan_p = os.path.join(SRC, scan)
+    if os.path.exists(scan_p):
+        s = io.open(scan_p, encoding="utf-8").read()
         used = set(re.findall(chr(92) + chr(92) + r"includegraphics\[[^\]]*\]\{figures/([^}]+)\}", s))
 
     figs = sorted(f for f in os.listdir(os.path.join(SRC, "figures"))
-                  if f.lower().endswith(".png"))
-    members = ["thesis.tex", "thesis_body.tex", "references.bib"]
+                  if f.lower().endswith(".png") and (not only_used or f in used))
+    return write_zip(members, figs, used, out)
+
+
+def write_zip(members, figs, used, OUT):
     missing = [m for m in members if not os.path.exists(os.path.join(SRC, m))]
     if missing:
         print("missing required file(s): %s" % missing)

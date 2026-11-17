@@ -11,12 +11,21 @@
 %    * LiveCC had a placeholder venue — it is CVPR 2025, arXiv:2504.16030.
 %  If you re-verify anything, note that Ego-Exo4D's arXiv submission is 2023
 %  while the proceedings year is 2024; both are given below.
+%
+%  2026-09-19: vljepa2025 changed from type inproceedings to type article. As an
+%  inproceedings entry with a `journal` field, the plain style silently dropped
+%  the journal line, so the PDF cited the paper this thesis reconstructs with no
+%  arXiv number at all. (Never write an at-sign in these comments: BibTeX has no
+%  comment syntax and reads one as the start of an entry.) Added eight entries (action100m2026 through
+%  transformer2017, below the original eight), each checked the same day
+%  against its arXiv / publisher page. Every entry is cited from the text; there
+%  is no \nocite{*}.
 % ===========================================================================
 
-@inproceedings{vljepa2025,
+@article{vljepa2025,
   title        = {{VL-JEPA}: Joint Embedding Predictive Architecture for
                   Vision-language},
-  author       = {Chen, Delong and Shukor, Mustafa and Moutakanni, Theo and
+  author       = {Chen, Delong and Shukor, Mustafa and Moutakanni, Th{\'e}o and
                   Chung, Willy and Yu, Jade and Kasarla, Tejaswi and
                   Bang, Yejin and Bolourchi, Allen and LeCun, Yann and
                   Fung, Pascale},
@@ -92,10 +101,237 @@
   note         = {arXiv:2504.16030}
 }
 
-% Software actually used in the pipeline — include if the institute expects
-% tooling to be cited; drop otherwise.
+% Software actually used in the pipeline.
 @misc{pycocoevalcap,
+  key          = {pycocoevalcap},
   title        = {{pycocoevalcap}: {MS-COCO} Caption Evaluation Metrics},
   howpublished = {\url{https://github.com/salaniz/pycocoevalcap}},
   note         = {CIDEr-D implementation used for all caption scoring}
+}
+
+% --- added 2026-09-19, each verified against its arXiv / publisher page ------
+
+% The corpus VL-JEPA trains on (section 6.6). The official citation from the
+% dataset card; this work used the 10% preview release linked in the note.
+@article{action100m2026,
+  title        = {{Action100M}: A Large-scale Video Action Dataset},
+  author       = {Chen, Delong and Kasarla, Tejaswi and Bang, Yejin and
+                  Shukor, Mustafa and Chung, Willy and Yu, Jade and
+                  Bolourchi, Allen and Moutakanni, Th{\'e}o and Fung, Pascale},
+  journal      = {arXiv preprint arXiv:2601.10592},
+  year         = {2026},
+  note         = {Submitted 15 January 2026. This work uses the 10\% preview
+                  release, \url{https://huggingface.co/datasets/facebook/action100m-preview}}
+}
+
+% Source videos of Action100M.
+@inproceedings{howto100m2019,
+  title        = {{HowTo100M}: Learning a Text-Video Embedding by Watching
+                  Hundred Million Narrated Video Clips},
+  author       = {Miech, Antoine and Zhukov, Dimitri and Alayrac, Jean-Baptiste
+                  and Tapaswi, Makarand and Laptev, Ivan and Sivic, Josef},
+  booktitle    = {Proceedings of the IEEE/CVF International Conference on
+                  Computer Vision (ICCV)},
+  year         = {2019},
+  note         = {arXiv:1906.03327}
+}
+
+% VL-JEPA's text encoder (its Y-encoder is initialised from EmbeddingGemma-300M),
+% which SONAR replaces here because it has no decoder. 89 authors.
+@article{embeddinggemma2025,
+  title        = {{EmbeddingGemma}: Powerful and Lightweight Text
+                  Representations},
+  author       = {Schechter Vera, Henrique and Dua, Sahil and Zhang, Biao and
+                  Salz, Daniel and Mullins, Ryan and Raghuram Panyam, Sindhu and
+                  others},
+  journal      = {arXiv preprint arXiv:2509.20354},
+  year         = {2025},
+  note         = {Submitted 24 September 2025}
+}
+
+% The offline segmenter (section 4.3).
+@article{ward1963,
+  title        = {Hierarchical Grouping to Optimize an Objective Function},
+  author       = {Ward, Jr., Joe H.},
+  journal      = {Journal of the American Statistical Association},
+  volume       = {58},
+  number       = {301},
+  pages        = {236--244},
+  year         = {1963}
+}
+
+% InfoNCE, half of the predictor's training loss (section 4.2).
+@article{cpc2018,
+  title        = {Representation Learning with Contrastive Predictive Coding},
+  author       = {van den Oord, Aaron and Li, Yazhe and Vinyals, Oriol},
+  journal      = {arXiv preprint arXiv:1807.03748},
+  year         = {2018}
+}
+
+% The optimiser actually used (torch.optim.AdamW in livejepa/train.py).
+@inproceedings{adamw2019,
+  title        = {Decoupled Weight Decay Regularization},
+  author       = {Loshchilov, Ilya and Hutter, Frank},
+  booktitle    = {International Conference on Learning Representations (ICLR)},
+  year         = {2019},
+  note         = {arXiv:1711.05101}
+}
+
+% The paired bootstrap of section 6.9.
+@book{efron1993,
+  title        = {An Introduction to the Bootstrap},
+  author       = {Efron, Bradley and Tibshirani, Robert J.},
+  publisher    = {Chapman \& Hall},
+  address      = {New York},
+  series       = {Monographs on Statistics and Applied Probability},
+  year         = {1993}
+}
+
+% --- added 2026-09-20 for the related-work section; each verified the same day
+% --- against its arXiv page.
+
+% Streaming / dense video captioning: the task neighbourhood.
+@inproceedings{densecap2017,
+  title        = {Dense-Captioning Events in Videos},
+  author       = {Krishna, Ranjay and Hata, Kenji and Ren, Frederic and
+                  Fei-Fei, Li and Niebles, Juan Carlos},
+  booktitle    = {Proceedings of the IEEE International Conference on Computer
+                  Vision (ICCV)},
+  year         = {2017},
+  note         = {arXiv:1705.00754. Introduces the dense-captioning task and
+                  ActivityNet Captions}
+}
+
+@inproceedings{vid2seq2023,
+  title        = {{Vid2Seq}: Large-Scale Pretraining of a Visual Language Model
+                  for Dense Video Captioning},
+  author       = {Yang, Antoine and Nagrani, Arsha and Seo, Paul Hongsuck and
+                  Miech, Antoine and Pont-Tuset, Jordi and Laptev, Ivan and
+                  Sivic, Josef and Schmid, Cordelia},
+  booktitle    = {Proceedings of the IEEE/CVF Conference on Computer Vision and
+                  Pattern Recognition (CVPR)},
+  year         = {2023},
+  note         = {arXiv:2302.14115}
+}
+
+@inproceedings{streamingdvc2024,
+  title        = {Streaming Dense Video Captioning},
+  author       = {Zhou, Xingyi and Arnab, Anurag and Buch, Shyamal and
+                  Yan, Shen and Myers, Austin and Xiong, Xuehan and
+                  Nagrani, Arsha and Schmid, Cordelia},
+  booktitle    = {Proceedings of the IEEE/CVF Conference on Computer Vision and
+                  Pattern Recognition (CVPR)},
+  year         = {2024},
+  note         = {arXiv:2404.01297}
+}
+
+@inproceedings{videollmonline2024,
+  title        = {{VideoLLM-online}: Online Video Large Language Model for
+                  Streaming Video},
+  author       = {Chen, Joya and Lv, Zhaoyang and Wu, Shiwei and
+                  Lin, Kevin Qinghong and Song, Chenan and Gao, Difei and
+                  Liu, Jia-Wei and Gao, Ziteng and Mao, Dongxing and
+                  Shou, Mike Zheng},
+  booktitle    = {Proceedings of the IEEE/CVF Conference on Computer Vision and
+                  Pattern Recognition (CVPR)},
+  year         = {2024},
+  note         = {arXiv:2406.11816}
+}
+
+% The JEPA lineage this reconstruction sits in.
+@inproceedings{ijepa2023,
+  title        = {Self-Supervised Learning from Images with a Joint-Embedding
+                  Predictive Architecture},
+  author       = {Assran, Mahmoud and Duval, Quentin and Misra, Ishan and
+                  Bojanowski, Piotr and Vincent, Pascal and Rabbat, Michael and
+                  LeCun, Yann and Ballas, Nicolas},
+  booktitle    = {Proceedings of the IEEE/CVF International Conference on
+                  Computer Vision (ICCV)},
+  year         = {2023},
+  note         = {arXiv:2301.08243}
+}
+
+@article{vjepa2024,
+  title        = {Revisiting Feature Prediction for Learning Visual
+                  Representations from Video},
+  author       = {Bardes, Adrien and Garrido, Quentin and Ponce, Jean and
+                  Chen, Xinlei and Rabbat, Michael and LeCun, Yann and others},
+  journal      = {arXiv preprint arXiv:2404.08471},
+  year         = {2024}
+}
+
+% Where to cut a stream: event boundaries, action segmentation, change points.
+@inproceedings{gebd2021,
+  title        = {Generic Event Boundary Detection: A Benchmark for Event
+                  Segmentation},
+  author       = {Shou, Mike Zheng and Lei, Stan Weixian and Wang, Weiyao and
+                  Ghadiyaram, Deepti and Feiszli, Matt},
+  booktitle    = {Proceedings of the IEEE/CVF International Conference on
+                  Computer Vision (ICCV)},
+  year         = {2021},
+  note         = {arXiv:2101.10511}
+}
+
+@article{tas2023,
+  title        = {Temporal Action Segmentation: An Analysis of Modern
+                  Techniques},
+  author       = {Ding, Guodong and Sener, Fadime and Yao, Angela},
+  journal      = {IEEE Transactions on Pattern Analysis and Machine
+                  Intelligence (TPAMI)},
+  year         = {2023},
+  note         = {arXiv:2210.10352}
+}
+
+@article{changepoint2020,
+  title        = {Selective Review of Offline Change Point Detection Methods},
+  author       = {Truong, Charles and Oudre, Laurent and Vayatis, Nicolas},
+  journal      = {Signal Processing},
+  volume       = {167},
+  pages        = {107299},
+  year         = {2020},
+  note         = {arXiv:1801.00718. The review behind the \texttt{ruptures} package}
+}
+
+% Spending less compute per frame, the complementary axis to decoding less often.
+@inproceedings{tome2023,
+  title        = {Token Merging: Your {ViT} But Faster},
+  author       = {Bolya, Daniel and Fu, Cheng-Yang and Dai, Xiaoliang and
+                  Zhang, Peizhao and Feichtenhofer, Christoph and
+                  Hoffman, Judy},
+  booktitle    = {International Conference on Learning Representations (ICLR)},
+  year         = {2023},
+  note         = {arXiv:2210.09461}
+}
+
+% Embedding-space evaluation, the precedent for our semantic metric.
+@inproceedings{bertscore2020,
+  title        = {{BERTScore}: Evaluating Text Generation with {BERT}},
+  author       = {Zhang, Tianyi and Kishore, Varsha and Wu, Felix and
+                  Weinberger, Kilian Q. and Artzi, Yoav},
+  booktitle    = {International Conference on Learning Representations (ICLR)},
+  year         = {2020},
+  note         = {arXiv:1904.09675}
+}
+
+@inproceedings{clipscore2021,
+  title        = {{CLIPScore}: A Reference-free Evaluation Metric for Image
+                  Captioning},
+  author       = {Hessel, Jack and Holtzman, Ari and Forbes, Maxwell and
+                  Le Bras, Ronan and Choi, Yejin},
+  booktitle    = {Proceedings of the 2021 Conference on Empirical Methods in
+                  Natural Language Processing (EMNLP)},
+  year         = {2021},
+  note         = {arXiv:2104.08718}
+}
+
+% The predictor's architecture (section 4.2).
+@inproceedings{transformer2017,
+  title        = {Attention Is All You Need},
+  author       = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and
+                  Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and
+                  Kaiser, {\L}ukasz and Polosukhin, Illia},
+  booktitle    = {Advances in Neural Information Processing Systems 30
+                  (NeurIPS)},
+  year         = {2017},
+  note         = {arXiv:1706.03762}
 }
