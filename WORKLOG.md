@@ -104,13 +104,90 @@ time-aligned CIDEr barely rewards timing.
 - `TABLES.md:232` says "pure temporal selection".
 - HANDOFF.md still has the stale "server RUNNING" and "finish the week plan" lines.
 
+### Later the same day: the fair baseline in the real harness, all 8 budgets
+- **Snapshot.** The user approved a snapshot commit and Step 1. I created branch
+  `thesis-reframe` and committed `8ea0da6`: the 13 modified files plus
+  `paper_ieee.tex`. `reference paper/` is deliberately left untracked, because it
+  holds a colleague's paper and an arXiv PDF. `main` is untouched and still equals
+  `origin/main` (682c5db).
+- **Code changes (on the branch, not yet committed):**
+  - `select_points` gains `uniform_pool`: uniform placement with adaptive's
+    smoothing and pooling, using blocks from the new `eval_pareto.uniform_blocks`.
+  - `select_points` gains `take_mean`: one decode per video, as a reference.
+  - `run_eval --methods`, with the default unchanged.
+  - V-JEPA 2 now loads only when a stream actually has to be built.
+  - The SonarSpace encoder now loads lazily, like the decoder. Decode-only work
+    then fits the 8 GB T1000, at about 145-230 decodes/min.
+  - `eval_rigor` pairs adaptive against every baseline that was run. The
+    `paired_adaptive_minus_uniform` key is unchanged; a new
+    `paired_adaptive_minus_uniform_pool` key sits beside it.
+  - `eval_semantic_pareto --methods`; extras must come after the defaults so the
+    shared RNG still reproduces the published curves.
+  - Tests: 13 -> 16, all passing.
+- **Regression checks:**
+  - Semantic curves, with pool `mean` and `none`, are bit-exact against the
+    published files, including the shuffled floor and random placement.
+  - `uniform_pool` is bit-exact against the scratch run.
+  - All 16 published CIDEr cells reproduce.
+  - eval_rigor's adaptive-minus-uniform table reproduces exactly.
+- **Decode cache.** I backed it up to the scratchpad, then appended the 2,626
+  scratch decodes after checking that the scratch copy extends it byte for byte.
+  The run grew `decode_cache_egoexo_indomain.jsonl` from 29,960 to 40,850 entries
+  (about 63 min of decoding).
+
+**Headline benchmark: corpus CIDEr, 40 takes, plus a per-take paired bootstrap of
+adaptive minus uniform+pool:**
+
+| Hz | decodes | uniform | adaptive | uniform+pool | adaptive - (uniform+pool), 95% CI | takes |
+|---:|---:|---:|---:|---:|---|---:|
+| 1.00 | 7072 | 0.296 | 0.330 | **0.335** | -0.0055 [-0.0157, +0.0028] ns | 21/40 |
+| 0.50 | 3537 | 0.310 | **0.348** | 0.342 | -0.0004 [-0.0087, +0.0073] ns | 24/40 |
+| 0.35 | 2357 | 0.299 | 0.340 | **0.358** | **-0.0113 [-0.0203, -0.0024]** | 11/40 |
+| 0.20 | 1412 | 0.287 | 0.333 | **0.341** | -0.0026 [-0.0124, +0.0083] ns | 15/40 |
+| 0.10 | 706 | 0.282 | 0.331 | **0.338** | -0.0062 [-0.0178, +0.0054] ns | 21/40 |
+| 0.05 | 357 | 0.278 | **0.338** | 0.319 | **+0.0143 [+0.0057, +0.0229]** | 29/40 |
+| 0.02 | 140 | 0.249 | 0.312 | **0.314** | -0.0035 [-0.0168, +0.0097] ns | 13/40 |
+| 0.01 | 76 | 0.305 | 0.302 | **0.322** | -0.0076 [-0.0214, +0.0062] ns | 9/40 |
+
+`take_mean`, one caption per take with 40 decodes in total, scores corpus CIDEr
+0.284 and semantic 0.6950. On the semantic metric uniform+pool is significantly
+better than adaptive at 8/8 budgets.
+
+**Verdict.**
+- Against the like-for-like baseline, adaptive is significantly better at 1/8
+  budgets (0.05 Hz), significantly worse at 1/8 (0.35 Hz), and tied at 6/8.
+- On corpus CIDEr, uniform+pool is higher at 6/8.
+- Its best score (0.358, 2,357 decodes) is above adaptive's best anywhere (0.348),
+  so the "9.9x fewer decodes" claim cannot be restated against it.
+- The published gain over plain uniform (+0.03 to +0.06) is the averaging, which
+  gives +6% to +26% CIDEr at every budget. Adaptive placement adds nothing
+  consistent on top.
+- VL-JEPA's "adaptive Pareto-dominates even with pooling on both" does not
+  replicate in our reconstruction.
+
+Outputs are gitignored at the root:
+- `results_egoexo_predictor_40_indomain_pooled.{json,png}`
+- `results_egoexo_rigor_pooled.json`
+- `logs/run_eval_pooled_20261117.log` and `logs/eval_rigor_pooled_20261117.log`
+
+### Paper author block filled
+The user supplied his guide's profile and his own details. The block uses the
+institute's format, taken from a colleague's IIIT-NR paper:
+- **A. Parganiha:** Department of Computer Science and Engineering, IIIT Naya
+  Raipur, 493661 India, aman25300@iiitnr.edu.in.
+- **K. G. Atram:** Department of Data Science and Artificial Intelligence, IIIT
+  Naya Raipur, gaurav@iiitnr.edu.in. He is now listed by his full name, "Kumar
+  Gaurav Atram".
+
 **Queued next (the user decides):**
-1. Snapshot-commit the 09-19 to 09-30 work.
-2. Add uniform+pool as a selectable baseline in run_eval, eval_rigor and
-   eval_semantic_pareto, and run all 8 budgets.
-3. Reframe the headline in the thesis, the paper, RESULTS and the README.
-4. The small doc fixes above.
-5. Paperwork: template, date, declaration, author block, viva deck.
+1. Commit Step 1 (the code plus the author block) on `thesis-reframe`.
+2. Step 2, the reframe. Rewrite the abstract, contributions 5-6, sections 6.8,
+   6.9, 7, 8 and 9 and the matching paper sections. Add the three-curve figure
+   and the paired table. Restate the 87% ceiling as a metric caveat. Update
+   RESULTS 5b and the README.
+3. The small doc fixes listed above.
+4. Paperwork: template, date and declaration.
+5. The viva deck.
 6. Disable the autopilot task.
 
 ---

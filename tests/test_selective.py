@@ -8,6 +8,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from livejepa.selective.offline import segment_stream, temporal_connectivity, decode_points
 from livejepa.selective.online import VarianceTrigger, run_online, run_online_segments
 from livejepa.selective.pooling import moving_average
+from livejepa.eval_pareto import uniform_points, uniform_blocks
+from livejepa.run_eval import select_points
 
 
 def make_event_stream(events=5, seg_len=40, dim=64, noise=0.05, seed=0):
@@ -94,6 +96,41 @@ def test_moving_average_is_causal_and_shape_preserving():
     assert sm.shape == stream.shape
     # first element unchanged (causal, window starts at itself)
     assert np.allclose(sm[0], stream[0])
+
+
+def test_uniform_blocks_partition_the_stream_around_uniform_points():
+    for T in (2, 3, 7, 40, 41, 719):
+        for stride in (1, 2, 3, 4, 7, 40, 100, 1000):
+            idxs, blocks = uniform_blocks(T, stride)
+            assert idxs == uniform_points(T, stride)
+            assert len(blocks) == len(idxs)
+            assert blocks[0][0] == 0 and blocks[-1][1] == T        # covers the stream
+            assert all(a < b for a, b in blocks)
+            assert all(x[1] == y[0] for x, y in zip(blocks, blocks[1:]))  # no gap/overlap
+            assert all(a <= i < b for i, (a, b) in zip(idxs, blocks))
+
+
+def test_uniform_pool_keeps_uniform_budget_and_timestamps():
+    stream, _ = make_event_stream()
+    sel = {"smoothing_window": 3, "pool": "mean", "linkage": "ward"}
+    for hz in (1.0, 0.2, 0.05, 0.01):
+        iu, eu = select_points("uniform", stream, hz, 2.0, sel)
+        ip, ep = select_points("uniform_pool", stream, hz, 2.0, sel)
+        ia, _ = select_points("adaptive", stream, hz, 2.0, sel)
+        assert ip == iu and len(ia) == len(iu)                   # same budget, same times
+        assert ep.shape == eu.shape
+    # with no smoothing and no pooling it is exactly plain uniform
+    raw = {"smoothing_window": 1, "pool": "none"}
+    iu, eu = select_points("uniform", stream, 0.2, 2.0, raw)
+    ip, ep = select_points("uniform_pool", stream, 0.2, 2.0, raw)
+    assert ip == iu and np.allclose(ep, eu)
+
+
+def test_take_mean_is_one_decode_of_the_whole_stream():
+    stream, _ = make_event_stream()
+    idxs, embs = select_points("take_mean", stream, 0.5, 2.0, {})
+    assert idxs == [len(stream) // 2] and embs.shape == (1, stream.shape[1])
+    assert np.allclose(embs[0], stream.mean(0))
 
 
 def test_adaptive_uses_fewer_decodes_than_dense_at_quality():

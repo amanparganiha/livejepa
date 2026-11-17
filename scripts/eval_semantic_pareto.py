@@ -53,6 +53,11 @@ def main():
                          "to separate temporal SELECTION from pooling/denoising")
     ap.add_argument("--gt-emb-cache", default="eval_data/gt_emb_cache.npz",
                     help="cache of SONAR embeddings for GT captions (speeds reruns)")
+    ap.add_argument("--methods", default="uniform,adaptive,random",
+                    help="comma-separated; also uniform_pool (uniform placement with "
+                         "adaptive's smoothing and pooling) and take_mean. One RNG is "
+                         "shared across methods in this order, so append extras AFTER "
+                         "the defaults to keep the default curves reproducible")
     ap.add_argument("--out", default="results_semantic_pareto")
     args = ap.parse_args()
 
@@ -128,7 +133,7 @@ def main():
     # any adaptive-vs-uniform gap would be meaningless.
     rng = np.random.default_rng(0)
     results = {}
-    for method in ("uniform", "adaptive", "random"):
+    for method in [m for m in args.methods.split(",") if m]:
         curve = []
         for hz in freqs:
             sims, shuf, n_dec, secs = [], [], 0, 0.0
@@ -169,7 +174,10 @@ def main():
         import matplotlib.pyplot as plt
         fig, ax = plt.subplots(figsize=(7, 5))
         for m, st in (("uniform", dict(marker="s", color="#888", ls="--")),
-                      ("adaptive", dict(marker="o", color="#2c7fb8", ls="-"))):
+                      ("adaptive", dict(marker="o", color="#2c7fb8", ls="-")),
+                      ("uniform_pool", dict(marker="^", color="#e6550d", ls="-."))):
+            if m not in results:
+                continue
             xs = [c["avg_hz"] for c in results[m]]
             ys = [c["semantic_cos"] for c in results[m]]
             o = np.argsort(xs)
