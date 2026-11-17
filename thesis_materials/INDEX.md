@@ -5,7 +5,9 @@ Everything needed to format the thesis, in one place. Prose draft is
 
 **Last refreshed 2026-08-02** — after the ceiling/headroom analysis closed the
 experimental programme. All planned experiments are complete; what remains is
-formatting.
+formatting. **Corrected 2026-09-20** in the thesis fix pass (see WORKLOG): the
+keystep figure is no longer labelled the paper's benchmark, and the significance
+wording matches §6.9.
 
 ## Documents
 | File | What it is |
@@ -13,7 +15,8 @@ formatting.
 | `../docs/THESIS.md` | Full thesis draft (prose, all sections) — **the working copy; edit this** |
 | `thesis.tex` | LaTeX main file: preamble, title page, bibliography. Hand-written, safe to edit |
 | `thesis_body.tex` | **GENERATED** from THESIS.md by `scripts/md_to_latex.py`. Never hand-edit |
-| `references.bib` | Bibliography — **every entry needs verifying before submission** |
+| `paper_ieee.tex` | 12-page IEEE journal-format paper (IEEEtran, two-column; 16 tables, 15 figures — 13 plots plus 2 drawn in TikZ, 27 refs) distilled from the thesis — **hand-maintained**; shares `figures/` and `references.bib`. Authors: A. Parganiha and G. Atram; department/institute/venue are TODO placeholders |
+| `references.bib` | Bibliography — 16 entries, each verified against its arXiv / publisher page (2026-08-10, 2026-09-20), every one cited inline |
 | `BUILD.md` | How to compile (Overleaf or local), how to swap in the institute template |
 | `TABLES.md` | Every result table + architecture facts, ready to convert |
 | `../RESULTS.md` | Consolidated results with reproduce commands |
@@ -28,8 +31,9 @@ redundancy**, and it needs a **predicted** stream rather than dense labels. On
 coarse streams it wins (≈1.6× COIN, ≈2.5× EgoExo4D keysteps); on *raw* atomic
 annotations (~1 event / 2 s) it loses at every budget; but on the **predicted**
 stream over those same atomic annotations, with an in-domain predictor, it wins
-7/8 budgets at **≈9.9× fewer decodes** — significant at every budget over 40
-held-out takes — and reaches **87% of a provable upper bound**, while *beating
+7/8 budgets at **≈9.9× fewer decodes** — significant at every budget on the
+semantic metric and 7/8 on CIDEr, over 40 held-out takes — and reaches **87% of a
+provable upper bound**, while *beating
 decode-everything at ~40× lower cost*. The residual gap belongs to the predictor,
 not the trigger.
 
@@ -39,7 +43,7 @@ not the trigger.
 | Figure | Thesis § | Caption idea |
 |---|---|---|
 | `results_coin_gt.png` | §6.1 | COIN gt-mode Pareto: adaptive vs uniform (≈1.6×) |
-| `results_egoexo_keystep.png` | §6.1 | EgoExo4D keysteps Pareto (≈2.5×; paper's benchmark) |
+| `results_egoexo_keystep.png` | §6.1 | EgoExo4D keysteps Pareto (≈2.5×; *not* the paper's benchmark — that is atomic descriptions, §6.7–6.8) |
 | `results_ablation_methods.png` | §6.2 | Method ablation incl. the online-trigger correction |
 | `results_coin_predictor.png` | §6.3 | Predictor-in-the-loop Pareto: the mid-band where uniform wins |
 | `results_coin_predictor_c1final.png` | §6.5 | Full predicted pipeline, final checkpoint |
@@ -60,7 +64,7 @@ not the trigger.
 | `results_egoexo_rigor.png` | **§6.9** | Paired (adaptive − uniform) per budget, 95% bootstrap CIs. All 8 semantic budgets clear zero; the single ns CIDEr cell is circled |
 | `results_egoexo_ceiling.png` | **§6.9** | Headroom: adaptive at 87.1% of the best-window upper bound, *above* decode-everything and above the GT-boundary reference |
 
-### Rejected artifact — keep, the controls chapter needs it
+### Rejected artifact — keep, the §6.8 controls are defined against it
 | Figure | Thesis § | Caption idea |
 |---|---|---|
 | `results_egoexo_predictor_40_semantic.png` | §6.8 controls | Out-of-domain predictor: the apparent 8/8 win whose controls exposed it as denoising, not selection |
@@ -85,13 +89,16 @@ python scripts/make_thesis_figures.py
 
 ## To format later
 The LaTeX conversion is **done** — see `BUILD.md`. Fastest path: upload
-`thesis.tex`, `thesis_body.tex`, `references.bib` and `figures/` to Overleaf,
-set the main document to `thesis.tex`, compile. Then swap the preamble for the
-institute's template, place the figures, and verify the bibliography.
+`livejepa_thesis_overleaf.zip` (built by `scripts/make_overleaf_zip.py`) to
+Overleaf and compile with pdfLaTeX. Figures are placed, tables are numbered and
+captioned, and the bibliography is verified and cited inline; what remains is
+swapping the preamble for the institute's template (`BUILD.md`).
 
 **Two things to carry into the viva.** (1) The negative in §6.7 and the positive
-in §6.8 are the *same benchmark* differing only in whether the stream is
-annotated or predicted — that pairing is the contribution, so keep them adjacent.
+in §6.8 are the *same benchmark*. On exactly the 40 headline takes, the annotated
+stream favours uniform at 7/8 budgets and the predicted stream favours adaptive at
+7/8 (verified 2026-09-20 from the 218-take run's decode cache), so the stream is
+the only difference. That pairing is the contribution, so keep them adjacent.
 (2) §6.9's ceiling says the trigger is close to exhausted; if an examiner asks
 "what next", the answer is predictor capacity and in-domain data (§6.5's curve
 was still climbing), not trigger tuning (§6.3, negative).

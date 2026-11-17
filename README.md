@@ -20,8 +20,8 @@ redundancy**, and it needs a **predicted** stream rather than dense labels. On t
 paper's own EgoExo4D atomic-description benchmark, adaptive **loses at every budget**
 against raw annotations — but wins **7 of 8 budgets at ≈9.9× fewer decoder calls**
 once the same annotations are approached through a predicted stream from an in-domain
-predictor. Significant at every budget over 40 held-out takes, and at **87% of a
-provable upper bound** — *above* what decoding every single window achieves, at ~40×
+predictor. Significant at every budget on a semantic metric (7 of 8 on CIDEr) over
+40 held-out takes, and at **87% of a provable upper bound** — *above* what decoding every single window achieves, at ~40×
 lower cost. Full numbers: **`RESULTS.md`**; thesis: **`docs/THESIS.md`**.
 
 ---

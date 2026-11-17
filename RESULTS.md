@@ -3,9 +3,10 @@
 All numbers use **real SONAR decode** + the paper's **time-aligned CIDEr-D**
 (each GT annotation matched to the nearest decoded caption in time).
 
-**The honest thesis claim.** Adaptive selective decoding **Pareto-dominates
-uniform-interval decoding when the semantic stream is temporally redundant** —
-COIN steps and EgoExo4D keysteps (§1). Its advantage is a **function of that
+**The honest thesis claim.** Adaptive selective decoding **dominates
+uniform-interval decoding across the mid-band when the semantic stream is
+temporally redundant** — COIN steps and EgoExo4D keysteps (§1), with uniform
+recovering at the lowest rates. Its advantage is a **function of that
 redundancy**, and the decisive variable is whether the stream is *predicted* or
 raw: on a **raw** hyper-dense annotation stream (EgoExo4D *atomic* descriptions,
 ~1 event / 2 s, measured at the paper's full 218-take scale) the advantage
@@ -44,10 +45,14 @@ for the why.
 
 | target Hz | uniform | adaptive |
 |---:|---:|---:|
+| 1.00 | 8.81 | 8.81 |
 | 0.50 | 8.47 | **8.79** |
-| 0.35 | 7.92 | **8.68** |
+| 0.35 | 7.92 | **8.67** |
 | 0.20 | 6.83 | **7.72** |
 | 0.10 | 4.94 | **5.27** |
+| 0.05 | **3.77** | 3.53 |
+| 0.02 | **3.54** | 2.29 |
+| 0.01 | **3.46** | 2.04 |
 
 Adaptive holds CIDEr ≈ 7.7 at 0.20 Hz, which uniform reaches only near ~0.31 Hz →
 **≈1.6× fewer decodes at equal quality**. Honest crossover at ≤0.05 Hz.
@@ -55,8 +60,8 @@ Adaptive holds CIDEr ≈ 7.7 at 0.20 Hz, which uniform reaches only near ~0.31 H
 python -m livejepa.run_eval --dataset coin --mode gt
 ```
 
-**EgoExo4D val keysteps** — the paper's own benchmark, 10 takes,
-`results_egoexo_keystep.png/.json`:
+**EgoExo4D val keysteps** — 10 takes, `results_egoexo_keystep.png/.json` (not the
+paper's benchmark: VL-JEPA reports on atomic descriptions, §5–5b):
 
 | target Hz | uniform | adaptive |
 |---:|---:|---:|
@@ -64,10 +69,13 @@ python -m livejepa.run_eval --dataset coin --mode gt
 | 0.35 | 8.12 | **8.20** |
 | 0.20 | 7.75 | **8.20** |
 | 0.10 | 6.54 | **7.38** |
-| 0.05 | 4.70 | 4.16 |
+| 0.05 | **4.70** | 4.16 |
+| 0.02 | **2.37** | 1.58 |
+| 0.01 | **1.49** | 0.74 |
 
 Adaptive holds the 8.20 plateau down to 0.20 Hz vs uniform's ~0.50 Hz →
-**≈2.5× fewer decodes** (paper reports 2.85×). Crossover at ~0.05 Hz.
+**≈2.5× fewer decodes** (not comparable to the paper's 2.85×, which is on atomic
+descriptions). Crossover at ~0.05 Hz.
 ```bash
 python -m livejepa.run_eval --dataset egoexo --mode gt --gt-source keystep --max-videos 10 --max-seconds 300
 ```
@@ -253,9 +261,9 @@ benefit is a monotone function of the stream's temporal redundancy.**
 atomic descriptions using their *predicted* (denoised) embedding stream; this is
 our clean-signal **gt-mode** proxy, which isolates the segmenter on the raw
 annotation density and finds nothing to exploit at that density. Whether a
-denoised *predicted* stream recovers an advantage on atomic content is the open
-question tested by the predictor-mode run on these takes (rung C2). The honest
-negative here is the baseline that question is measured against.
+denoised *predicted* stream recovers an advantage on atomic content is answered in
+§5b: it does, with an in-domain predictor. The honest negative here is the
+baseline that answer is measured against.
 ```bash
 python -m livejepa.run_eval --dataset egoexo --mode gt --gt-source atomic \
     --uids-file eval_data/egoexo_takes_218.txt --max-seconds 360 \
@@ -275,10 +283,13 @@ stylistically alien captions (`'remove the chain'` vs annotations written as
 flooring CIDEr at **0.012 for both methods** — an unmeasurable comparison.
 
 We therefore trained an in-domain predictor: 11,556 (window → caption) pairs from
-721 EgoExo takes, windowed **identically to inference** (K=16 @2 fps, centred on
-the annotation timestamp), 20k steps. The 40 evaluation takes were excluded from
-training entirely; 25 further takes were held out for gating
-(**cos 0.599**, pred–pred 0.325 — not collapsed).
+627 EgoExo takes (extraction hit its 12,000-sample cap before the 721-take
+candidate pool was exhausted), windowed **identically to inference** (K=16 @2 fps,
+centred on the annotation timestamp), 20k steps. The 40 evaluation takes were
+excluded from training by take; 25 further takes were held out for gating
+(**cos 0.599**, pred–pred 0.325 — not collapsed). Caveat found 2026-09-19: the 40
+takes share participants (40/40) and recording sessions (39/40) with training
+takes; a participant-disjoint retrain keeps 483 takes / 8,822 pairs.
 
 **Time-aligned CIDEr-D, 40 held-out takes, `--max-seconds 360`:**
 
@@ -293,11 +304,17 @@ training entirely; 25 further takes were held out for gating
 | 0.020 | 140 | 0.249 | **0.312** | +0.063 |
 | 0.011 | 76 | **0.305** | 0.302 | −0.003 |
 
-**Adaptive wins 7/8 budgets, and CIDEr rose 25× overall (0.012 → ~0.33) purely
-from fixing the domain.** Headline in the paper's form: the best uniform result
-anywhere is 0.310 (0.499 Hz, 3537 decodes); adaptive reaches **0.338 at 0.050 Hz
-using 357 decodes** — **≈9.9× fewer decodes at equal-or-better quality**
-(the paper reports 2.85×).
+**Adaptive wins 7/8 budgets, and CIDEr rose 25× overall (0.012 → ~0.33) from
+training in-domain** (partly same-session familiarity; see the caveat above).
+Headline, anchored conservatively: the best uniform result anywhere is 0.310
+(0.499 Hz, 3537 decodes); adaptive reaches **0.338 at 0.050 Hz using 357
+decodes** — **≈9.9× fewer decodes at equal-or-better quality** (the paper reports
+2.85×). The paper anchors on uniform at 1 Hz; here that rule would give a
+meaningless ~93×, because uniform's CIDEr is nearly flat in rate. Same-takes
+control (2026-09-20): on exactly these 40 takes the ground-truth stream favours
+uniform at 7/8 budgets (adaptive edges it only at 0.20 Hz, 2.381 vs 2.352; all
+from the 218-take run's decode cache), so the reversal belongs to the stream, not
+to the take sample.
 
 ### Controls — why we trust this one (and not the out-of-domain attempt)
 
@@ -516,12 +533,15 @@ the largest training set in this project.
 
 | model | training data | COIN-137 | COIN-956 | A100M-160 |
 |---|---|---:|---:|---:|
-| C1-final | 26,863 COIN | **0.897** | **0.846** | 0.386 |
+| C1-final | 26,360 COIN | **0.897** | **0.846** | 0.386 |
 | C1-mid | 5,529 COIN | 0.883 | 0.733 | **0.401** |
 | C2 | 6,710 A100M | 0.359 | 0.392 | 0.348 |
-| **C3 combined** | 33,573 (both) | 0.875 | 0.823 | 0.390 |
+| **C3 combined** | 33,573 (both) | 0.875 | 0.824 | 0.390 |
 
-**Adding 25% more clips made the model slightly worse** (−0.022 / −0.023 on the
+(COIN-956 = the 956 val files that predate the 2026-07-19 late merge; C3's earlier
+0.823 was measured on the 977-file directory. Re-derived 2026-09-20.)
+
+**Adding 25% more clips made the model slightly worse** (−0.022 on both
 COIN benchmarks) and produced no meaningful gain on A100M (0.390, still under
 C1-mid's 0.401). The decoded captions show the mechanism directly — A100M's open
 vocabulary contaminates previously exact COIN outputs:
@@ -587,7 +607,8 @@ honest residue — things deliberately not done, and their reasons.
 - **Predictor-mode EgoExo eval on the 40-take subset — DONE (§5b), and it is the
   thesis headline.** The §5 open question is answered: yes, a *predicted* stream
   beats uniform on atomic content where the clean gt-stream cannot — 7/8 budgets,
-  ≈9.9× fewer decodes, significant at every budget, 87% of a provable ceiling.
+  ≈9.9× fewer decodes, significant at every budget on the semantic metric (7/8
+  on CIDEr), 87% of a provable ceiling.
 - **Ceiling analysis — DONE (§5b).** Also settles the follow-up question: the
   trigger is near-exhausted, so remaining effort belongs on the predictor. This
   is why no further trigger work is queued.

@@ -6,6 +6,452 @@ backfilled summaries.
 
 ---
 
+## 2026-11-17 (Tuesday)
+
+**Theme: a fresh-session review of the whole project, after seven weeks idle,
+found that the headline's uniform baseline was never pooled. Adaptive decodes
+segment means of a smoothed stream, and VL-JEPA pools both schedules. Against a
+pooling-matched uniform the headline does not hold. Everything was measured
+read-only in the session scratchpad; the only repo change is this entry.**
+
+### State re-verified
+- Still the college T1000 machine. All caches and checkpoints are on disk, and
+  the GPU was free. `pytest tests/ -q`: 13/13.
+- Git is as 09-30 left it: 13 modified files plus 2 untracked
+  (`reference paper/`, `thesis_materials/paper_ieee.tex`), all uncommitted.
+  `thesis.pdf` (32 pp) and `paper_ieee.pdf` (12 pp) are current with their sources.
+- `LiveJEPA_KaggleAutopilot` is **still enabled**. It attempted a run today at
+  17:28 (result 0x800710E0) and is next due 2026-11-18 12:00. Its last successful
+  5.2 GB re-download of `coin_cache_p7.tar` was 2026-10-07. Not disabled (user's call).
+
+### Finding: the uniform baseline was never pooled
+- In code, `select_points('uniform')` decodes single raw stream points. Adaptive
+  decodes the mean of each Ward segment of the 3-step-smoothed stream.
+- VL-JEPA section 4.6 (read from the PDF in `reference paper/`): decoding uses
+  "either the exact embedding or the average-pooled embedding within the
+  segment", and "average pooling provides consistent gains for both strategies".
+  The paper's uniform baseline is pooled; ours never was. (On 09-30 I read the
+  same sentence as support for our setup and missed this.)
+- The "no-pooling" control is not exact-point either. With `pool=none`, adaptive
+  still decodes points of the *smoothed* stream while uniform decodes raw ones.
+  THESIS 6.8 and paper_ieee.tex:962-965 describe it as exact points and conclude
+  "temporal selection, not pooling, carries the margin".
+- **The harness was validated first.** Before any new number was trusted, it
+  reproduced every published value exactly:
+  - three semantic curves (uniform, adaptive, no-pool), to 4 dp at all 8 budgets;
+  - the rigor run's per-take means, exactly;
+  - all 10 CIDEr cells (both methods at 5 budgets), from a scratch *copy* of
+    `decode_cache_egoexo_indomain.jsonl`.
+- "uniform+pool" below means fixed blocks of length `stride`, mean-pooled, with
+  the same count and the same timestamps as uniform, and the same smoothing as
+  adaptive.
+
+**Semantic metric (40 takes):**
+- No-pool control with equal smoothing on both sides: -0.0025 to +0.0028.
+  Published, with smoothing on adaptive only: +0.031 to +0.040. With no
+  smoothing on either side: -0.0048 to +0.0083.
+- uniform+pool beats adaptive at 8/8 budgets, and the paired bootstrap is
+  significant at 8/8: from -0.0013 [-0.0019, -0.0007] at 1 Hz to -0.0111
+  [-0.0179, -0.0052] at 0.01 Hz. Only 1-12 of 40 takes favour adaptive.
+- **One decode per take** (the whole-take mean) scores **0.6950**. That is above
+  adaptive at every budget (its best is 0.6825) and 90.0% of the 0.7720 "ceiling".
+  The metric rewards averaging itself.
+
+**CIDEr, the sparse half (corpus CIDEr; per-take paired bootstrap of adaptive
+minus uniform+pool):**
+
+| Hz | decodes | uniform | adaptive | uniform+pool | adaptive - (uniform+pool), 95% CI | takes |
+|---:|---:|---:|---:|---:|---|---:|
+| 0.20 | 1412 | 0.2873 | 0.3330 | **0.3410** | -0.0026 [-0.0124, +0.0083] ns | 15/40 |
+| 0.10 | 706 | 0.2820 | 0.3315 | **0.3381** | -0.0062 [-0.0178, +0.0054] ns | 21/40 |
+| 0.05 | 357 | 0.2783 | **0.3378** | 0.3192 | **+0.0143 [+0.0057, +0.0229]** | 29/40 |
+| 0.02 | 140 | 0.2493 | 0.3118 | **0.3135** | -0.0035 [-0.0168, +0.0097] ns | 13/40 |
+| 0.01 | 76 | 0.3052 | 0.3024 | **0.3218** | -0.0076 [-0.0214, +0.0062] ns | 9/40 |
+
+**One caption per take** (40 decodes in total) scores CIDEr **0.2844**, roughly
+plain uniform at 0.2 Hz (0.2873 with 1,412 decodes). On this benchmark,
+time-aligned CIDEr barely rewards timing.
+
+### What it means
+- **Against a pooled uniform, adaptive wins at one budget only.** It is
+  significantly better at 1 of the 5 sparse budgets (0.05 Hz). The other 4 are
+  statistical ties, and uniform+pool is numerically ahead at all 4.
+- **The 9.9x claim does not hold against the fair baseline.** It is anchored on
+  plain uniform. The best pooled-uniform score so far is 0.341, at 1,412 decodes.
+  Adaptive first exceeds that at 0.5 Hz (0.348, 3,537 decodes). The dense half
+  (1.0/0.5/0.35 Hz, about 13k decodes) is not yet run for uniform+pool.
+- **Most of the gain over plain uniform is averaging.** The predicted stream is
+  noisy, and both schedules can average it. "87% of a provable ceiling" is
+  weakened as an argument about trigger quality, since a schedule with no timing
+  at all reaches 90%.
+- **Unaffected:**
+  - the reconstruction;
+  - the `SegmentTrigger` fix;
+  - the scaling study;
+  - C2 and C3;
+  - the clean-stream results (COIN 1.6x, keysteps 2.5x, the atomic-218 negative);
+  - the demo.
+
+### Doc errors that survived the 09-20 pass
+- `RESULTS.md:359-360` says both metrics "agree in direction at every budget",
+  which is false at 0.01 Hz.
+- `RESULTS.md:574-578` still uses the label-noise framing, against the entropy
+  account in the same file.
+- `RESULTS.md:164-165` says the definitive COIN Pareto was "bundled into C2"; it
+  never was.
+- The `BUILD.md` status header says 30 pp and 16 refs; the actual figures are
+  32 pp and 28.
+- `TABLES.md:232` says "pure temporal selection".
+- HANDOFF.md still has the stale "server RUNNING" and "finish the week plan" lines.
+
+**Queued next (the user decides):**
+1. Snapshot-commit the 09-19 to 09-30 work.
+2. Add uniform+pool as a selectable baseline in run_eval, eval_rigor and
+   eval_semantic_pareto, and run all 8 budgets.
+3. Reframe the headline in the thesis, the paper, RESULTS and the README.
+4. The small doc fixes above.
+5. Paperwork: template, date, declaration, author block, viva deck.
+6. Disable the autopilot task.
+
+---
+
+## 2026-09-30 (Wednesday)
+
+**Theme: the IEEE paper restyled against two reference PDFs the user supplied --
+the real VL-JEPA paper and a colleague's paper -- plus the first chance to check
+our VL-JEPA claims against the source rather than against web fetches.**
+
+### The source paper confirms what we wrote about it
+`reference paper/2512.10942v2.pdf` is the actual VL-JEPA paper. Verified directly:
+- "selective decoding at 0.35 Hz (i.e., 2.85s interval) matches the performance of
+  uniform decoding at 1 Hz" and "adaptive selection consistently Pareto-dominates
+  uniform sampling" -- our description and our "no crossover" contrast are right.
+- "218 videos with an average duration of 6 minutes and about T = 143 atomic
+  action annotations per video" -- matches.
+- Agglomerative clustering with temporal-connectivity constraints, segments of
+  high intra-segment monosemanticity measured by Ward distance, **decoded at the
+  segment midpoint** -- the same choice we made independently.
+- Predictor initialised from **layers 8-16 of Llama-3.2-1B** (490M); Y-Encoder is
+  EmbeddingGemma-300M. Both now stated in Related Work.
+- The paper itself stabilises the stream "with simple smoothing" before detection
+  and reports average pooling helps both schedules. That is worth knowing: our
+  smoothing disclosure describes a setting the original method also uses, and our
+  pooling control isolates what the paper assumes.
+
+### Restyle (format only -- no content taken from the colleague's paper)
+- Author line is now `Aman Parganiha, and Gaurav Atram`, journal-style, with
+  affiliations as `\thanks` footnotes, matching the reference layout. Department,
+  institute, city and the `\markboth` venue remain TODO.
+- **Two TikZ figures added**: Fig. 1, the architecture (frozen components grey,
+  the trained predictor tinted, the training-only branch boxed); Fig. 2, what
+  uniform and adaptive do with the same budget on a stream of plateaus. Both are
+  drawn in the .tex so the user can edit them, and both are wrapped in
+  `\resizebox` after the first draft of Fig. 1 ran 86pt past the text width.
+- Winning cells in the headline, same-takes and ceiling tables now use a tinted
+  `\best{}` macro, as the reference paper highlights its best numbers.
+- Still 12 pages, 0 errors, 0 overfull. All **287 numeric cells re-verified** after
+  the restyle (the checker needed teaching about `\best{}`). The Overleaf zip was
+  rebuilt and re-validated by compiling it from an empty directory.
+
+Later the same day, on the user's request, the running head
+("PREPRINT -- TODO: TARGET VENUE, 2026") was removed from every page:
+`\markboth{}{}`, so pages carry only a page number, as the reference paper does.
+The commented line above it restores a venue banner in one edit. Rebuilt: 12
+pages, 0 errors, 0 overfull, 287 cells still verifying. (The word "preprint" still
+appears seven times on the last page -- inside "arXiv preprint arXiv:..." in the
+bibliography, which is correct.)
+
+**Queued next (user):** fill the author placeholders; commit when happy.
+
+---
+
+## 2026-09-20 (Sunday)
+
+**Theme: the thesis fix pass, on the user's "fix the thesis". Every defect from
+yesterday's audit is fixed. Verifying the fixes by measurement rather than by
+reading turned up four more wrong numbers, one wrong framing, and a bound whose
+"provable" label needed re-proving.**
+
+### What changed in `docs/THESIS.md` (and therefore the PDF)
+- **The paper is described correctly** (§1, §2, §3, §6.1), checked against the
+  arXiv HTML of 2512.10942. Its selective-decoding benchmark is EgoExo4D atomic
+  descriptions (218 videos, ~143 annotations each). Its 2.85x means "selective at
+  0.35 Hz matches uniform at 1 Hz". It reports no crossover anywhere in 0.01–2 Hz.
+  Keysteps are no longer called the paper's benchmark, and 2.5x is no longer set
+  against 2.85x. §1 also claimed the paper "glosses over" predicted streams; its
+  headline is on a predicted stream, so that sentence is rewritten.
+- **Significance** (abstract, §1, §6.9, §9, README, INDEX, RESULTS): the semantic
+  metric is significant at 8/8 budgets and CIDEr at 7/8. At 0.011 Hz the CIDEr
+  difference is null (−0.002, CI [−0.037, +0.031], 19/40 takes).
+- **Complete tables:** COIN-gt now has 8 rows, keysteps 7, §6.3b 8, atomic-218 8,
+  and the headline 8 (including the one uniform win). "Pareto dominance" becomes
+  "mid-band dominance" wherever the data says so.
+- **Pre-smoothing disclosed** in §4.3, §6.3, §6.5, §6.8, §8 and Appendix A:
+  `smoothing_window = 3` applies from §6.5 on, and §6.1–6.3 are un-smoothed. It
+  also explains why the same checkpoint has two adaptive curves.
+- **Smaller fixes:**
+  - The in-domain predictor used 627 takes, not 721.
+  - The optimiser is AdamW with cosine decay and batch 32.
+  - The §6.5 caption now compares like for like (0.846 vs 0.667).
+  - §6.7 is no longer in future tense, and its claim to be "exact" is gone.
+  - The 9.9x anchor is explained: the paper's rule would give a meaningless ~93x,
+    and adaptive at 0.020 Hz (≈25x) is within noise.
+  - EmbeddingGemma is named, and VL-JEPA's own decoder is described.
+  - The web app is described in §6.4.
+  - The session overlap is disclosed in §8 and added to future work.
+- **The PDF defects:** the rejected-artifact figure no longer splits a sentence,
+  and the VL-JEPA entry is now an article, so its arXiv id prints.
+- **Formatting:**
+  - The bibliography has 16 entries, 8 of them new; each new one was checked against
+    its arXiv or publisher page. All are cited inline and there is no `\nocite{*}`.
+  - The 10 tables are numbered and captioned.
+  - All 21 floats are referenced from the text.
+  - There is a List of Figures (with short captions) and a List of Tables.
+
+### New measurements (scratch scripts in the job dir; no repo data touched)
+- **Scaling confound:** the final run's 20k-step checkpoint scores 0.882 / 0.832 /
+  0.394. At matched 20k steps, +0.099 of the +0.113 gain is data and +0.014 is the
+  extra steps. The frozen-137 set saturates (0.883 → 0.882). All 9 published
+  scaling cells re-derive exactly on the "956" set, which is the files in
+  `data_cache_coin_full_val` that predate the 2026-07-19 late merge. The directory
+  now holds 977, so `eval_predictor.py` there prints 0.844 rather than 0.846;
+  Appendix A says so.
+- **Headline without smoothing, semantic metric:** recomputing with w=3 reproduces
+  the published numbers exactly. With w=1, adaptive still wins 8/8, by +0.013 at
+  1 Hz rising to +0.102.
+- **Headline without smoothing, CIDEr:** the harness first reproduced the published
+  0.05 Hz cell exactly (0.33781). With w=1, adaptive wins the **same 7/8 budgets**
+  and loses 0.011 Hz as before. The key 9.9x cell is unchanged (0.3379 vs 0.3378).
+  Only the two highest rates narrow: 1 Hz 0.3065 vs 0.2956, and 0.5 Hz 0.3196 vs
+  0.3098 (≈+0.010, against ≈+0.035 smoothed). The 0.2–0.1 Hz cells are slightly
+  *higher* unsmoothed.
+- **Ceiling with smoothing:** the raw ceiling does not strictly bound smoothed
+  adaptive. The smoothed-stream ceiling is 0.7661, and the per-annotation union
+  is 0.7721 against 0.7720, so the "provable" claim holds and every percentage
+  is unchanged.
+- **Action100M, C3 and vocabulary tables:** all re-derive exactly, except C3's
+  COIN-956, which is 0.824 (the published 0.823 was measured on the 977-file dir).
+- **The GT stream on exactly the 40 headline takes**, rebuilt as `run_eval` does and
+  looked up in the atomic-218 run's decode cache:
+  - **§6.7 used smoothing 3.** All 15,843 w=3 adaptive keys are in the cache. Only
+    12,693/15,843 w=1 keys are, and the missing ones are the blended means an
+    un-smoothed run would have decoded.
+  - **Same takes, the stream is the only difference.** The GT stream favours
+    uniform at 7/8 budgets (adaptive only at 0.20 Hz, 2.381 vs 2.352), while the
+    predicted stream favours adaptive at 7/8. §6.8, §7, the Figure 7 caption and
+    the INDEX viva note now say so. The earlier text had said "differing only in
+    the stream" across 218 vs 40 takes.
+
+### Four more wrong numbers, caught by checking at printed precision
+Yesterday's audit said "every printed value matches". It was eyeballing values at
+4 decimals, and that was not good enough. The machine check (118 cells) found:
+1. COIN-gt 0.35 Hz adaptive is 8.67 (source 8.674699), not 8.68.
+2. Atomic-218 0.10 Hz adaptive is 1.60 (1.604963), not 1.61.
+3. C3's COIN-956 is 0.824 on the fixed set. Also, "no better than COIN alone on
+   A100M" was false against C1-final (0.390 vs 0.386).
+4. TABLES.md had its own errors:
+   - It listed C1-final as trained on 26,863 clips; the real figure is 26,360.
+   - The 25.3x caveat pointed at the wrong row.
+   - "Curated labels beat noisy ones" contradicted the entropy account.
+   - The out-of-domain effect was 59% denoising, not 58%.
+
+### Tooling
+- `md_to_latex.py`: a `Table: caption {#tab:x}` line now makes a numbered table
+  float, and a `~` before `\ref`/`\cite` is kept as a tie. Regression-checked:
+  unchanged markdown gives byte-identical output.
+- `check_thesis_tex.py` now fails on:
+  - unreferenced floats;
+  - cite keys missing from the .bib;
+  - .bib entries that are never cited;
+  - any at-sign in the .bib outside an entry header.
+- `thesis.tex`:
+  - gains the List of Figures and List of Tables;
+  - sets table captions to sit above their tables;
+  - uses `hypertexnames=false`, which removes the duplicate-anchor warnings;
+  - loses a stale "SECTIONLEVEL" pointer.
+- **Two of my own mistakes, caught before they shipped.** An at-sign in my new .bib
+  header comment made BibTeX skip "entries" (BibTeX has no comment syntax, so this
+  is now a check). And I had written "nine" new entries where there are eight.
+
+### Build
+Tectonic 0.17.0 was re-downloaded to the job scratch dir (nothing installed). The
+final build is clean:
+- exit 0, with **0 errors, 0 overfull boxes, 0 undefined refs or cites**, and
+  BibTeX silent;
+- **30 pages**: 4 unnumbered front matter plus 26 numbered;
+- all 114 auto-checked table cells, and the GT-boundary row, match their sources
+  at the printed precision;
+- the mechanical PDF-text checks pass.
+
+`livejepa_thesis_overleaf.zip` (0.86 MB) was validated by compiling it from an
+empty directory, and its text matches the main build. 13/13 tests pass. Nothing
+is committed: the diff (12 files) is left for the user's review.
+
+### Operational gotcha
+The first background eval crawled at 12 decodes/min. `run_eval` in predictor mode
+loads V-JEPA 2 even when every stream is cached, and SONAR loads encoder and
+decoder in fp32 (≈3 + 5.5 GB), which overflows the 8 GB T1000 into shared memory.
+A decode-only script that releases the encoder runs at ~190/min.
+
+### Later the same day: related work, abstract, and an IEEE paper
+On the user's "fix all the mistakes and make paper in IEEE format":
+- **Related work is now a real section.** Twelve references added (dense and
+  streaming captioning, the JEPA lineage, event boundaries, action segmentation,
+  change-point detection, token merging, BERTScore, CLIPScore), each verified
+  against its arXiv page the same day. The bibliography is 28 entries, all cited.
+  LeCun's position paper was dropped: OpenReview served a bot check, and an
+  unverified entry is not worth the line.
+- **The abstract is 427 words, down from 548.** Every claim survives, including
+  the crossover caveat and the COIN mid-band.
+- **`thesis_materials/paper_ieee.tex`**: an IEEEtran two-column paper distilled
+  from the thesis, sharing `figures/` and `references.bib`. Written first as a
+  6-page conference paper, then extended on request to **12 pages in journal
+  format**: 16 tables, 13 figures, 27 references. The extension is all material
+  the 6-page version compressed into single sentences — the method ablation and
+  the naive trigger's (W, tau) grid, the tuning sweep, the qualitative caption
+  table, the same-takes control, the smoothing on/off table, and the per-budget
+  significance table — plus pseudocode for the trigger and formal definitions of
+  both metrics. Clean build: 0 errors, 0 overfull, no undefined citations.
+  It is hand-maintained; the author block and `\markboth` carry TODO placeholders.
+- **All 287 numeric cells in the paper were machine-checked** against their source
+  files at the printed precision. That caught four of my own double-rounding
+  errors in the significance table (e.g. +.068 where the source rounds to +.067),
+  now fixed. The checker itself needed two fixes first: it could not read
+  IEEE-style leading-dot decimals or nested braces in `\textbf{26{,}360}`.
+- `make_overleaf_zip.py` grew a `--paper` flag; the resulting 0.72 MB zip was
+  validated by compiling it from an empty directory.
+- The thesis is now 32 pages and still passes every check.
+
+**Queued next (user):**
+1. Review the diff and the new PDFs, then commit and push.
+2. Institute template, date, declaration, and an own-voice re-read.
+3. Optionally, the participant-disjoint retrain (~1 day, ₹0).
+4. The viva deck.
+5. Disable the autopilot task, and clean up credentials.
+
+---
+
+## 2026-09-19 (Saturday)
+
+**Theme: full completeness audit after a month idle. Code, data, archive and the
+build pipeline are sound. The thesis *document* is not yet submission-ready: it has
+factual and consistency defects, two typesetting defects visible in the PDF, and
+structural gaps. A scheduled task has also been wasting 5.2 GB a day for two months.**
+
+### Verified sound (re-run today rather than taken from the docs)
+- `pytest tests/ -q`: **13/13** in 6 s. `py_compile` passes over livejepa/, scripts/, webapp/.
+- Git clean, `main` == `origin/main` (682c5db), 137 tracked files.
+- `md_to_latex.py` regenerated to a temp file: **byte-identical** to the committed
+  `thesis_body.tex`. `check_thesis_tex.py` PASS. All 19 files in the Overleaf zip are
+  byte-identical to the working tree.
+- The tables below were checked cell by cell against their source JSON: 6.1 COIN-gt
+  and keystep, 6.3b, the 6.5 Pareto panels, 6.7 atomic-218, 6.8 in-domain, the 6.9
+  significance and ceiling results, and the C2 A100M gate (0.348). **Every printed
+  value matches.** I did not re-derive four sets of numbers: the 6.5 cos-scaling
+  values, the 6.6 C1/C3 cos values, the 6.2 ablation, and the 6.8 control deltas.
+  No raw gate output for the first two is left on disk (`logs/` has none), though
+  HANDOFF, WORKLOG and THESIS all agree on them. The problems below are about what
+  is left out and how things are described, not about wrong numbers.
+  **Correction (2026-09-20): not quite.** This check compared values by eye at 4
+  decimals. A machine check at the printed precision found two rounding errors:
+  COIN-gt 0.35 Hz adaptive is 8.67, not 8.68, and atomic-218 0.10 Hz adaptive is
+  1.60, not 1.61. Re-deriving the skipped numbers also found C3's COIN-956 printed
+  as 0.823 where the fixed 956-file set gives 0.824. All are fixed; see 2026-09-20.
+- Drive archive `G:\My Drive\livejepa_archive` is present.
+
+### Found: `LiveJEPA_KaggleAutopilot` was never switched off
+It still fires daily at 12:00. Since 2026-07-21 it has downloaded the same 5.2 GB
+`coin_cache_p7.tar` **42 times (~220 GB)**, overwriting `backups/coin_cache_p7.tar`
+each time. This does no harm to the data, but it keeps the Kaggle token in daily
+use. The six other LiveJEPA tasks are one-shot and dormant. I did **not** disable it;
+that is the user's call. Fix: `Disable-ScheduledTask -TaskName LiveJEPA_KaggleAutopilot`.
+
+### Thesis content defects (none of these is caught by the build checks)
+1. **Sections 3 and 6.1 misdescribe the paper.** Checked today against the arXiv
+   2512.10942 HTML: VL-JEPA's selective-decoding benchmark is EgoExo4D **atomic**
+   descriptions on 218 val videos (~143 annotations each), and its 2.85x means
+   "selective at 0.35 Hz matches uniform at 1 Hz". Our section 3 says keysteps are
+   "the regime the paper's headline benchmark uses" and that atomic is deliberately
+   not used. Section 6.1 calls keysteps "the paper's own benchmark" and sets 2.5x
+   against 2.85x. Both passages were written before D.1/D.4, and they contradict
+   6.7, 6.8 and the abstract.
+2. **Significance is overclaimed** in the abstract and section 9 ("significant at every
+   decode budget"). `results_egoexo_rigor.json` shows the semantic metric significant
+   at 8/8 budgets but CIDEr at only 7/8. At 0.011 Hz the per-take CIDEr difference is
+   **-0.0017** (19/40 takes), so 6.9's "agrees in direction at every budget" is also false.
+3. **Some tables leave out rows.** The 6.1 COIN-gt table stops at 0.10 Hz. In the JSON,
+   0.05/0.02/0.01 Hz are all uniform wins (3.77 vs 3.53, 3.54 vs 2.29, 3.46 vs 2.04),
+   yet the heading says "Pareto dominance holds". The paper claims *no* crossover
+   anywhere in 0.01-2 Hz, so our crossover is a finding that should be reported, not
+   trimmed. The 6.8 table shows 4 of 8 budgets and leaves out the one uniform win
+   (0.011 Hz: 0.305 vs 0.302).
+4. **Undisclosed smoothing.** `configs/default.yaml` sets `smoothing_window: 3`.
+   Every adaptive number that goes through `select_points` used it: the headline,
+   rigor, ceiling, and the 6.5 COIN runs. Section 4 never mentions smoothing. This also
+   explains why the thesis shows **two different adaptive curves for the same
+   checkpoint on the same 7 videos**: 6.3b used smooth=1 (2.814 at 1 Hz) and the 6.5
+   c1old panel used smooth=3 (2.658). The smooth3_ward row of
+   `results_adaptive_tuning.json` reproduces c1old exactly. With smooth=3, adaptive
+   *loses* at 0.5 Hz, which contradicts 6.3b's "wins at >=0.5 Hz" for that panel.
+5. **Smaller items.** Only **627** takes actually contributed pairs, not the "721" the
+   thesis states (721 was the candidate pool; extraction hit its cap at 11,556 pairs).
+   4.2 says Adam but the code uses AdamW. The 6.5 caption compares 0.846 (956-val) with
+   0.772 (137-val). 6.7 still ends in future tense about "our next rung". The 9.9x is
+   called "the paper's reporting form", but the paper anchors on uniform at 1 Hz, and
+   by that rule adaptive at 76 decodes (0.302) already beats uniform at 1 Hz (0.296).
+   Anchoring on the best uniform point is the conservative choice, and the text should
+   say so. Adaptive at 0.02 Hz (0.312, 140 decodes) also beats the best uniform
+   (0.310), so the text should explain why it quotes 9.9x rather than about 25x.
+   EmbeddingGemma is never named. Action100M is used but never cited. Section 9 lists
+   the web UI as future work, but it is deployed.
+
+### Typesetting defects, confirmed in the compiled PDF (pdftotext)
+- In 6.8, the rejected-artifact figure fence sits in the middle of a sentence. The PDF
+  reads "...our negative and positive results", then Figure 9, then a new indented
+  paragraph starting "together isolate."
+- Bibliography entry [3] (VL-JEPA itself) prints with **no arXiv id and no venue**. It
+  is an `@inproceedings` entry with a `journal` field, and that entry type ignores
+  `journal`. Fix: make it `@article`.
+
+### Structural gaps for a Master's thesis
+The body is about 6,400 words over 24 pages (21 numbered). Related work is four short
+paragraphs. There are 8 bib entries and no inline `\cite`: the prose writes author-year
+by hand while the bibliography is numeric via `\nocite{*}`. The 10 tables are bare
+`tabular` with no caption or number. The body text never refers to a figure (all 3
+`\ref`s are inside captions). The abstract is 504 words. The institute's requirements
+are unknown, so the user must check them. Most of the material needed to expand
+already exists in RESULTS.md (602 lines), SYSTEM_DESIGN.md (528), TABLES.md and the
+data-engine story.
+
+### Viva risk: session-level overlap behind the headline
+The eval takes are disjoint from training **by take uid only**. From takes.json:
+**40/40** eval takes share a participant and a physical setting with training takes,
+and **39/40 share the recording session** (`capture_uid`). The thesis does not say
+this. Both methods consume the same stream, so the adaptive-vs-uniform comparison is
+not directly biased, but the absolute quality (the "25x from correcting the domain")
+includes some familiarity with the same session. A participant-disjoint control needs
+no new extraction: filtering the existing cache keeps **483 takes / 8,822 pairs (76%)**.
+It would cost about 6.5 h to retrain, about 15 h to re-encode the 40 takes (23 min
+each), and about 3 h for rigor. That is roughly one day of unattended T1000 time, at
+no cost.
+
+### Housekeeping
+- Credentials are still on this college machine: `~/.kaggle/access_token`,
+  `~/.kaggle/kaggle.json`, `~/.aws/credentials` (expired Aug 1),
+  `~/.cache/huggingface/token`, and GitHub in Windows Credential Manager. Google Drive
+  is also still signed in (G:).
+- HANDOFF.md has 3 stale lines: the server is "currently RUNNING" (it is not), the
+  thesis "needs a midweek update", and "finish the week plan".
+- No viva slide deck exists.
+
+**Queued next (the user decides):** disable the autopilot task. Choose the scope of a
+thesis fix pass: items 1-5 plus the typesetting fixes are about a day of editing,
+while the structural expansion depends on the institute's rules. Optionally run the
+participant-disjoint control (about a day of machine time). Build the viva deck. Clean
+up credentials before the machine is handed back.
+
+---
+
 ## 2026-08-18 (Tuesday)
 
 **Theme: the thesis COMPILES. 24-page PDF, zero errors, 14 figures placed - and

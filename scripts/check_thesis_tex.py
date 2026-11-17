@@ -100,7 +100,17 @@ def check_tex(problems):
     print("labels: %d, refs: %d, dangling: %d"
           % (len(labels), len(refs), len([r for r in refs if r not in labels])))
 
-    for env in ("figure", "tabular", "center", "abstract", "itemize",
+    # Every figure and table must be pointed at from somewhere; an examiner
+    # reads an unreferenced float as decoration.
+    orphans = sorted({l for l in labels
+                      if l.startswith(("fig:", "tab:")) and l not in refs})
+    for l in orphans:
+        problems.append("figure/table never referenced: %s" % l)
+    print("floats never referenced: %d" % len(orphans))
+
+    check_citations(s, problems)
+
+    for env in ("figure", "table", "tabular", "center", "abstract", "itemize",
                 "enumerate", "lstlisting", "document"):
         o = len(re.findall(B + B + r"begin\{" + env + r"\}", s))
         c = len(re.findall(B + B + r"end\{" + env + r"\}", s))
@@ -114,6 +124,38 @@ def check_tex(problems):
         problems.append("non-ASCII in generated body: %s" % left)
     else:
         print("generated body is pure ASCII                     OK")
+
+
+def check_citations(s, problems):
+    """Every \\cite key must exist in references.bib, or BibTeX prints [?].
+
+    Without \\nocite{*}, an entry nobody cites silently drops out of the
+    bibliography, so that case is reported too."""
+    bib_p = os.path.join(TEX_DIR, "references.bib")
+    if not os.path.exists(bib_p):
+        problems.append("missing %s" % bib_p)
+        return
+    bib = io.open(bib_p, encoding="utf-8").read()
+    # BibTeX has no comment syntax: an at-sign anywhere outside an entry header,
+    # even on a %-line, is read as the start of a (broken) entry and silently
+    # skipped along with whatever follows it.
+    for n, line in enumerate(bib.split("\n"), 1):
+        if "@" in line and not re.match(r"^@\w+\{", line):
+            problems.append("references.bib:%d: stray at-sign outside an entry "
+                            "header (BibTeX will misparse): %s" % (n, line.strip()))
+    keys = set(re.findall(r"^@\w+\{([^,\s]+),", bib, re.M))
+    cited = set()
+    for group in re.findall(B + B + r"cite\w*(?:\[[^\]]*\])?\{([^}]+)\}", s):
+        cited.update(k.strip() for k in group.split(","))
+    for k in sorted(cited - keys):
+        problems.append("cited but not in references.bib: %s" % k)
+    nocite_all = (B + "nocite{*}") in s
+    unused = sorted(keys - cited)
+    if unused and not nocite_all:
+        for k in unused:
+            problems.append("bib entry never cited (it will not appear): %s" % k)
+    print("citations: %d keys cited, %d in .bib, %d missing, %d uncited"
+          % (len(cited), len(keys), len(cited - keys), len(unused)))
 
 
 def main():
