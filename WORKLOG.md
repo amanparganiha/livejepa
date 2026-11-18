@@ -79,6 +79,63 @@ have failed. Fixed, verified, zip rebuilt.**
   paths, no secrets or caches.
 - Committed on branch `brand-page` and pushed; it reaches main by PR, as PR #1 did.
 
+### Later: "will it work live?" The first real-browser webcam test
+- The webcam path had never run end-to-end in a browser: this PC has no camera,
+  and July's `/ws_cam` test sent frames from a script.
+- **A fast-GPU bug, found by reading `/ws_cam`.** The loop re-encoded the newest
+  16 frames whenever the GPU was free, without waiting for a new frame.
+  - On the T1000 (~5 s/window) every window has new frames. A 4090 needs well
+    under the 0.5 s between frames, so it would re-encode the same frames several
+    times per frame.
+  - Effects: inflated on-screen counters (windows, % skipped), and the trigger's
+    8-step window shrinks from ~4 s of video (as tuned) to ~1.5 s, which would
+    make the demo quieter on exactly the fast GPU.
+  - Simulated fast GPU (fake 10 ms encoder, frames every 50 ms): 140 windows for
+    25 new frames (5.6x).
+  - Fix: one window per new frame (snapshot taken on the event loop together with
+    its frame count). The T1000 path is unchanged. After the fix: 25/25.
+- Stop in webcam mode left "final segment flushing…" on screen forever (no done
+  event). The closing event now carries `done`, so the UI shows its summary, as
+  the video path does.
+- The demo page's hints said "~11 s/window on this T1000/GPU" on every machine.
+  They now quote timing only when `/config` reports a T1000.
+- **End-to-end test.** Chrome headless with a fake camera
+  (`--use-file-for-fake-video-capture`, COIN clip 26bW3TnYWtM at 320x240, 5 fps)
+  opened `/demo?token=…`, switched to webcam and pressed Start, against the real
+  local server (T1000, token on, `LIVEJEPA_EAGER_DECODER=1` as on the pod).
+  - Camera live; first window at 16 s (16 frames at 2 fps, plus one window), then
+    one window per ~5 s.
+  - "add some grain" at 47.5 s (the meter crossed τ), then "mix raw materials." at
+    106.5 s. Stop flushed "add raw material." and showed "done — spoke 3 time(s)
+    across 21 windows → skipped 86% of decoder calls". Page console clean.
+  - Server log: windows=21 decodes=3 wall=111.7 s. That is ~5 s per window on the
+    live webcam path, so the webcam hint's T1000 figure is now ~5 s (like-for-like).
+    The video-path ~11 s was not re-measured and stays.
+- Not testable here: websockets through the RunPod proxy, and the 4090's speed.
+  Expected on the 4090 (not measured): one window per frame (0.5 s), so a first
+  caption is possible ~12 s after Start (8 s to fill 16 frames, then 8 trigger
+  steps). The dry run measures it.
+- `livejepa_cloud.zip` rebuilt again with these fixes: 298.8 MB, 86 files,
+  identical to the working tree. Pushed to `brand-page` on the user's OK, together
+  with the README below.
+
+### README restructured (the user's request)
+- Rewritten as a reader's path: at a glance (with the headline figure), the
+  problem, how it works (a mermaid pipeline diagram), key results, quick start,
+  live demo, reproduce, repository map, which document to read, models/data/
+  hardware, limitations, credits.
+- Two stale claims fixed, both checked by running:
+  - "Stub mode is the default": `configs/default.yaml` ships `use_stubs: false`.
+    The smoke test forces stubs itself, so it still runs with no GPU.
+  - The "minimal install" lacked `pycocoevalcap`. In a fresh venv with only the
+    listed packages the smoke test failed; with it added, it runs (no torch). The
+    16 unit tests pass in that venv either way.
+- Checked: 26 links and 12 anchors resolve; 7 tables consistent; 35 result numbers
+  found verbatim in RESULTS.md; model sizes match HANDOFF/TABLES/the paper; the
+  mermaid block renders with mermaid 11; no code line over 88 characters.
+- Gap noted, not changed: the EgoExo take lists live in `eval_data/` (gitignored),
+  so a fresh clone cannot rerun §5/§5b without them.
+
 ### Guide email
 - Drafted for the user: the thesis and paper PDFs, a view-only Overleaf link, a
   GitHub collaborator invite (the repo goes private), and a demo recording from
@@ -86,7 +143,8 @@ have failed. Fixed, verified, zip rebuilt.**
 
 **Queued next (the user decides):**
 1. RunPod 1-hour dry run with the new zip, recording the demo; Terminate after.
-2. Merge the `brand-page` PR on GitHub.
+2. Merge the `brand-page` PR on GitHub (brand page, pod fixes, live-webcam fixes,
+   README).
 3. Send the guide email (after the dry run, with the recording).
 4. Paperwork: template, date and declaration.
 5. The viva deck.

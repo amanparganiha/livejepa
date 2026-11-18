@@ -377,11 +377,15 @@ def _decode_frame(data_url):
 @app.websocket("/ws_cam")
 async def ws_cam(websocket: WebSocket):
     """Live webcam: the browser streams JPEG frames; we keep the most recent K,
-    process a window whenever the (slow) pipeline is free, and stream captions back.
+    process one window per new frame whenever the pipeline is free, and stream
+    captions back.
 
     Because V-JEPA 2 is ~11 s/window on a T1000, frames that arrive while a window
     is being processed simply update the buffer (older ones drop) — we caption the
-    most recent context when free, rather than queueing an ever-growing backlog."""
+    most recent context when free, rather than queueing an ever-growing backlog.
+    A fast GPU (a 4090 needs well under the 0.5 s between frames) instead waits for
+    the next frame: re-encoding the same frames would inflate the step counter and
+    shrink the trigger's time scale, which was tuned at one step per 2-fps frame."""
     import asyncio
     from collections import deque
     await websocket.accept()
@@ -434,7 +438,7 @@ async def ws_cam(websocket: WebSocket):
         recent = []
         n_dec = n_steps = 0
         t0 = time.time()
-        state = {"stop": False}
+        state = {"stop": False, "frames": 0}   # frames = count of decoded frames received
 
         async def receiver():
             try:
@@ -447,6 +451,7 @@ async def ws_cam(websocket: WebSocket):
                         img = _decode_frame(fr)
                         if img is not None:
                             latest.append(img)
+                            state["frames"] += 1
             except Exception:
                 state["stop"] = True
 
@@ -454,11 +459,8 @@ async def ws_cam(websocket: WebSocket):
         loop = asyncio.get_event_loop()
         await websocket.send_json({"status": "webcam running — captions on semantic change"})
 
-        def process_window():
+        def process_window(window):
             nonlocal n_dec, n_steps, recent
-            window = list(latest)
-            if len(window) < K:
-                return None
             emb = PIPE.predict(PIPE.vision.encode_window(window[-K:]))
             recent.append(emb)
             if len(recent) > smooth:
@@ -477,20 +479,29 @@ async def ws_cam(websocket: WebSocket):
             return {"n_steps": n_steps, "n_dec": n_dec, "caption": cap, "time": ts,
                     "delta": delta}
 
+        done_frames = 0
         while not state["stop"]:
-            if len(latest) < K:
-                await asyncio.sleep(0.1)
+            # a full window, and at least one frame newer than the last processed one
+            if len(latest) < K or state["frames"] == done_frames:
+                await asyncio.sleep(0.05)
                 continue
-            ev = await loop.run_in_executor(None, process_window)
-            if ev is not None:
-                await websocket.send_json(ev)
+            # snapshot on the event loop, where the receiver appends: count and frames agree
+            done_frames, window = state["frames"], list(latest)
+            ev = await loop.run_in_executor(None, process_window, window)
+            await websocket.send_json(ev)
+        # the closing event carries done=True, so the UI swaps "final segment
+        # flushing…" for its summary line (as the video path does)
+        final = {"n_steps": n_steps, "n_dec": n_dec, "done": True}
         if mode == "adaptive":                         # emit the final open segment
             out = trig.flush()
             if out is not None:
                 n_dec += 1
                 cap = await loop.run_in_executor(None, lambda: PIPE.sonar.decode(out[1])[0])
-                await websocket.send_json({"n_steps": n_steps, "n_dec": n_dec,
-                                           "caption": cap, "time": time.time() - t0})
+                final.update(n_dec=n_dec, caption=cap, time=time.time() - t0)
+        try:
+            await websocket.send_json(final)
+        except Exception:
+            pass                                       # the browser already left (tab closed)
         recv_task.cancel()
         log.info("ws_cam session done: windows=%d decodes=%d wall=%.1fs",
                  n_steps, n_dec, time.time() - cam_t0)
