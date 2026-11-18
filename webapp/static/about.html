@@ -88,7 +88,7 @@
 <div class="wrap">
 
 <header>
-  <a class="back" href="/">&larr; back to the live demo</a>
+  <a class="back" href="/demo">&larr; back to the live demo</a>
   <h1>Inside <span class="grad">LiveJEPA</span></h1>
   <p class="sub">A Master's-thesis reconstruction of VL-JEPA's <b>selective decoding</b>:
   a video model that watches continuously, predicts meaning in embedding space,
@@ -282,7 +282,7 @@
   <div class="grid2">
     <div class="card"><span class="kpi">Live demo</span><br/>
       <span class="muted">Upload any how-to/activity video (or use a sample) on the
-      <a href="/">main page</a> — watch the semantic-shift meter cross &tau; exactly when a
+      <a href="/demo">demo page</a> — watch the semantic-shift meter cross &tau; exactly when a
       caption fires, and count the decoder calls it skipped. Download the result as
       <code>.srt</code> subtitles.</span></div>
     <div class="card"><span class="kpi">Where it fits</span><br/>
@@ -300,5 +300,15 @@
 </footer>
 
 </div>
+<script>
+  /* keep ?token=... on internal links, so the demo still authenticates after a visit here */
+  (function () {
+    var q = location.search;
+    if (!q) return;
+    document.querySelectorAll('a[href^="/"]').forEach(function (a) {
+      a.setAttribute("href", a.getAttribute("href") + q);
+    });
+  })();
+</script>
 </body>
 </html>

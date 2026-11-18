@@ -140,7 +140,7 @@
     <div class="cta">
       <button class="btn primary" onclick="location.hash='#play'">▶ Try it on a real video</button>
       <button class="btn" onclick="jumpWebcam()">📷 Point your camera at it</button>
-      <button class="btn" onclick="location.href='/about'">🧠 How it works — architecture &amp; results</button>
+      <button class="btn" onclick="location.href='/about' + location.search">🧠 How it works — architecture &amp; results</button>
     </div>
 
     <div class="demo-anim">
@@ -225,7 +225,7 @@
           <div id="maxwWrap"><label>max windows (0=all)</label><input type="number" id="maxw" value="40" min="0"></div>
         </div>
         <button id="start">▶ Start</button>
-        <p class="hint" id="hint">Each window is ~11 s of GPU time on this T1000 — captions stream in progressively. 40 windows ≈ 20 s of video.</p>
+        <p class="hint" id="hint">Captions stream in progressively, one window at a time. 40 windows ≈ 20 s of video.</p>
       </div>
 
       <div class="panel">
@@ -283,7 +283,7 @@
 <script>
 const $ = s => document.querySelector(s);
 let mode = "adaptive", src = "file", ws = null, camStream = null, camTimer = null, running = false, done = false;
-let TAU = 0.15, selectedSample = null, track = [];
+let TAU = 0.15, DEVICE = "", selectedSample = null, track = [];
 const TOKEN = new URLSearchParams(location.search).get("token") || "";
 
 /* ---------- hero animation: sparse vs dense decoding ---------- */
@@ -308,6 +308,7 @@ const TOKEN = new URLSearchParams(location.search).get("token") || "";
 /* ---------- config / footer / tau ---------- */
 fetch("/config").then(r => r.json()).then(c => {
   TAU = c.tau || 0.15;
+  DEVICE = c.device || ""; setHint();
   $("#foot").textContent = `LiveJEPA · checkpoint ${c.ckpt || "none"} · ${c.device} · τ=${c.tau} · upload limit ${c.max_upload_mb} MB` +
     (c.token_required ? " · access token required" : "");
 }).catch(() => {});
@@ -346,10 +347,18 @@ document.querySelectorAll("#src button").forEach(b => b.onclick = () => {
   const cam = src === "webcam";
   $("#fileControls").style.display = cam ? "none" : "block";
   $("#maxwWrap").style.display = cam ? "none" : "block";
-  $("#hint").textContent = cam
-    ? "Hold up an object, switch activities, walk away — watch the meter spike right before it speaks. Captions lag ~11 s/window on this GPU."
-    : "Each window is ~11 s of GPU time on this T1000 — captions stream in progressively. 40 windows ≈ 20 s of video.";
+  setHint();
 });
+/* the ~11 s/window timing is the T1000's; on any other GPU say nothing about speed */
+function setHint() {
+  const cam = src === "webcam", t1000 = /T1000/i.test(DEVICE);
+  $("#hint").textContent = cam
+    ? "Hold up an object, switch activities, walk away — watch the meter spike right before it speaks."
+      + (t1000 ? " Captions lag ~5 s/window on this GPU." : "")   /* measured live 2026-11-18 */
+    : (t1000 ? "Each window is ~11 s of GPU time on this T1000 — captions stream in progressively."
+             : "Captions stream in progressively, one window at a time.")
+      + " 40 windows ≈ 20 s of video.";
+}
 function jumpWebcam(){ location.hash = "#play"; const b = document.querySelector('#src [data-src="webcam"]'); if (b && !running) b.click(); }
 
 /* ---------- run state / rendering ---------- */

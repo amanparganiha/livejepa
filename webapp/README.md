@@ -11,12 +11,16 @@ counter.
 ```bash
 pip install -r requirements.txt          # includes fastapi, uvicorn, python-multipart
 python -m uvicorn webapp.backend:app --host 127.0.0.1 --port 8000
-# then open http://127.0.0.1:8000 in a browser
+# then open http://127.0.0.1:8000 in a browser: "/" is the brand page,
+# "/demo" the live demo, "/about" the architecture and results page.
+# Links between them keep a ?token=... query, so one shared link is enough.
 ```
 
-The predictor checkpoint defaults to `checkpoints_kaggle/predictor_20000.pt`. Models
-(V-JEPA 2 + SONAR) load once at startup — `GET /health` reports `model_loaded` and
-any load error.
+The predictor checkpoint defaults to `checkpoints_c1_final/predictor_30000.pt` (the
+model the thesis reports), falling back to `checkpoints_kaggle/predictor_20000.pt`
+if that is absent. Models (V-JEPA 2 + SONAR) load once at startup — `GET /health`
+reports `model_loaded` and any load error. The SONAR decoder (~5.5 GB) loads on the
+first caption unless `LIVEJEPA_EAGER_DECODER=1` (the cloud setup sets it).
 
 ## Deploy
 
@@ -53,18 +57,20 @@ powershell -ExecutionPolicy Bypass -File webapp\start_tunnel.ps1
 ```
 
 Copy the printed `https://xxxx.trycloudflare.com` URL and open
-`https://xxxx.trycloudflare.com/?token=pick-a-secret` on your laptop. Because the
-origin is HTTPS, the browser allows the camera → select **webcam** → Start.
+`https://xxxx.trycloudflare.com/?token=pick-a-secret` on your laptop and click
+**Open the live demo** (the token carries over). Because the origin is HTTPS, the
+browser allows the camera → select **webcam** → Start.
 The URL changes each time the tunnel restarts.
 
 ### Config (env vars, all optional)
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `LIVEJEPA_CKPT` | `checkpoints_kaggle/predictor_20000.pt` | predictor checkpoint |
+| `LIVEJEPA_CKPT` | `checkpoints_c1_final/predictor_30000.pt` | predictor checkpoint |
 | `LIVEJEPA_UPLOAD_DIR` | `webapp/uploads` | where uploads are stored |
 | `LIVEJEPA_MAX_UPLOAD_MB` | `500` | upload size cap (413 beyond it) |
 | `LIVEJEPA_TOKEN` | *(empty = auth off)* | shared secret required on `/upload` + both WebSockets |
+| `LIVEJEPA_EAGER_DECODER` | *(unset = lazy)* | `1` loads the SONAR decoder at startup, so `/health` is ready only when captions can be produced (needs GPU room; the cloud setup sets it) |
 
 `start_server.ps1` logs to `webapp/server.log` and auto-restarts on crash.
 
@@ -94,7 +100,9 @@ The URL changes each time the tunnel restarts.
 
 | Route | Purpose |
 |---|---|
-| `GET /` | the single-page UI |
+| `GET /` | the landing (brand) page, `static/brand.html` |
+| `GET /demo` | the live-demo UI, `static/index.html` |
+| `GET /about` | architecture and results, `static/about.html` |
 | `GET /health` | `{status, model_loaded, ckpt, error}` |
 | `GET /config` | non-secret runtime info (ckpt name, device, τ, upload limit) |
 | `GET /samples` | list server-side sample videos (`eval_data/coin_videos`) |
@@ -105,7 +113,10 @@ The URL changes each time the tunnel restarts.
 ## Files
 
 - `backend.py` — FastAPI app + the `Pipeline` wrapper (loads models once, streams events).
-- `static/index.html` — the self-contained UI (no external CDNs).
+- `static/brand.html` — the landing page at `/` (loads Google Fonts; falls back to
+  system fonts offline).
+- `static/index.html` — the self-contained demo UI at `/demo` (no external CDNs).
+- `static/about.html` — the architecture and results page at `/about`.
 - `start_server.ps1` — deployment launcher (0.0.0.0, logging, crash restart).
 - `start_tunnel.ps1` — cloudflared HTTPS tunnel (enables remote webcam).
 

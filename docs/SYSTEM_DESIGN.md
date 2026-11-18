@@ -44,7 +44,8 @@ stream out, with the efficiency (decodes / windows) made visible.
 ## 2. Functional requirements
 
 **Core (all [built]):**
-- Serve a single-page UI at `/`.
+- Serve a landing page at `/`, the single-page demo UI at `/demo`, and an
+  architecture/results page at `/about` (each keeps the `?token=` query).
 - List server-side sample videos; upload a user video (validated type/size).
 - Stream captions over WebSocket for a chosen video in **adaptive** or **uniform**
   mode, with per-window progress events (`n_steps`, `n_dec`, `caption`, `time`).

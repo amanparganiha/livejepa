@@ -35,29 +35,45 @@ from livejepa.selective.online import SegmentTrigger
 from livejepa.selective.pooling import moving_average
 
 
+class SourceError(RuntimeError):
+    """The webcam or video file could not be opened."""
+
+
 def frame_source(source, target_fps=None):
-    """Yield RGB frames from a webcam index or video path via OpenCV.
+    """Return an iterator of RGB frames from a webcam index or video path via OpenCV.
 
     Subsamples to `target_fps` (skipping native frames) so each processed window
     advances by ~1/target_fps of video, matching how run_eval/read_frames_at_fps
     builds streams and how the predictor was trained. Without this the window
     slides one native frame at a time (~25 fps) -> near-duplicate windows, the
-    trigger barely fires, and it's ~native/target x slower than needed."""
+    trigger barely fires, and it's ~native/target x slower than needed.
+
+    The source is opened eagerly and an unopenable one raises SourceError, an
+    ordinary Exception: the web backend reports it to the browser, and the CLI
+    turns it into a clean exit (a SystemExit here slipped past the backend's
+    `except Exception` and the browser only saw the connection drop)."""
     import cv2
     cap = cv2.VideoCapture(int(source) if str(source).isdigit() else source)
     if not cap.isOpened():
-        raise SystemExit(f"Could not open source: {source}")
+        raise SourceError(f"Could not open source: {source}")
     native = cap.get(cv2.CAP_PROP_FPS) or 0.0
     stride = max(1, round(native / target_fps)) if (target_fps and native > 0) else 1
+    return _read_frames(cap, stride)
+
+
+def _read_frames(cap, stride):
+    import cv2
     i = 0
-    while True:
-        ok, frame = cap.read()
-        if not ok:
-            break
-        if i % stride == 0:
-            yield cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        i += 1
-    cap.release()
+    try:
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
+            if i % stride == 0:
+                yield cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            i += 1
+    finally:
+        cap.release()
 
 
 def _draw_overlay(frame_rgb, caption, n_dec, n_steps, flash):
@@ -136,7 +152,11 @@ def main():
         flash = 5
         print(f"[{time.time() - t0:6.1f}s] {caption}")
 
-    for frame in frame_source(source, target_fps=fps):
+    try:
+        frames = frame_source(source, target_fps=fps)
+    except SourceError as e:
+        raise SystemExit(str(e))                          # CLI: a clean message, no traceback
+    for frame in frames:
         buf.append(frame)                                 # bounded sliding window
         if len(buf) > K:
             buf.pop(0)

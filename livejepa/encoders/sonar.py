@@ -49,7 +49,7 @@ class SonarSpace:
             self._enc_tok = None
             self._encoder = None
             self._dec_tok = None
-            self._decoder = None  # ~2.6 GB — loaded lazily on first decode()
+            self._decoder = None  # ~5.5 GB (fp32) — loaded lazily on first decode()
 
     def _ensure_encoder(self):
         if self._encoder is None:
