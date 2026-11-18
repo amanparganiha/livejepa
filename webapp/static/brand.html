@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LiveJEPA</title>
+<meta name="description" content="LiveJEPA watches video in embedding space and decodes a sentence only when the meaning changes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect width='26' height='26' rx='6' fill='%230b1020'/%3E%3Cpath d='M4 16h6M17 16h5' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M10 16l2.6-8 2.6 12 1.8-4' fill='none' stroke='%238c6bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  /* Layout: a lab instrument on white paper. Asymmetric 12-column editorial grid;
+     one full-width live "meaning line" carries the motion, everything else stays quiet.
+     Blue = the predicted signal. Violet = the moment the model decodes. */
+  :root {
+    --paper: #ffffff;
+    --panel: #f6f8fb;
+    --rule: #e3e7ee;
+    --ink: #0b1020;
+    --ink-2: #394156;
+    --muted: #677186;
+    --signal: #1f74c9;
+    --signal-soft: #e8f1fb;
+    --decode: #6c43ef;
+    --decode-soft: #f0ebfe;
+    --s-uniform: #2a9d8f;
+    --s-adaptive: #1f74c9;
+    --s-pool: #d9581a;
+    --f-display: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --f-body: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink-2);
+         font: 400 17px/1.65 var(--f-body); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible, canvas:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--decode); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 24px; }
+  .mono { font-family: var(--f-mono); }
+  h1, h2, h3 { font-family: var(--f-display); color: var(--ink); text-wrap: balance; margin: 0; }
+  p { text-wrap: pretty; }
+
+  /* ---------- nav ---------- */
+  nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+        background: color-mix(in srgb, var(--paper) 86%, transparent);
+        backdrop-filter: saturate(1.5) blur(12px); -webkit-backdrop-filter: saturate(1.5) blur(12px);
+        border-bottom: 1px solid transparent; transition: border-color .2s; }
+  nav.scrolled { border-bottom-color: var(--rule); }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 19px/1 var(--f-display);
+           letter-spacing: -.02em; color: var(--ink); }
+  .brand svg { display: block; flex: none; }
+  .navlinks { display: flex; align-items: center; gap: 26px; font: 500 12.5px/1 var(--f-mono);
+              letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .navlinks a:not(.btn):hover { color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; border-radius: 8px;
+         font: 600 15px/1 var(--f-body); border: 1px solid var(--rule); color: var(--ink); background: var(--paper);
+         transition: transform .15s, border-color .15s, background .15s; cursor: pointer; }
+  .btn:hover { transform: translateY(-1px); border-color: #c5ccd8; }
+  .btn.primary { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .btn.primary:hover { background: #1b2340; }
+  .btn.primary .arrow { transition: transform .15s; }
+  .btn.primary:hover .arrow { transform: translateX(3px); }
+  .btn.sm { padding: 10px 16px; font-size: 13.5px; letter-spacing: 0; text-transform: none; font-family: var(--f-body); }
+
+  /* ---------- hero ---------- */
+  .hero { padding-block: 72px 40px; }
+  .hero-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: end; }
+  .hero-title { grid-column: 1 / span 8; min-width: 0; }
+  .hero-side { grid-column: 9 / span 4; min-width: 0; padding-bottom: 10px; }
+  .eyebrow { font: 500 12.5px/1.4 var(--f-mono); letter-spacing: .08em; text-transform: uppercase;
+             color: var(--muted); margin: 0 0 22px; display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--ink); }
+  h1 { font-size: clamp(44px, 7.4vw, 104px); line-height: .94; letter-spacing: -.036em; font-weight: 750;
+       font-variation-settings: "opsz" 96; }
+  h1 .when { background: linear-gradient(92deg, var(--signal) 10%, var(--decode) 90%);
+             -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+  .lede { font-size: 18px; margin: 0 0 26px; color: var(--ink-2); }
+  .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .spec { margin: 30px 0 0; border-top: 1px solid var(--rule); display: grid; grid-template-columns: auto 1fr;
+          font: 400 12.5px/1.5 var(--f-mono); }
+  .spec dt, .spec dd { padding: 9px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+  .spec dt { color: var(--muted); letter-spacing: .06em; text-transform: uppercase; padding-right: 18px; }
+  .spec dd { color: var(--ink); }
+  .spec .tr { color: var(--decode); font-weight: 600; }
+
+  /* ---------- instrument (the meaning line) ---------- */
+  .instrument { padding-block: 8px 72px; }
+  .panel { border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); overflow: hidden;
+           box-shadow: 0 1px 0 rgba(11,16,32,.03), 0 30px 60px -40px rgba(11,16,32,.35); }
+  .readout { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 12px 18px;
+             border-bottom: 1px solid var(--rule); background: var(--panel);
+             font: 500 12px/1.4 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .readout b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .nt { text-transform: none; }
+  .readout .live { display: inline-flex; align-items: center; gap: 8px; }
+  .readout .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #18a058;
+                           box-shadow: 0 0 0 3px rgba(24,160,88,.15); }
+  #line { display: block; width: 100%; height: 300px; }
+  .legend-strip { display: flex; gap: 22px; flex-wrap: wrap; padding: 12px 18px; border-top: 1px solid var(--rule);
+                  font: 400 12px/1.4 var(--f-mono); color: var(--muted); }
+  .legend-strip i { display: inline-block; width: 18px; height: 2px; vertical-align: middle; margin-right: 8px; }
+  .fig-note { max-width: 760px; margin: 16px 0 0; font-size: 14.5px; color: var(--muted); }
+
+  /* ---------- sections ---------- */
+  .section { padding-block: 96px; border-top: 1px solid var(--rule); }
+  .label { font: 500 12.5px/1.4 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+           margin: 0 0 16px; }
+  .label b { color: var(--decode); font-weight: 600; }
+  h2 { font-size: clamp(32px, 4.2vw, 54px); line-height: 1.02; letter-spacing: -.035em; font-weight: 720;
+       font-variation-settings: "opsz" 72; }
+  .split { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+  .split .head { grid-column: 1 / span 5; min-width: 0; }
+  .split .body { grid-column: 7 / span 6; min-width: 0; }
+  .body p { margin: 0 0 16px; }
+
+  /* the three stages */
+  .stages { display: grid; grid-template-columns: 1fr 64px 1fr 64px 1fr; align-items: stretch; margin-top: 56px; }
+  .stage { border: 1px solid var(--rule); border-radius: 12px; padding: 22px 22px 20px; background: var(--paper);
+           min-width: 0; }
+  .stage.trained { border-color: var(--decode); background: var(--decode-soft); }
+  .stage .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 26px; }
+  .stage .n { font: 500 12px/1 var(--f-mono); color: var(--muted); letter-spacing: .06em; }
+  .stage .state { font: 600 11px/1 var(--f-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--muted);
+                  border: 1px solid var(--rule); border-radius: 999px; padding: 5px 9px; background: var(--paper); }
+  .stage.trained .state { color: var(--decode); border-color: #cdbffb; }
+  .stage h3 { font-size: 30px; letter-spacing: -.03em; font-weight: 700; margin-bottom: 4px; }
+  .stage .what { font: 500 13px/1.4 var(--f-mono); color: var(--ink); margin: 0 0 12px; }
+  .stage p { margin: 0; font-size: 15px; }
+  .flow { position: relative; align-self: center; height: 2px; background: var(--rule); margin: 0 6px; }
+  .flow::after { content: ""; position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%;
+                 background: var(--signal); animation: flow 1.8s linear infinite; }
+  @keyframes flow { from { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } to { left: calc(100% - 8px); opacity: 0; } }
+
+  .params { margin-top: 44px; }
+  .params .bar { display: flex; gap: 2px; height: 14px; }
+  .params .bar span { display: block; height: 100%; }
+  .params .bar span:first-child { border-radius: 4px 0 0 4px; }
+  .params .bar span:last-child { border-radius: 0 4px 4px 0; }
+  .params .keys { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 14px; font: 400 12.5px/1.5 var(--f-mono);
+                  color: var(--muted); }
+  .params .keys i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px;
+                    vertical-align: -1px; }
+  .params .keys b { color: var(--ink); font-weight: 600; }
+
+  /* meaning space */
+  .space-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start; }
+  .space-copy { grid-column: 1 / span 4; min-width: 0; }
+  .space-copy p { margin: 18px 0 0; }
+  .space-fig { grid-column: 6 / span 7; min-width: 0; }
+  #space { display: block; width: 100%; height: 420px; cursor: crosshair; touch-action: pan-y; }
+  .space-bar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+               padding: 12px 18px; border-top: 1px solid var(--rule); background: var(--panel); }
+  .spoken { font: 500 15px/1.4 var(--f-body); color: var(--ink); min-width: 0; }
+  .spoken span { font: 500 11.5px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--decode);
+                 margin-right: 10px; }
+  .meter { display: flex; align-items: center; gap: 10px; font: 500 11.5px/1 var(--f-mono); color: var(--muted);
+           letter-spacing: .05em; text-transform: uppercase; }
+  .meter .track { position: relative; width: 120px; height: 8px; border-radius: 4px; background: var(--rule); overflow: hidden; }
+  .meter .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--signal); border-radius: 4px; }
+  .meter .fill.hot { background: var(--decode); }
+  .meter .tau { position: absolute; top: -2px; bottom: -2px; left: 45%; width: 2px; background: var(--ink); }
+  .tour { font: 500 12px/1 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; }
+  .hint { margin: 12px 0 0; font: 400 12.5px/1.5 var(--f-mono); color: var(--muted); }
+
+  /* results */
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 52px;
+           border-top: 1px solid var(--ink); }
+  .stat { padding: 22px 24px 4px 0; min-width: 0; }
+  .stat + .stat { padding-left: 24px; border-left: 1px solid var(--rule); }
+  .stat .big { font: 720 clamp(44px, 5vw, 64px)/1 var(--f-display); letter-spacing: -.045em; color: var(--ink);
+               font-variation-settings: "opsz" 96; }
+  .stat .big small { font-size: .5em; letter-spacing: -.02em; color: var(--muted); }
+  .stat p { margin: 12px 0 0; font-size: 15px; }
+  .chart-card { margin-top: 56px; }
+  .chart-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap;
+                padding: 18px 20px 6px; }
+  .chart-head h3 { font-size: 22px; letter-spacing: -.02em; font-weight: 700; }
+  .chart-head .sub { font: 400 12.5px/1.5 var(--f-mono); color: var(--muted); margin-top: 4px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font: 500 13px/1.3 var(--f-body); color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend svg { flex: none; }
+  .chart-wrap { position: relative; padding: 4px 8px 8px; }
+  #chart { display: block; width: 100%; }
+  .tip { position: absolute; pointer-events: none; background: var(--paper); border: 1px solid var(--rule);
+         border-radius: 8px; padding: 10px 12px; box-shadow: 0 12px 28px -16px rgba(11,16,32,.45);
+         font: 400 12.5px/1.55 var(--f-body); color: var(--ink-2); min-width: 190px; }
+  .tip .t { font: 600 12px/1.4 var(--f-mono); color: var(--ink); margin-bottom: 6px; }
+  .tip .r { display: flex; justify-content: space-between; gap: 14px; }
+  .tip .r b { color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .tip i { display: inline-block; width: 12px; height: 2px; margin-right: 6px; vertical-align: middle; }
+  details.table { border-top: 1px solid var(--rule); padding: 12px 20px 14px; }
+  details.table summary { cursor: pointer; font: 500 12.5px/1.4 var(--f-mono); letter-spacing: .05em;
+                          text-transform: uppercase; color: var(--muted); }
+  .tablebox { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; width: 100%; font: 400 14px/1.4 var(--f-body); font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 7px 12px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  th { font: 500 12px/1.4 var(--f-mono); color: var(--muted); letter-spacing: .04em; }
+  th:first-child, td:first-child { text-align: left; }
+  td.best { color: var(--ink); font-weight: 600; }
+  .finding { margin: 36px 0 0; max-width: 780px; padding-left: 18px; border-left: 2px solid var(--decode); font-size: 16px; }
+  .finding a { color: var(--decode); font-weight: 600; white-space: nowrap; }
+
+  /* uses */
+  .uses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 48px; }
+  .use { border-top: 1px solid var(--ink); padding-top: 18px; min-width: 0; }
+  .use .label { margin-bottom: 10px; }
+  .use p { margin: 0; font-size: 16px; color: var(--ink-2); }
+
+  /* closing band */
+  .closing { padding-block: 110px; border-top: 1px solid var(--rule); background:
+             radial-gradient(60% 120% at 100% 0%, var(--decode-soft), transparent 60%),
+             radial-gradient(50% 120% at 0% 100%, var(--signal-soft), transparent 60%), var(--paper); }
+  .closing .inner { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: end; }
+  .closing h2 { grid-column: 1 / span 8; font-size: clamp(36px, 5.4vw, 72px); }
+  .closing .act { grid-column: 9 / span 4; min-width: 0; }
+  .closing .act p { margin: 0 0 22px; }
+
+  footer { border-top: 1px solid var(--rule); padding-block: 30px 40px; }
+  .foot { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+          font: 400 12.5px/1.6 var(--f-mono); color: var(--muted); }
+  .foot nav { position: static; background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+              display: flex; gap: 22px; border: 0; }
+  .foot a:hover { color: var(--ink); }
+
+  @media (max-width: 960px) {
+    .hero-title, .hero-side, .split .head, .split .body, .space-copy, .space-fig,
+    .closing h2, .closing .act { grid-column: 1 / -1; }
+    .hero { padding-block: 48px 28px; }
+    .stages { grid-template-columns: 1fr; gap: 0; }
+    .flow { width: 2px; height: 34px; margin: 0 auto; }
+    .flow::after { animation-name: flowv; left: -3px; }
+    @keyframes flowv { from { top: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } to { top: calc(100% - 8px); opacity: 0; } }
+    .stats, .uses { grid-template-columns: 1fr; }
+    .stat + .stat { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+    .section { padding-block: 72px; }
+    #line { height: 250px; }
+    #space { height: 340px; }
+    .navlinks .hide-sm { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .flow::after { animation: none; display: none; }
+    .btn, .btn.primary .arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="site-nav">
+  <div class="wrap nav">
+    <a class="brand" href="/" data-keep aria-label="LiveJEPA home">
+      <svg width="28" height="28" viewBox="0 0 26 26" aria-hidden="true">
+        <rect width="26" height="26" rx="6" fill="#0b1020"/>
+        <path d="M4 16h6M17 16h5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 16l2.6-8 2.6 12 1.8-4" fill="none" stroke="#8c6bff" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      LiveJEPA
+    </a>
+    <div class="navlinks">
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#space-sec">Meaning space</a>
+      <a class="hide-sm" href="#results">Results</a>
+      <a class="hide-sm" href="/about" data-keep>About</a>
+      <a class="btn primary sm" href="/demo" data-keep>Live demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="hero-grid">
+    <div class="hero-title">
+      <p class="eyebrow">Selective decoding for streaming video</p>
+      <h1>Video that speaks <span class="when">only when</span> something happens.</h1>
+    </div>
+    <div class="hero-side">
+      <p class="lede">LiveJEPA turns live video into a stream of meaning. While the meaning holds
+        still, the language decoder stays off. When it moves, LiveJEPA writes one sentence.</p>
+      <div class="cta">
+        <a class="btn primary" href="/demo" data-keep>Open the live demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn" href="#how">How it works</a>
+      </div>
+      <dl class="spec">
+        <dt>Watch</dt><dd>V-JEPA 2 &middot; frozen &middot; 326M</dd>
+        <dt>Predict</dt><dd><span class="tr">predictor &middot; trained</span> &middot; 29.9M</dd>
+        <dt>Speak</dt><dd>SONAR decoder &middot; frozen &middot; 1.37B</dd>
+        <dt>Trigger</dt><dd>1 &minus; cos &gt; &tau; = 0.15</dd>
+      </dl>
+    </div>
+  </div>
+</header>
+
+<section class="instrument" aria-label="Animated illustration of the meaning line">
+  <div class="wrap">
+    <div class="panel">
+      <div class="readout">
+        <span class="live">Meaning line &middot; illustration</span>
+        <span>window <b id="rWin">0000</b> &middot; 2 fps &middot; <span class="nt">&tau;</span> 0.15 &middot; decodes <b id="rDec">0</b> &middot; silent <b id="rSil">100.0%</b></span>
+      </div>
+      <canvas id="line" role="img" aria-label="A blue line of predicted meaning stays flat for long stretches and steps when the scene changes. At each step the segment that just ended is averaged and decoded once, at its midpoint, shown as a caption."></canvas>
+      <div class="legend-strip">
+        <span><i style="background:var(--signal)"></i>predicted meaning</span>
+        <span><i style="background:var(--decode)"></i>segment average, decoded once</span>
+        <span><i style="background:#9aa3b5"></i>shift the trigger reads</span>
+        <span><i style="background:repeating-linear-gradient(90deg,var(--decode) 0 4px,transparent 4px 7px)"></i>&tau; threshold</span>
+      </div>
+    </div>
+    <p class="fig-note">Each column is one window of 16 frames at 2 fps. When the shift crosses &tau;, the segment that
+      just ended is averaged and decoded once at its midpoint, exactly how the online trigger emits.
+      Between events the 1.37-billion-parameter decoder never runs.</p>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="split">
+      <div class="head">
+        <p class="label">How it works</p>
+        <h2>Three models in a row. Only the middle one learns.</h2>
+      </div>
+      <div class="body">
+        <p>LiveJEPA rebuilds the selective decoding idea from VL-JEPA, whose code and weights were never
+          released, out of public parts: a frozen video encoder, a frozen sentence decoder, and one
+          small predictor trained to connect them.</p>
+        <p>The predictor is the only part we trained, on 26,360 COIN clips. Everything it outputs lands
+          in a space the decoder already understands.</p>
+      </div>
+    </div>
+
+    <div class="stages">
+      <article class="stage">
+        <div class="row"><span class="n">01</span><span class="state">frozen</span></div>
+        <h3>Watch</h3>
+        <p class="what">V-JEPA 2 &middot; 326M</p>
+        <p>A self-supervised video encoder turns each 16-frame window into visual tokens. It predicts
+          representations, never pixels.</p>
+      </article>
+      <div class="flow" aria-hidden="true"></div>
+      <article class="stage trained">
+        <div class="row"><span class="n">02</span><span class="state">trained</span></div>
+        <h3>Predict</h3>
+        <p class="what">Predictor &middot; 29.9M</p>
+        <p>A four-layer transformer maps those tokens to one point in SONAR, where every point decodes
+          to a sentence.</p>
+      </article>
+      <div class="flow" aria-hidden="true"></div>
+      <article class="stage">
+        <div class="row"><span class="n">03</span><span class="state">frozen</span></div>
+        <h3>Speak</h3>
+        <p class="what">SONAR decoder &middot; 1.37B</p>
+        <p>The trigger watches the predicted point. Only when it moves past &tau; does the decoder wake
+          and write the sentence.</p>
+      </article>
+    </div>
+
+    <div class="params" aria-label="Parameter budget">
+      <div class="bar">
+        <span style="width:13.1%;background:#cfd6e2" title="V-JEPA 2, 326M, frozen"></span>
+        <span style="width:1.2%;min-width:5px;background:var(--decode)" title="Predictor, 29.9M, trained"></span>
+        <span style="width:30.7%;background:#e2e7ef" title="SONAR encoder, 766M, frozen"></span>
+        <span style="width:55%;background:#cfd6e2" title="SONAR decoder, 1.37B, frozen"></span>
+      </div>
+      <div class="keys">
+        <span><i style="background:#cfd6e2"></i>V-JEPA 2 <b>326M</b></span>
+        <span><i style="background:var(--decode)"></i>predictor <b>29.9M &middot; 1.2% of 2.5B, the only trained part</b></span>
+        <span><i style="background:#e2e7ef"></i>SONAR encoder <b>766M</b> &middot; training targets only</span>
+        <span><i style="background:#cfd6e2"></i>SONAR decoder <b>1.37B</b> &middot; sleeps between events</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="space-sec">
+  <div class="wrap space-grid">
+    <div class="space-copy">
+      <p class="label">Meaning space</p>
+      <h2>It thinks in sentences, not pixels.</h2>
+      <p>The predictor places every window at a point in SONAR space. Nearby points mean nearly the same
+        thing, so a steady scene keeps the point inside one region and the decoder has nothing new to say.</p>
+      <p>Move your pointer across the map. Inside a region LiveJEPA stays quiet. Cross into a new one and it
+        speaks once.</p>
+      <p class="hint">Keyboard: focus the map, then use the arrow keys. Touch: drag across it.</p>
+    </div>
+    <div class="space-fig">
+      <div class="panel">
+        <canvas id="space" tabindex="0" role="img" aria-label="Interactive map of five meaning regions. Moving the point into a new region triggers one decode."></canvas>
+        <div class="space-bar">
+          <div class="spoken" aria-live="polite"><span>Decoded</span><b id="spoken">&ldquo;chop the onion&rdquo;</b></div>
+          <div class="meter" title="Distance from the meaning it last spoke about. Crossing the line means a new meaning.">
+            shift <div class="track"><div class="fill" id="mFill"></div><div class="tau"></div></div>
+            calls <b id="mCalls" style="color:var(--ink)">1</b>
+          </div>
+          <button class="btn sm tour" id="tour" type="button">Auto tour</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="results">
+  <div class="wrap">
+    <div class="split">
+      <div class="head">
+        <p class="label">What we found</p>
+        <h2>Averaging is the real win.</h2>
+      </div>
+      <div class="body">
+        <p>We matched every decode budget exactly and compared three schedules on the paper's own benchmark,
+          EgoExo4D atomic descriptions. Decoding the average of a span instead of a single window lifted
+          caption quality at every budget. With the same averaging, evenly spaced decodes did as well as
+          adaptive ones.</p>
+        <p>We report that as the finding. On clean, redundant streams adaptive placement still saves decoder
+          calls at equal quality.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="big">2.5<small>&times;</small></div>
+        <p>fewer decodes at equal quality on redundant ground-truth streams (EgoExo4D keysteps; 1.6&times; on COIN)</p></div>
+      <div class="stat"><div class="big">+5&ndash;26<small>%</small></div>
+        <p>caption quality from averaging the predicted stream before decoding, at every budget</p></div>
+      <div class="stat"><div class="big">25<small>&times;</small></div>
+        <p>caption quality from training the predictor on in-domain video</p></div>
+    </div>
+
+    <div class="panel chart-card">
+      <div class="chart-head">
+        <div>
+          <h3>Caption quality at matched decode budgets</h3>
+          <div class="sub">Time-aligned CIDEr-D &middot; EgoExo4D atomic descriptions &middot; 40 held-out takes</div>
+        </div>
+        <div class="legend" aria-label="Legend">
+          <span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="#d9581a" stroke-width="2.5"/></svg>uniform + averaging</span>
+          <span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="#1f74c9" stroke-width="2.5"/></svg>adaptive</span>
+          <span><svg width="22" height="8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4" stroke="#2a9d8f" stroke-width="2.5" stroke-dasharray="5 3"/></svg>uniform, single window</span>
+        </div>
+      </div>
+      <div class="chart-wrap" id="chartWrap">
+        <svg id="chart" role="img" aria-label="Line chart. Uniform with averaging sits above uniform with a single window at every decode rate; adaptive is above it at 7 of 8 rates. Uniform with averaging and adaptive cross each other several times."></svg>
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <details class="table">
+        <summary>View as table</summary>
+        <div class="tablebox">
+          <table>
+            <thead><tr><th>decode rate</th><th>decodes</th><th>uniform, single window</th><th>adaptive</th><th>uniform + averaging</th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+
+    <p class="finding">The comparison with a single-window baseline made adaptive look 9.9&times; more efficient.
+      Giving the baseline the same averaging that VL-JEPA's protocol gives it removed that gap, so
+      the thesis reports it as a finding. <a href="/about" data-keep>Read the full results &rarr;</a></p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="label">Where it fits</p>
+    <h2>Anywhere video runs longer than anyone watches.</h2>
+    <div class="uses">
+      <div class="use"><p class="label">Accessibility</p>
+        <p>Narrate the scene for a blind user when it changes, and stay quiet when it doesn't.</p></div>
+      <div class="use"><p class="label">Tutorials</p>
+        <p>Turn an hour-long how-to video into a short step-by-step text track.</p></div>
+      <div class="use"><p class="label">Wearables</p>
+        <p>Predict in embedding space and speak on change: a decode budget a battery can afford.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="wrap inner">
+    <h2>Point it at something that changes.</h2>
+    <div class="act">
+      <p>Caption a sample video, your own upload, or a webcam. The shift meter in the demo shows the
+        exact signal the trigger reads.</p>
+      <a class="btn primary" href="/demo" data-keep>Open the live demo <span class="arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>LiveJEPA &middot; Master's thesis by Aman Parganiha, guided by Kumar Gaurav Atram &middot;
+      Department of CSE, IIIT Naya Raipur &middot; 2026<br>Built on V-JEPA 2 and SONAR &middot; evaluated on COIN and EgoExo4D</span>
+    <nav aria-label="Footer"><a href="/demo" data-keep>Live demo</a><a href="/about" data-keep>About</a><a href="#top">Top</a></nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var css = getComputedStyle(document.documentElement);
+  function tok(n) { return css.getPropertyValue(n).trim(); }
+  var C = { ink: tok("--ink"), ink2: tok("--ink-2"), muted: tok("--muted"), rule: tok("--rule"),
+            signal: tok("--signal"), decode: tok("--decode"), paper: tok("--paper"),
+            fBody: tok("--f-body"), fMono: tok("--f-mono") };
+
+  /* ---- keep ?token=... on the links people follow from a shared demo URL ---- */
+  (function () {
+    var q = location.search; if (!q) return;
+    document.querySelectorAll("a[data-keep]").forEach(function (a) {
+      a.setAttribute("href", a.getAttribute("href") + q);
+    });
+  })();
+
+  /* ---- hairline under the nav once the page scrolls ---- */
+  (function () {
+    var nav = document.getElementById("site-nav");
+    addEventListener("scroll", function () { nav.classList.toggle("scrolled", scrollY > 8); }, { passive: true });
+  })();
+
+  function fitCanvas(cv) {
+    var dpr = Math.min(2, window.devicePixelRatio || 1), r = cv.getBoundingClientRect();
+    cv.width = Math.max(1, Math.round(r.width * dpr)); cv.height = Math.max(1, Math.round(r.height * dpr));
+    var ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: r.width, h: r.height };
+  }
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function whenVisible(el, onShow, onHide) {
+    if (!("IntersectionObserver" in window)) { onShow(); return; }
+    new IntersectionObserver(function (es) { es.forEach(function (e) { e.isIntersecting ? onShow() : onHide(); }); },
+                             { threshold: 0.05 }).observe(el);
+  }
+
+  /* =================== 1. the meaning line =================== */
+  (function () {
+    var cv = document.getElementById("line");
+    var CAPS = ["fill the kettle with water", "switch on the kettle", "put a tea bag in the cup",
+                "pour in the hot water", "let the tea steep", "take out the tea bag",
+                "add a splash of milk", "stir and serve"];
+    var TINT = ["#e3eefb", "#ece6fd", "#e2f3ef", "#fcecdf", "#e9edf3"];
+    var SPEED = 6.5, TAU = 0.15, WIN = 8, GAP = 4, KEEP = 420;
+    var win = [], first = 0, n = 0, chips = [], bands = [];
+    var segStart = 0, segLeft = 0, level = 0.5, tintIx = 0, buf = [], since = GAP;
+    var decodes = 0, capIx = 0, chipRow = 0, ph1 = Math.random() * 9, ph2 = Math.random() * 9;
+    var t = 0, g = null, last = 0, rafId = 0, onScreen = false, pulse = null;
+    var rWin = document.getElementById("rWin"), rDec = document.getElementById("rDec"), rSil = document.getElementById("rSil");
+
+    function newSegment() {
+      var lv; do { lv = 0.14 + Math.random() * 0.72; } while (Math.abs(lv - level) < 0.24);
+      level = lv; segLeft = 15 + Math.floor(Math.random() * 18); tintIx = (tintIx + 1) % TINT.length;
+    }
+    function gen() {
+      if (segLeft <= 0) newSegment();
+      segLeft--;
+      var i = n;
+      var v = level + 0.022 * Math.sin(i * 0.83 + ph1) + 0.014 * Math.sin(i * 2.31 + ph2) + 0.018 * (Math.random() - 0.5);
+      var mean = 0; buf.forEach(function (b) { mean += b; }); mean = buf.length ? mean / buf.length : v;
+      var s = buf.length ? Math.min(0.62, Math.abs(v - mean) * 1.25 + 0.012 + 0.01 * Math.random()) : 0;
+      var fire = buf.length >= WIN && s > TAU && since >= GAP && i - segStart > 1;
+      win.push({ v: v, s: s, tint: TINT[tintIx], shade: 0.78 + Math.random() * 0.22, fire: fire });
+      since++; buf.push(v); if (buf.length > WIN) buf.shift();
+      if (fire) {
+        var a = segStart, b = i - 1, sum = 0;
+        for (var k = a; k <= b; k++) sum += win[k - first].v;
+        var mid = a + Math.floor((b - a) / 2), mu = sum / (b - a + 1);
+        bands.push({ a: a, b: b, mu: mu, tint: win[a - first].tint });
+        chips.push({ mid: mid, mu: mu, text: CAPS[capIx++ % CAPS.length], row: chipRow++ % 2 });
+        decodes++; segStart = i; since = 0; buf = [v]; pulse = { i: i, at: performance.now() };
+      }
+      n++;
+      if (win.length > KEEP) {
+        var drop = win.length - KEEP; win.splice(0, drop); first += drop;
+        chips = chips.filter(function (c) { return c.mid >= first; });
+        bands = bands.filter(function (bd) { return bd.b >= first; });
+      }
+    }
+    function readout() {
+      var seen = Math.max(1, Math.floor(t));
+      rWin.textContent = String(seen % 10000).padStart(4, "0");
+      rDec.textContent = decodes;
+      rSil.textContent = (100 * (1 - decodes / seen)).toFixed(1) + "%";
+    }
+    function draw(now) {
+      if (!g) return;
+      var ctx = g.ctx, W = g.w, H = g.h, narrow = W < 640;
+      var VIS = narrow ? 64 : 118, xNow = W * (narrow ? 0.9 : 0.87), dx = (xNow - 14) / VIS;
+      var chipTop = 14, lineTop = narrow ? 82 : 96, lineH = H - lineTop - (narrow ? 86 : 92);
+      var shTop = lineTop + lineH + 14, shH = narrow ? 34 : 40, fsTop = shTop + shH + 10, fsH = H - fsTop - 10;
+      function X(i) { return xNow - (t - i) * dx; }
+      function Y(v) { return lineTop + (1 - v) * lineH; }
+      function YS(s) { return shTop + shH - Math.min(1, s / 0.4) * shH; }
+      var lo = Math.max(first, Math.floor(t - VIS - 2)), hi = Math.min(n - 1, Math.floor(t));
+      ctx.clearRect(0, 0, W, H);
+
+      // closed segments: tinted band + the decoded average as a violet rule
+      bands.forEach(function (bd) {
+        if (X(bd.b) < -40 || X(bd.a) > xNow) return;
+        var xa = X(bd.a) - dx / 2, xb = Math.min(xNow, X(bd.b) + dx / 2);
+        ctx.fillStyle = bd.tint; ctx.globalAlpha = 0.55; ctx.fillRect(xa, lineTop - 8, xb - xa, lineH + 16); ctx.globalAlpha = 1;
+        ctx.strokeStyle = C.decode; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(xa + 2, Y(bd.mu)); ctx.lineTo(xb - 2, Y(bd.mu)); ctx.stroke(); ctx.setLineDash([]);
+      });
+
+      // tau and shift trace
+      ctx.strokeStyle = C.rule; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, shTop + shH + .5); ctx.lineTo(W, shTop + shH + .5); ctx.stroke();
+      ctx.strokeStyle = C.decode; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(0, YS(TAU)); ctx.lineTo(xNow, YS(TAU)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font = "500 10.5px " + C.fMono; ctx.fillStyle = C.decode; ctx.fillText("τ 0.15", 6, YS(TAU) - 5);
+      ctx.fillStyle = C.muted; ctx.fillText("SHIFT", 6, shTop + shH - 5);
+      ctx.strokeStyle = "#9aa3b5"; ctx.lineWidth = 1.25; ctx.beginPath();
+      for (var i = lo; i <= hi; i++) { var w = win[i - first]; if (!w) continue; i === lo ? ctx.moveTo(X(i), YS(w.s)) : ctx.lineTo(X(i), YS(w.s)); }
+      ctx.stroke();
+      for (i = lo; i <= hi; i++) { w = win[i - first]; if (w && w.fire) { ctx.fillStyle = C.decode; ctx.beginPath(); ctx.arc(X(i), YS(w.s), 3, 0, 7); ctx.fill(); } }
+
+      // filmstrip of windows
+      for (i = lo; i <= hi; i++) {
+        w = win[i - first]; if (!w) continue;
+        ctx.globalAlpha = w.shade; ctx.fillStyle = w.tint; ctx.fillRect(X(i) - dx / 2 + 0.5, fsTop, Math.max(1, dx - 1), fsH);
+      }
+      ctx.globalAlpha = 1;
+
+      // the predicted meaning
+      ctx.save(); ctx.shadowColor = "rgba(31,116,201,.28)"; ctx.shadowBlur = 10;
+      ctx.strokeStyle = C.signal; ctx.lineWidth = 2.4; ctx.lineJoin = "round"; ctx.beginPath();
+      for (i = lo; i <= hi; i++) { w = win[i - first]; if (!w) continue; i === lo ? ctx.moveTo(X(i), Y(w.v)) : ctx.lineTo(X(i), Y(w.v)); }
+      var cur = win[hi - first]; if (cur) ctx.lineTo(xNow, Y(cur.v));
+      ctx.stroke(); ctx.restore();
+
+      // decoded captions, pinned to the midpoint of the segment they summarise
+      ctx.font = "500 13px " + C.fBody;
+      // phones show only the newest caption; wide screens alternate two rows so neighbours never touch
+      (narrow ? chips.slice(-1) : chips).forEach(function (c) {
+        var xm = X(c.mid); if (xm < -260 || xm > xNow) return;
+        var label = "“" + c.text + "”", tw = ctx.measureText(label).width, cw = tw + 34, ch = 30;
+        var cy = chipTop + (narrow ? 0 : c.row * 36), cx = Math.min(xm - cw / 2, xNow - cw - 6);
+        if (narrow) cx = Math.max(6, cx);
+        ctx.strokeStyle = "rgba(108,67,239,.45)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(xm, cy + ch); ctx.lineTo(xm, Y(c.mu) - 5); ctx.stroke();
+        ctx.save(); ctx.shadowColor = "rgba(11,16,32,.10)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
+        roundRect(ctx, cx, cy, cw, ch, 8); ctx.fillStyle = C.paper; ctx.fill(); ctx.restore();
+        roundRect(ctx, cx, cy, cw, ch, 8); ctx.strokeStyle = C.rule; ctx.stroke();
+        ctx.fillStyle = C.decode; ctx.beginPath(); ctx.arc(cx + 14, cy + ch / 2, 3.5, 0, 7); ctx.fill();
+        ctx.fillStyle = C.ink; ctx.fillText(label, cx + 24, cy + ch / 2 + 4.5);
+        ctx.fillStyle = C.paper; ctx.beginPath(); ctx.arc(xm, Y(c.mu), 5.5, 0, 7); ctx.fill();
+        ctx.fillStyle = C.decode; ctx.beginPath(); ctx.arc(xm, Y(c.mu), 3.8, 0, 7); ctx.fill();
+      });
+
+      // decode pulse
+      if (pulse && now) {
+        var age = (now - pulse.at) / 900;
+        if (age < 1) { ctx.strokeStyle = "rgba(108,67,239," + (0.5 * (1 - age)).toFixed(3) + ")"; ctx.lineWidth = 2;
+          var pw = win[pulse.i - first]; if (pw) { ctx.beginPath(); ctx.arc(X(pulse.i), Y(pw.v), 6 + 26 * age, 0, 7); ctx.stroke(); } }
+      }
+
+      // playhead and a soft fade on the left edge
+      ctx.strokeStyle = "rgba(11,16,32,.22)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(xNow + .5, 6); ctx.lineTo(xNow + .5, H - 6); ctx.stroke();
+      if (cur) { ctx.fillStyle = C.paper; ctx.beginPath(); ctx.arc(xNow, Y(cur.v), 6.5, 0, 7); ctx.fill();
+                 ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(xNow, Y(cur.v), 4.5, 0, 7); ctx.fill(); }
+      ctx.font = "600 10.5px " + C.fMono; ctx.fillStyle = C.muted; ctx.fillText("NOW", xNow + 8, H - 12);
+      var fade = ctx.createLinearGradient(0, 0, 46, 0); fade.addColorStop(0, "rgba(255,255,255,1)"); fade.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = fade; ctx.fillRect(0, 0, 46, H);
+    }
+    function frame(now) {
+      rafId = 0;
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
+      t += SPEED * dt;
+      while (n <= t + 1) gen();
+      readout(); draw(now);
+      rafId = requestAnimationFrame(frame);
+    }
+    // exactly one loop: start only when on screen and the tab is visible, stop by cancelling the frame
+    function start() { if (!rafId && onScreen && !document.hidden) { last = 0; rafId = requestAnimationFrame(frame); } }
+    function stop() { if (rafId) cancelAnimationFrame(rafId); rafId = 0; }
+    function resize() { g = fitCanvas(cv); draw(performance.now()); }
+    // pre-roll so the panel is full the moment the page loads
+    t = 150; while (n <= t + 1) gen(); readout();
+    resize();
+    if ("ResizeObserver" in window) new ResizeObserver(resize).observe(cv); else addEventListener("resize", resize);
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { draw(performance.now()); });
+    if (REDUCE) return;
+    whenVisible(cv, function () { onScreen = true; start(); }, function () { onScreen = false; stop(); });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else start(); });
+  })();
+
+  /* =================== 2. meaning space (interactive) =================== */
+  (function () {
+    var cv = document.getElementById("space"), g = null;
+    var R = [ { x: .2, y: .3, t: "chop the onion", c: "#e3eefb" }, { x: .52, y: .2, t: "heat the oil", c: "#fcecdf" },
+              { x: .82, y: .36, t: "fry the onion", c: "#ece6fd" }, { x: .3, y: .74, t: "add the tomatoes", c: "#e2f3ef" },
+              { x: .7, y: .76, t: "season and serve", c: "#fde6ea" } ];
+    var p = { x: R[0].x, y: R[0].y }, target = null, cur = 0, pend = -1, pendN = 0, trail = [], pulses = [];
+    var calls = 1, raf = 0, tourIx = -1, tourAt = 0, tourDest = -1;
+    var spoken = document.getElementById("spoken"), mFill = document.getElementById("mFill"), mCalls = document.getElementById("mCalls");
+    function nearest(q) { var b = 0, bd = 9; R.forEach(function (r, k) { var d = Math.hypot((q.x - r.x) * 1.4, q.y - r.y); if (d < bd) { bd = d; b = k; } }); return b; }
+    function draw(now) {
+      var ctx = g.ctx, W = g.w, H = g.h, rad = Math.min(W, H) * 0.19;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#d7dce5";
+      for (var gx = 12; gx < W; gx += 22) for (var gy = 12; gy < H; gy += 22) ctx.fillRect(gx, gy, 1.4, 1.4);
+      R.forEach(function (r, k) {
+        var cx = r.x * W, cy = r.y * H, grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+        grd.addColorStop(0, r.c); grd.addColorStop(0.7, r.c); grd.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(cx, cy, rad, 0, 7); ctx.fill();
+        if (k === cur) { ctx.strokeStyle = "rgba(108,67,239,.55)"; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]);
+                         ctx.beginPath(); ctx.arc(cx, cy, rad * 0.78, 0, 7); ctx.stroke(); ctx.setLineDash([]); }
+        ctx.font = (k === cur ? "600 " : "500 ") + "12px " + C.fMono; ctx.fillStyle = k === cur ? C.ink : C.muted;
+        var tw = ctx.measureText(r.t).width; ctx.fillText(r.t, Math.max(6, Math.min(W - tw - 6, cx - tw / 2)), cy + rad * 0.5);
+      });
+      ctx.strokeStyle = C.signal; ctx.lineWidth = 2; ctx.lineCap = "round";
+      for (var i = 1; i < trail.length; i++) { ctx.globalAlpha = i / trail.length * 0.8; ctx.beginPath();
+        ctx.moveTo(trail[i - 1].x * W, trail[i - 1].y * H); ctx.lineTo(trail[i].x * W, trail[i].y * H); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+      pulses = pulses.filter(function (q) { return now - q.at < 900; });
+      pulses.forEach(function (q) { var a = (now - q.at) / 900; ctx.strokeStyle = "rgba(108,67,239," + (0.55 * (1 - a)).toFixed(3) + ")";
+        ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(q.x * W, q.y * H, 8 + 34 * a, 0, 7); ctx.stroke(); });
+      ctx.fillStyle = "rgba(31,116,201,.14)"; ctx.beginPath(); ctx.arc(p.x * W, p.y * H, 15, 0, 7); ctx.fill();
+      ctx.fillStyle = C.paper; ctx.beginPath(); ctx.arc(p.x * W, p.y * H, 8, 0, 7); ctx.fill();
+      ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(p.x * W, p.y * H, 5.5, 0, 7); ctx.fill();
+    }
+    function meter() {
+      var r = R[cur], d = Math.hypot((p.x - r.x) * 1.4, p.y - r.y), f = Math.min(1, d / 0.44);
+      mFill.style.width = (f * 100).toFixed(1) + "%"; mFill.classList.toggle("hot", f > 0.45);
+    }
+    function step(now) {
+      raf = 0;
+      // tour: one destination per 1.5 s step, chosen once, so each region is entered (and spoken) once
+      if (tourIx >= 0) {
+        if (now - tourAt > 1500) { tourIx++; tourAt = now;
+          if (tourIx >= R.length) { tourIx = -1; target = null; } else tourDest = (tourDest + 1) % R.length; }
+        if (tourIx >= 0) target = { x: R[tourDest].x, y: R[tourDest].y };
+      }
+      var goal = target || R[cur], k = target ? 0.16 : 0.08;
+      p.x += (goal.x - p.x) * k + (target ? (Math.random() - 0.5) * 0.004 : 0);
+      p.y += (goal.y - p.y) * k + (target ? (Math.random() - 0.5) * 0.004 : 0);
+      trail.push({ x: p.x, y: p.y }); if (trail.length > 36) trail.shift();
+      var nb = nearest(p);
+      if (nb !== cur) { if (nb === pend) pendN++; else { pend = nb; pendN = 1; }
+        if (pendN >= 6) { cur = nb; pend = -1; pendN = 0; calls++; pulses.push({ x: p.x, y: p.y, at: now });
+          spoken.textContent = "“" + R[cur].t + "”"; mCalls.textContent = calls; } }
+      else { pend = -1; pendN = 0; }
+      meter(); draw(now);
+      var settling = !target && Math.hypot(p.x - R[cur].x, p.y - R[cur].y) > 0.002;
+      if (target || settling || pulses.length || tourIx >= 0) raf = requestAnimationFrame(step);
+      else { trail = []; draw(now); }
+    }
+    function kick() { if (!raf) raf = requestAnimationFrame(step); }
+    function toLocal(e) { var b = cv.getBoundingClientRect(); return { x: (e.clientX - b.left) / b.width, y: (e.clientY - b.top) / b.height }; }
+    cv.addEventListener("pointermove", function (e) { if (tourIx >= 0) return; target = toLocal(e); kick(); });
+    cv.addEventListener("pointerdown", function (e) { tourIx = -1; target = toLocal(e); kick(); });
+    cv.addEventListener("pointerleave", function () { if (tourIx < 0) { target = null; kick(); } });
+    cv.addEventListener("keydown", function (e) {
+      var m = { ArrowLeft: [-.05, 0], ArrowRight: [.05, 0], ArrowUp: [0, -.06], ArrowDown: [0, .06] }[e.key];
+      if (!m) return; e.preventDefault(); tourIx = -1;
+      var base = target || p; target = { x: Math.min(.97, Math.max(.03, base.x + m[0])), y: Math.min(.95, Math.max(.05, base.y + m[1])) }; kick();
+    });
+    cv.addEventListener("blur", function () { target = null; kick(); });
+    document.getElementById("tour").addEventListener("click", function () {
+      if (REDUCE) { cur = (cur + 1) % R.length; p = { x: R[cur].x, y: R[cur].y }; calls++;
+        spoken.textContent = "“" + R[cur].t + "”"; mCalls.textContent = calls; meter(); draw(performance.now()); return; }
+      tourIx = 0; tourDest = (cur + 1) % R.length; tourAt = performance.now(); kick();
+    });
+    function resize() { g = fitCanvas(cv); draw(performance.now()); }
+    resize(); meter();
+    if ("ResizeObserver" in window) new ResizeObserver(resize).observe(cv); else addEventListener("resize", resize);
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { draw(performance.now()); });
+  })();
+
+  /* =================== 3. results chart (real numbers) =================== */
+  (function () {
+    var D = [ // decode rate (Hz), decodes, uniform single window, adaptive, uniform + averaging
+      [0.998, 7072, 0.296, 0.330, 0.335], [0.499, 3537, 0.310, 0.348, 0.342], [0.333, 2357, 0.299, 0.340, 0.358],
+      [0.199, 1412, 0.287, 0.333, 0.341], [0.100, 706, 0.282, 0.331, 0.338], [0.050, 357, 0.278, 0.338, 0.319],
+      [0.020, 140, 0.249, 0.312, 0.314], [0.011, 76, 0.305, 0.302, 0.322] ];
+    var S = [ { k: 4, name: "uniform + averaging", color: "#d9581a", dash: "" },
+              { k: 3, name: "adaptive", color: "#1f74c9", dash: "" },
+              { k: 2, name: "uniform, single window", color: "#2a9d8f", dash: "6 4" } ];
+    var svg = document.getElementById("chart"), wrap = document.getElementById("chartWrap"), tip = document.getElementById("tip");
+    var NS = "http://www.w3.org/2000/svg";
+    var tb = document.getElementById("tbody");
+    D.forEach(function (r) {
+      var best = Math.max(r[2], r[3], r[4]);
+      tb.insertAdjacentHTML("beforeend", "<tr><td>" + r[0].toFixed(3) + " Hz</td><td>" + r[1].toLocaleString("en-US") + "</td>" +
+        [2, 3, 4].map(function (k) { return "<td" + (r[k] === best ? " class=\"best\"" : "") + ">" + r[k].toFixed(3) + "</td>"; }).join("") + "</tr>");
+    });
+    function el(tag, a, parent) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); (parent || svg).appendChild(e); return e; }
+    var geo = null;
+    function render() {
+      var W = wrap.clientWidth - 16, narrow = W < 560, H = Math.round(Math.max(270, Math.min(380, W * 0.5)));
+      var m = { l: 48, r: narrow ? 14 : 168, t: 16, b: 42 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+      svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("height", H); svg.innerHTML = "";
+      var lx0 = Math.log10(0.009), lx1 = Math.log10(1.15), y0 = 0.235, y1 = 0.37;
+      function X(v) { return m.l + (Math.log10(v) - lx0) / (lx1 - lx0) * pw; }
+      function Y(v) { return m.t + (1 - (v - y0) / (y1 - y0)) * ph; }
+      [0.25, 0.30, 0.35].forEach(function (v) {
+        el("line", { x1: m.l, x2: m.l + pw, y1: Y(v), y2: Y(v), stroke: C.rule, "stroke-width": 1 });
+        var tx = el("text", { x: m.l - 10, y: Y(v) + 4, "text-anchor": "end", fill: C.muted, "font-size": 11.5, "font-family": C.fMono }); tx.textContent = v.toFixed(2);
+      });
+      (narrow ? [0.01, 0.1, 1] : [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]).forEach(function (v) {
+        el("line", { x1: X(v), x2: X(v), y1: m.t + ph, y2: m.t + ph + 5, stroke: C.muted, "stroke-width": 1 });
+        var tx = el("text", { x: X(v), y: m.t + ph + 19, "text-anchor": "middle", fill: C.muted, "font-size": 11.5, "font-family": C.fMono });
+        tx.textContent = v === 1 ? "1 Hz" : String(v);
+      });
+      el("line", { x1: m.l, x2: m.l + pw, y1: m.t + ph + .5, y2: m.t + ph + .5, stroke: "#c9cfda", "stroke-width": 1 });
+      var xl = el("text", { x: m.l + pw / 2, y: H - 4, "text-anchor": "middle", fill: C.muted, "font-size": 11.5, "font-family": C.fMono });
+      xl.textContent = narrow ? "decodes per second (log scale)"
+                              : "decodes per second (log scale) → fewer decodes to the left";
+      var cross = el("line", { x1: 0, x2: 0, y1: m.t, y2: m.t + ph, stroke: C.ink, "stroke-width": 1, opacity: 0, "stroke-dasharray": "3 3" });
+      S.forEach(function (s) {
+        var d = D.map(function (r, i) { return (i ? "L" : "M") + X(r[0]).toFixed(1) + " " + Y(r[s.k]).toFixed(1); }).join(" ");
+        el("path", { d: d, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-dasharray": s.dash, "stroke-linejoin": "round" });
+        D.forEach(function (r) { el("circle", { cx: X(r[0]), cy: Y(r[s.k]), r: 4, fill: s.color, stroke: C.paper, "stroke-width": 2 }); });
+      });
+      if (!narrow) { // direct labels at the 1 Hz end, nudged apart so they never collide
+        var lab = S.map(function (s) { return { s: s, y: Y(D[0][s.k]) }; }).sort(function (a, b) { return a.y - b.y; });
+        for (var i = 1; i < lab.length; i++) if (lab[i].y - lab[i - 1].y < 16) lab[i].y = lab[i - 1].y + 16;
+        lab.forEach(function (o) {
+          var tx = el("text", { x: X(D[0][0]) + 12, y: o.y + 4, fill: C.ink2, "font-size": 12.5, "font-family": C.fBody });
+          tx.textContent = o.s.name + " " + D[0][o.s.k].toFixed(3);
+        });
+      }
+      var hit = el("rect", { x: m.l - 10, y: m.t, width: pw + 20, height: ph, fill: "transparent" });
+      geo = { X: X, Y: Y, cross: cross, m: m, pw: pw };
+      function show(e) {
+        var b = svg.getBoundingClientRect(), px = (e.clientX - b.left) * (W / b.width), bi = 0, bd = 1e9;
+        D.forEach(function (r, i) { var d = Math.abs(X(r[0]) - px); if (d < bd) { bd = d; bi = i; } });
+        var r = D[bi], cx = X(r[0]);
+        cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("opacity", .35);
+        tip.innerHTML = "<div class=\"t\">" + r[0].toFixed(3) + " Hz &middot; " + r[1].toLocaleString("en-US") + " decodes</div>" +
+          S.map(function (s) { return "<div class=\"r\"><span><i style=\"background:" + s.color + "\"></i>" + s.name + "</span><b>" + r[s.k].toFixed(3) + "</b></div>"; }).join("");
+        tip.hidden = false;
+        // place beside the crosshair, flip sides near the right edge, and always clamp inside the panel
+        var tw = tip.offsetWidth, x = cx / W * b.width + 8, maxL = wrap.clientWidth - tw - 8;
+        var left = x + 16; if (left > maxL) left = x - tw - 16;
+        tip.style.left = Math.max(8, Math.min(maxL, left)) + "px"; tip.style.top = (m.t + 6) + "px";
+      }
+      var hideTimer = 0;
+      function hide() { tip.hidden = true; cross.setAttribute("opacity", 0); }
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("pointerdown", function (e) {
+        show(e); clearTimeout(hideTimer);
+        if (e.pointerType === "touch") hideTimer = setTimeout(hide, 4000);   // a tap keeps it readable
+      });
+      hit.addEventListener("pointerleave", function (e) { if (e.pointerType !== "touch") hide(); });
+    }
+    render();
+    if ("ResizeObserver" in window) new ResizeObserver(function () { render(); }).observe(wrap); else addEventListener("resize", render);
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(render);
+  })();
+})();
+</script>
+</body>
+</html>

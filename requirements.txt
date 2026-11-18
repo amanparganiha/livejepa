@@ -11,6 +11,7 @@ torchvision>=0.17
 transformers>=4.44
 accelerate>=0.30
 sentencepiece                    # NLLB tokenizer for the transformers SONAR ports
+protobuf>=4.21                   # builds that tokenizer from sentencepiece.bpe.model (the decoder repo has no tokenizer.json); without it every caption decode fails
 sentence-transformers>=3.0      # EmbeddingGemma (optional)
 # fairseq2 + sonar-space are Linux/macOS-only. On Windows use the
 # transformers backend (configs/default.yaml -> encoders.sonar.backend: transformers)

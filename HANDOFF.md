@@ -146,7 +146,7 @@ what the condition actually bounds. (Cost ~3 h of re-runs to learn.)
 | `eval_data/egoexo/` | annotations + 786 take videos (61 GB) |
 | `eval_data/coin_union_state.json` | all-lane done/dead union (embedded into the Kaggle notebook by make_c1_notebook.py) |
 | `backups/` | banked lane tars (kaggle p1–p6 chain cumulative, colab p8) |
-| `webapp/` | backend.py + static/index.html (product UI) + start/stop ps1 |
+| `webapp/` | backend.py + static/brand.html (landing page, `/`) + index.html (demo UI, `/demo`) + about.html (`/about`) + start/stop ps1 |
 | `deploy/kaggle_autopilot/` | kernel-metadata.json + run_daily.ps1 (noon Windows task `LiveJEPA_KaggleAutopilot` downloads newest tar to backups\) |
 | `deploy/` + `docs/SYSTEM_DESIGN.md` | RunPod cloud kit + 18-section design |
 | `WORKLOG.md` | daily log — UPDATE DAILY UNPROMPTED (user's standing order) |

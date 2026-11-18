@@ -25,7 +25,8 @@ INCLUDE_FILES = ["requirements.txt", "README.md", "RESULTS.md", "HANDOFF.md",
                  os.path.join("webapp", "backend.py"),
                  os.path.join("webapp", "README.md"),
                  os.path.join("webapp", "static", "index.html"),
-                 os.path.join("webapp", "static", "about.html")]
+                 os.path.join("webapp", "static", "about.html"),
+                 os.path.join("webapp", "static", "brand.html")]
 # small training assets for --c2 (no big caches, no videos)
 C2_FILES = [os.path.join("eval_data", "COIN.json"),
             os.path.join("eval_data", "frozen_val_uids.txt"),

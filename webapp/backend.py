@@ -8,10 +8,12 @@ counter advancing every window and a caption appears the moment the selective tr
 
 Run:
     python -m uvicorn webapp.backend:app --host 127.0.0.1 --port 8000
-    # then open http://127.0.0.1:8000
+    # then open http://127.0.0.1:8000 (brand page) or /demo (the live demo)
 
 Endpoints:
-    GET  /            -> the single-page UI
+    GET  /            -> brand page (links into /demo and /about, keeping ?token=)
+    GET  /demo        -> the live-demo UI
+    GET  /about       -> architecture and results page
     GET  /health      -> {status, model_loaded}
     GET  /config      -> non-secret runtime info (ckpt, device, defaults)
     GET  /samples     -> list of server-side sample videos (eval_data/coin_videos)
@@ -108,6 +110,15 @@ class Pipeline:
             self.vision = VisionEncoder(self.cfg)
             self.sonar = SonarSpace(self.cfg)
             self.predict = load_predictor(self.cfg, self.ckpt)
+            # The SONAR decoder (~5.5 GB) normally loads on the first caption, which
+            # keeps the 8 GB T1000 workable. A cloud GPU has room, so the pod setup
+            # sets LIVEJEPA_EAGER_DECODER=1: the download happens before /health says
+            # ready, and a decoder that cannot load shows up as a /health error
+            # instead of failing the first job.
+            if os.environ.get("LIVEJEPA_EAGER_DECODER") == "1":
+                ensure = getattr(self.sonar, "_ensure_decoder", None)  # transformers backend only
+                if ensure:
+                    ensure()
             self._loaded = True
 
     def stream(self, video_path, mode="adaptive", hz=0.2, tau=None, max_windows=0):
@@ -500,7 +511,16 @@ async def ws_cam(websocket: WebSocket):
 
 
 @app.get("/", response_class=HTMLResponse)
-def index():
+def brand():
+    """The brand page: what LiveJEPA is, with links into the demo (carrying ?token=)."""
+    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "brand.html")
+    if os.path.exists(html_path):
+        return HTMLResponse(open(html_path, encoding="utf-8").read())
+    return demo()
+
+
+@app.get("/demo", response_class=HTMLResponse)
+def demo():
     html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "index.html")
     if os.path.exists(html_path):
         return HTMLResponse(open(html_path, encoding="utf-8").read())

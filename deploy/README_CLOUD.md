@@ -6,7 +6,7 @@ demo, or fast training. Total cost for a demo session: well under $2.
 ## Step 0 — build the bundle (on your machine, once)
 
 ```powershell
-python scripts/make_cloud_bundle.py        # -> livejepa_cloud.zip (~200 MB)
+python scripts/make_cloud_bundle.py        # -> livejepa_cloud.zip (~300 MB)
 ```
 
 ## Step 1 — rent the pod (RunPod, recommended for simplicity)
@@ -29,9 +29,13 @@ cd /workspace
 unzip -o livejepa_cloud.zip -d livejepa && cd livejepa
 export LIVEJEPA_TOKEN="pick-a-secret"      # optional; defaults to livejepa-demo-2026
 bash deploy/cloud_setup.sh
-# first start downloads ~5 GB of models; watch progress:
-tail -f server.log            # or: curl -s localhost:8000/health
 ```
+
+The script installs packages, checks the GPU, checkpoint and caption tokenizer,
+starts the server, then **waits while the models download (~7 GB on a fresh
+pod)** and ends with `READY` and the address to open. If something fails it
+prints the last lines of `server.log`. Re-running it is safe: it replaces the
+server from the earlier run (do this after changing `LIVEJEPA_TOKEN`).
 
 ## Step 4 — open the demo
 
@@ -41,6 +45,9 @@ RunPod: **Connect → HTTP Service [8000]** gives an HTTPS URL like
 ```
 https://<pod-id>-8000.proxy.runpod.net/?token=pick-a-secret
 ```
+
+That opens the white brand page; its **Open the live demo** button goes to `/demo`
+and carries the `?token=` along (so do the links to and from `/about`).
 
 HTTPS means the **webcam works directly** — no tunnel needed. On a 4090 expect
 roughly ~1 s/window (vs ~11 s on the T1000): near-real-time captions.
@@ -69,6 +76,6 @@ Download the resulting `checkpoints_cloud/predictor_*.pt` before stopping the po
 
 - **STOP (terminate) the pod when done** — billing runs while it exists, even idle.
   "Stop" on RunPod still bills storage; *Terminate* ends all charges.
-- Models re-download on a fresh pod (~5 GB, ~2 min on datacenter internet) — fine.
+- Models re-download on a fresh pod (~7 GB, a few minutes on datacenter internet) — fine.
 - A demo session (setup 10 min + 2 h of playing) on a 4090 ≈ $1.50.
 - Nothing sensitive is in the bundle; the token gates uploads/jobs on the public URL.

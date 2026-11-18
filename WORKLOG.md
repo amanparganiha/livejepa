@@ -6,6 +6,96 @@ backfilled summaries.
 
 ---
 
+## 2026-11-18 (Wednesday)
+
+**Theme: before pushing the brand page and the first RunPod run, a review of the
+diff and of pod-readiness found one blocker: on a fresh pod every caption would
+have failed. Fixed, verified, zip rebuilt.**
+
+### Pre-push review
+- 4 agents: two reviewers (the uncommitted brand-page diff; whether the serving
+  path, written on Windows/Python 3.14 and never run on Linux, survives a pod),
+  each followed by an adversarial verifier. 13 findings: 11 confirmed, 2 rejected.
+  - Rejected: the torch floor in requirements is below what transformers 5.x needs,
+    but the RunPod PyTorch template ships 2.8, so nothing breaks. The setup checked
+    the superseded checkpoint: stale but harmless (fixed anyway, below).
+
+### The blocker: protobuf
+- `raxtemur/SONAR_200_text_decoder` ships only `sentencepiece.bpe.model` (no
+  `tokenizer.json`), so transformers needs `protobuf` to build the tokenizer. It
+  was never in `requirements.txt`; this machine simply had it installed.
+- The decoder loads lazily, so `/health` would have said ready and the failure
+  would only appear at the first caption of every job.
+- Fixes: `protobuf>=4.21` in requirements. Setup step 3 builds the tokenizer, so a
+  missing dependency stops the setup instead. New `LIVEJEPA_EAGER_DECODER=1`
+  (set by `cloud_setup.sh`) loads the decoder at startup: `/health` turns ready
+  only when captions can be produced, and a decoder failure shows as a `/health`
+  error. The T1000 stays lazy (8 GB).
+
+### Other pod fixes
+- `cloud_setup.sh`:
+  - replaces a server left by an earlier run (a re-run silently kept the old
+    server and its old token) and appends to `server.log`;
+  - waits up to 15 min for `/health`, then prints READY and
+    `https://<pod>-8000.proxy.runpod.net/?token=...` (from `RUNPOD_POD_ID`), or
+    the log tail on failure;
+  - checks the checkpoint the backend serves (`checkpoints_c1_final`).
+- `demo.frame_source` raised SystemExit on an unopenable video, which slipped past
+  the `/ws` handler's `except Exception`: the browser only saw "connection lost".
+  It now raises `SourceError` (a RuntimeError) eagerly; the CLI still exits cleanly.
+- Real download sizes (HF API): V-JEPA 2 1.30 GB + SONAR decoder 5.49 GB, about
+  7 GB. The docs said ~5 GB and `sonar.py` said ~2.6 GB for the decoder. Corrected.
+- Left alone on purpose: the docs' ~11 s/window on the T1000. It is end-to-end;
+  July's 4.65 s measures encode + predict only.
+
+### Brand page fixes (re-tested in headless Chrome)
+- Auto tour: the target was recomputed every frame, so ~60 "decodes" in 7.5 s.
+  Now one destination per 1.5 s step: 5 decodes, one per region.
+- Meaning line: each tab hide/show added an animation loop (5x after 4 cycles).
+  Now one tracked frame: 1x after 4 cycles, 0 while off-screen.
+- Footer "Top" did nothing (its target was the sticky nav). Nav renamed; the link
+  scrolls 4065 px to 0.
+- Chart tooltip was clipped on phones (up to 173 px at 320 px). Clamped: 0/8
+  clipped at 320, 375, 414 and 1280 px; a tap keeps it visible for 4 s.
+- The map swallowed vertical swipes on phones. `touch-action: pan-y`: a swipe
+  scrolls the page, with no stray decode.
+- The chart's aria-label said adaptive beats single-window uniform at every rate;
+  it is 7 of 8. Corrected.
+- Docs: `webapp/README.md` (routes table, tunnel steps, default checkpoint, the new
+  env var) and the route lines in `docs/SYSTEM_DESIGN.md` and `HANDOFF.md`.
+
+### Verified
+- pytest 16/16. Python 3.10 parse and vermin (minimum 3.8) on the changed server
+  files. `bash -n` and 0 CR bytes on `cloud_setup.sh`. `node --check` on all three
+  pages.
+- Stubbed-model checks 15/15: the SourceError path, `/ws` sending the error and
+  releasing the GPU lock, the eager flag on/off/absent, `/health` reporting a
+  decoder failure, all three routes.
+- The setup wait loop, run verbatim against a fake `/health`: ready gives READY
+  (exit 0), a load error gives MODEL LOAD FAILED (exit 1), a crash gives SERVER
+  EXITED (exit 1).
+- `livejepa_cloud.zip` rebuilt: 298.8 MB, 86 files, every file byte-identical to
+  the working tree, both checkpoints (119.7 MB each), 6 sample videos, POSIX
+  paths, no secrets or caches.
+- Committed on branch `brand-page` and pushed; it reaches main by PR, as PR #1 did.
+
+### Guide email
+- Drafted for the user: the thesis and paper PDFs, a view-only Overleaf link, a
+  GitHub collaborator invite (the repo goes private), and a demo recording from
+  the dry run instead of a permanently hosted link.
+
+**Queued next (the user decides):**
+1. RunPod 1-hour dry run with the new zip, recording the demo; Terminate after.
+2. Merge the `brand-page` PR on GitHub.
+3. Send the guide email (after the dry run, with the recording).
+4. Paperwork: template, date and declaration.
+5. The viva deck.
+6. Disable the autopilot task.
+7. Optionally, the participant-disjoint retrain (about a day of T1000 time, ₹0).
+8. When the Overleaf edits are done, sync them back into the repo.
+
+---
+
 ## 2026-11-17 (Tuesday)
 
 **Theme: a fresh-session review of the whole project, after seven weeks idle,
@@ -277,12 +367,117 @@ installed, nothing in the repo).
   affected; the rows were rebuilt by hand from the printed values. Scripts with
   LaTeX go in files, via the Write tool.
 
+**Committed, pushed and merged.**
+- **Commit.** On the user's "commit it", Step 2 was committed as `e474f86` after
+  re-running the checks: thesis PASS, tests 16/16.
+- **Push.** On "push the branch", `thesis-reframe` was pushed to the private
+  `origin`.
+- **Merge.** The user then merged it on GitHub themselves, as pull request #1,
+  merge commit `0538ec2`.
+- **Verified.** The merged `main` is content-identical to `e474f86`: `git diff`
+  is empty.
+- **Synced locally.** Local `main` was fast-forwarded to `origin/main`
+  (`fetch origin main:main`) and checked out.
+- **Left alone:** `reference paper/` stays untracked on purpose, and the
+  `thesis-reframe` branch still exists on GitHub (optional to delete).
+
+**Overleaf hand-off.** The user wants to edit the `.tex` on Overleaf, so I built
+`livejepa_overleaf_all.zip` in the repo root (gitignored, 1.2 MB):
+`thesis.tex`, `thesis_body.tex`, `paper_ieee.tex`, `references.bib` and 20
+figures. Both documents compile from it in an empty directory: thesis 34 pp and
+paper 13 pp, exit 0, 0 overfull. **Once text is edited on Overleaf, the Overleaf
+copy is the master.** `thesis_body.tex` is generated from `docs/THESIS.md`, so
+regenerating it would discard Overleaf edits. Bring them back first, via
+Overleaf "Download Source", and sync them into the repo.
+
+**Live-camera question, and the demo plan.**
+- There is still no camera on this machine (cv2 probe of indices 0-3: none).
+- July's measured pace on the T1000 is 4.65 s per window, so the first caption
+  comes after about 15-40 s. It works, but it isn't live.
+- Vultr's $250 credit was looked at and set aside. Its GPU eligibility was
+  unconfirmed (third-party sources disagree, and the official FAQ returned 403),
+  it expires in 30 days, and Vultr serves on a plain IP, so the camera would need
+  a tunnel.
+- RunPod is the choice. The user's balance is **$6.84**, about 9-10 h of a 4090 at
+  July's $0.70/h, and the proxy URL is HTTPS, so the laptop camera works directly.
+- The plan: a 1-hour dry run soon, then **Terminate**. On viva day, deploy a
+  fresh pod about 30 minutes early. Stop-and-resume is a poor fit: a stopped
+  volume disk costs $0.20/GB/month, a resumed pod may come back with zero GPUs,
+  and pip packages and the HF cache sit on the container disk, which is wiped.
+
+**Brand page.** The user asked for a simple, aesthetic, white, clean page.
+- **New `webapp/static/brand.html`** is served at `/`; the existing app moved to
+  `/demo`.
+  - Design: white and minimal, an ink colour with one blue accent, and a "pulse"
+    logo mark.
+  - Content: a hero with an animated "decode on change" strip, labelled as an
+    illustration, with reduced motion respected; Watch / Predict / Speak; the
+    frozen -> trained -> frozen pipeline (1.2% trained); an honest results band
+    (2.5x, 5-26%, 25x, plus the averaging caveat); use cases; a call to action;
+    and a footer naming Aman, the guide and IIIT Naya Raipur.
+  - No external dependencies.
+- **`?token=` now survives navigation**, on the brand page and via small scripts
+  in about/demo. Before this, the about <-> demo links dropped it, which would
+  have broken the demo on a token-protected pod.
+- **`make_cloud_bundle.py` now ships `brand.html`.** It had a fixed file list and
+  would have silently served the old page on RunPod.
+- `webapp/README.md` and `deploy/README_CLOUD.md` are updated.
+- **Verified:**
+  - FastAPI TestClient: `/`, `/demo` and `/about` return 200; every brand link
+    and anchor resolves; HTML is balanced on all three pages.
+  - Headless Chrome screenshots at desktop width, and at a true 390 px inside an
+    iframe harness (Chrome headless enforces about a 500 px minimum window, which
+    cropped the first phone shot).
+  - Two fixes came out of the screenshots: `text-wrap: balance` had split the grey
+    "only when" phrase, now `nowrap`; and a one-word orphan line in the lede.
+  - Tests 16/16. Not committed yet.
+
+**Brand page, redesigned** (the user asked for something more attractive, using
+the project's theme and the design guidance). Concept: a lab instrument on white
+paper.
+- **Type and colour.** Bricolage Grotesque for display, IBM Plex Sans for body,
+  JetBrains Mono for readouts. Blue for the predicted signal; the app's violet
+  only where the model decodes.
+- **Hero.** An asymmetric giant headline ("only when" in the signal-to-decode
+  gradient) with a mono spec sheet (watch / predict / speak / trigger τ = 0.15).
+- **A live canvas "meaning line"** that behaves the way the online trigger does:
+  - a noisy predicted stream on plateaus, with a shift trace against τ;
+  - on a crossing, the segment just closed gets a tinted band, a dashed violet
+    average and a caption pinned at its midpoint;
+  - plus a filmstrip of windows, a NOW playhead and a mono readout (window,
+    decodes, % silent).
+  - It pre-rolls so the first frame is complete, pauses off-screen, and is
+    static under reduced motion.
+- **The three stages**, with flow connectors and a parameter-budget bar where the
+  1.2% trained sliver shows in violet.
+- **An interactive "meaning space" map.** Moving the pointer, or arrow keys or a
+  drag, into a new region fires one decode. It has a shift meter and an auto
+  tour, and rests on a valid state.
+- **The real results chart.** CIDEr at matched budgets for uniform, adaptive and
+  uniform+pool, with a crosshair tooltip, legend, direct labels and a table view.
+  - Its palette was validated with the dataviz script. Grey failed the chroma
+    floor, so teal is used for plain uniform, dashed as a second cue.
+  - All 8 data rows were checked against
+    `results_egoexo_predictor_40_indomain_pooled.json`: 0 mismatches.
+- **Then:** stat tiles, use cases, a closing call to action and a footer.
+- **Checks.** Headless Chrome showed no console errors. Screenshots at desktop
+  and at a true 390 px (iframe harness).
+- **Fixes from the screenshots:**
+  - old captions piled up at the left edge (they now scroll off; phones show only
+    the newest);
+  - uppercase turned τ into a T-like capital (now `text-transform: none`);
+  - the chart's axis caption was clipped on phones (a shorter caption there);
+  - the headline tracking was slightly loosened.
+- Routes, links and anchors re-verified.
+
 **Queued next (the user decides):**
-1. Review the draft (the PDFs in `thesis_materials/`) and commit Step 2 when
-   happy.
+1. Commit and push the brand page, then rebuild `livejepa_cloud.zip` for the
+   RunPod dry run.
 2. Paperwork: template, date and declaration.
 3. The viva deck.
 4. Disable the autopilot task.
+5. Optionally, the participant-disjoint retrain (about a day of T1000 time, ₹0).
+6. When the Overleaf edits are done, sync them back into the repo.
 
 ---
 
