@@ -6,6 +6,138 @@ backfilled summaries.
 
 ---
 
+## 2026-11-22 (Sunday)
+
+**Theme: the first RunPod deployment. Setup ran clean, first try, on an RTX
+4090.**
+
+- Pod `h3eh9ivcwac23z`: RTX 4090 at $0.89/hr, template runpod/pytorch 2.8.0 on
+  CUDA 13.2, HTTP ports 8888 and 8000, 50 GB container disk, no volume.
+  - The A40 ($0.59, ample stock) was the fallback; the 4090 showed low stock.
+- The zip uploaded through Jupyter. `cloud_setup.sh` ran with no errors and went
+  straight to READY: protobuf installed, the tokenizer check passed, the decoder
+  loaded at startup, checkpoint `checkpoints_c1_final/predictor_30000.pt`.
+- Gotcha: the Jupyter terminal opens in `/`, not `/workspace`, so `cd /workspace`
+  is needed first.
+- **`bench_live.py` on the 4090: 0.100 s per window** (median of 12; range
+  0.097–0.105), against 4.65 s on the T1000, so about 46× faster. One SONAR decode
+  takes 0.317 s.
+  - The live webcam sends 2 frames/s (one window per 0.5 s), so the GPU has about
+    5× headroom.
+- **Caveat: the bench's "what the demo will feel like" table is wrong for the
+  webcam** since the 11-18 fix. It prints W × seconds-per-window (0.8 s to the
+  first caption, 1.1 s between captions), which holds only when windows run back
+  to back. That is true for video-file playback (in wall-clock terms), not for the
+  live webcam.
+  - Live, each window waits for a new frame (0.5 s). The first caption needs 16
+    frames (8 s) plus 8 trigger steps (4 s), about 12 s, and captions are at least
+    ~4 s apart.
+  - To fix: have the script print the live figures as max(seconds per window,
+    0.5 s) × W.
+- **The live webcam works end to end through the RunPod proxy.**
+  - The user's laptop webcam (face to camera): 149 windows, 2 captions ("pull the
+    hair to the hands" at 40.7 s, "pump up the fuel." at 48.6 s), so 99% of
+    decoder calls were skipped.
+  - Driving `/ws_cam` through the proxy from here like the browser does (COIN clip
+    26bW3TnYWtM as JPEG frames at 2 fps, `scratchpad/pod_cam_test.py`): 146 frames
+    gave 131 windows (one per frame, as fixed on 11-18). Captions "add raw
+    materials" at 47 s and, on Stop, "mix raw materials." Same story as the local
+    T1000 run.
+- **The user expected "drink water" and got nothing like it.** That is the
+  vocabulary, not a bug.
+  - The demo predictor was trained on 26,863 COIN clips with only **747 distinct
+    captions**, none containing "drink". A face in front of a laptop camera is out
+    of domain, so it decodes the nearest how-to step.
+  - Desk-doable actions that are in the vocabulary: "fold or bent the paper" (60
+    clips), "remove the peel"/"peel", "open the bottle carefully" (65), "pour into
+    a glass", "brew tea and stir" (79), "twist the paperclips by hands" (85).
+  - The camera must see hands and objects on a table, not a face.
+- For the viva: lead with a sample video, then a prepared desk task; say up front
+  that the demo speaks COIN's 747-step vocabulary.
+- Browser check on the pod page, in a local headless Chrome (the Claude-in-Chrome
+  extension was not connected): a sample COIN weightlifting video processed 40
+  windows in ~4 s and captioned "pullbar and hold up the barbell", with a clean
+  console. A second run got "GPU busy" (the user's own session was running), as
+  designed.
+- The user recorded the demo (landing page, sample video at max windows 0, webcam
+  table actions), then **terminated the pod**. Stop came first: RunPod's ⋮ menu
+  shows Terminate only once the pod is stopped. Confirmed: the proxy link returns
+  404. Cost of the whole session: **$1.06** ($6.84 → $5.78, about 6.5 h of 4090
+  left).
+
+### Later: a model switch, "what it can say" (the user asked to caption anything)
+- Literally anything is impossible with this architecture: the predictor says
+  things near its training captions (the scaling result). But the in-domain
+  EgoExo predictor already existed: 11,556 pairs, **6,888 distinct free-form
+  captions**, 1,277 words, including drink, cup (76), bottle (50) and water (33).
+  COIN has 747.
+- Built:
+  - `backend.py`: a `MODELS` registry (`coin` = c1_final, the default;
+    `egoexo` = `checkpoints_egoexo/predictor_20000.pt` or
+    `LIVEJEPA_CKPT_EGOEXO`). Every predictor present loads at startup (29.9M each).
+  - `/ws` and `/ws_cam` take `model`; an unknown id falls back to coin.
+  - `/config` lists the models; `/health` lists the loaded ones.
+  - `index.html`: a "What it can say" switch (how-to steps / everyday actions)
+    with an explanation, hidden when only one model exists.
+  - `make_cloud_bundle.py` ships the EgoExo checkpoint instead of the superseded
+    `checkpoints_kaggle` one (the server only fell back to it when c1_final was
+    missing), so the zip stays 298.9 MB. It also skips `autopilot.log`.
+  - `cloud_setup.sh` reports whether the second model is present.
+- Verified:
+  - stubbed checks 12/12: registry, a missing checkpoint not offered, `/ws` and
+    `/ws_cam` routing by model, fallback on an unknown id, `/config` and
+    `/health`;
+  - pytest 16/16; Python 3.10 parse; `bash -n`; `node --check`;
+  - **real T1000 run** with headless Chrome and a fake camera playing EgoExo take
+    `upenn_0711_Cooking_6_5` (one of the 40 eval takes, excluded from training;
+    caveat: participants overlap training), uniform at 1 Hz, same clip, both models:
+    - **everyday actions:** "holds a case open with both her hands", "puts the
+      casket on the set", "opens the container with her right hand" (45 s; the
+      ground truth there is opening the cabinet and the tea pack), "opens up the
+      container" (56 s; ground truth: opens the teabag pack), "puts out the
+      set-up bag in the bag" (66 s; ground truth: teabag into the bin, vegetable
+      bag), "leaves the plate on the counter"…
+    - **how-to steps:** "rake up a coat of adhesive", "pour the sauce to the
+      tub", "rinse the dish towel", "pull the dishcloth out", "heat the
+      saucepan"…
+    - So the EgoExo model gets the actions and the first-person style roughly
+      right. Its nouns are often wrong ("octave", "cupcake") and so is gender (her
+      vs his).
+  - In adaptive mode on the T1000 (one window per ~5 s) the EgoExo model fired
+    only once in 150 s (flushed on Stop). The trigger is conservative on predicted
+    streams. For a live demo that should keep talking, uniform mode is the honest
+    fallback.
+- Zip rebuilt: 85 files, both switchable checkpoints.
+- Viva-day plan: a fresh 4090 (A40 as fallback) ~30 min early with the same zip
+  and commands (`cd /workspace` first). Setup took well under 10 minutes today.
+
+---
+
+## 2026-11-19 (Thursday)
+
+**Theme: the guide email went out; the viva is on 2026-11-25. Sizing the
+publication to-do list turned up one wrong claim in our own docs.**
+
+- The email to the guide is ready: both PDFs, Overleaf (edit invite plus a view
+  link), the public GitHub repo, a demo recording to follow. PR #2 (`brand-page`) is
+  merged, so main has the new README.
+- **Finding: the 218-take pool overlaps the predictor's training takes.**
+  - 146 of the 218 density-matched takes are among the 627 training takes of
+    `checkpoints_egoexo`, and 6 are among its 25 held-out validation takes.
+  - Only 26 of the 218 are untouched beyond the 40 evaluation takes.
+  - So "the 40-take comparison could be widened to 218 for ~84 h" (RESULTS §7,
+    the new README's Limitations) is wrong. With this predictor the clean ceiling
+    is 66 takes (~10 h more of T1000 encoding). All 218 would need a new predictor
+    trained without them.
+  - The 40-take result itself is unaffected: those takes were excluded from
+    training by take uid.
+- Time estimates for the list, from logged run times:
+  - participant-disjoint control: 6.5 h retrain + ~15 h re-encode (23 min/take)
+    + ~3 h statistics, about a day of unattended T1000 time;
+  - widening to 66 takes: about 13 h.
+
+---
+
 ## 2026-11-18 (Wednesday)
 
 **Theme: before pushing the brand page and the first RunPod run, a review of the
