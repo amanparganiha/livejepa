@@ -66,7 +66,8 @@ The URL changes each time the tunnel restarts.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `LIVEJEPA_CKPT` | `checkpoints_c1_final/predictor_30000.pt` | predictor checkpoint |
+| `LIVEJEPA_CKPT` | `checkpoints_c1_final/predictor_30000.pt` | predictor checkpoint (the default "how-to steps" model) |
+| `LIVEJEPA_CKPT_EGOEXO` | `checkpoints_egoexo/predictor_20000.pt` | the switchable "everyday actions" model; offered only if the file exists |
 | `LIVEJEPA_UPLOAD_DIR` | `webapp/uploads` | where uploads are stored |
 | `LIVEJEPA_MAX_UPLOAD_MB` | `500` | upload size cap (413 beyond it) |
 | `LIVEJEPA_TOKEN` | *(empty = auth off)* | shared secret required on `/upload` + both WebSockets |
@@ -84,6 +85,22 @@ The URL changes each time the tunnel restarts.
 | upload rejected 400/413 | extension not in mp4/avi/mov/mkv/webm, or over the size cap |
 | "invalid token" | append `?token=<secret>` to the page URL so the UI passes it through |
 | captions very slow | expected: ~11 s per window on a T1000 (a T4 would be ~3–4× faster) |
+
+## Two models: what it can say
+
+The demo page's **What it can say** switch picks the predictor for each session
+(both load at startup; each is 29.9M parameters):
+
+| Switch | Checkpoint | Trained on | Captions |
+|---|---|---|---|
+| how-to steps (default) | `checkpoints_c1_final/predictor_30000.pt` | 26,360 COIN clips | 747 distinct instructional steps ("pour into a glass") |
+| everyday actions | `checkpoints_egoexo/predictor_20000.pt` | 11,556 EgoExo4D clips | 6,888 distinct first-person descriptions ("the camera wearer opens the container with her right hand.") |
+
+The predictor can only say things close to what it was trained on, so neither
+captions arbitrary scenes. The EgoExo model covers far more everyday actions but
+is looser (held-out cosine 0.599 vs 0.846), and it learned from head-mounted
+cameras, so point the camera down at your hands. The switch is hidden when only
+one checkpoint is present.
 
 ## Notes
 

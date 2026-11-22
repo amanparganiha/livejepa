@@ -1,7 +1,9 @@
 """Build livejepa_cloud.zip — everything a rented Linux GPU pod (RunPod/Vast) needs.
 
-Default (demo/serve): code, configs, tests, both trained checkpoints, the web app,
-deploy scripts, a few COIN sample videos.
+Default (demo/serve): code, configs, tests, the two predictors the demo switches
+between (COIN c1_final and the in-domain EgoExo one), the web app, deploy scripts,
+a few COIN sample videos. (The superseded checkpoints_kaggle predictor is left out:
+the server only falls back to it when c1_final is missing, and c1_final ships.)
 --c2 (rung-C2 training weekend): additionally bundles the small training assets —
 COIN.json, the frozen-val + EgoExo uid lists, the Action100M segment manifest, and
 the C2 runbook. Deliberately EXCLUDES the ~1 GB frozen val caches and any videos:
@@ -20,8 +22,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 INCLUDE_DIRS = ["livejepa", "configs", "scripts", "tests", "deploy"]
 INCLUDE_FILES = ["requirements.txt", "README.md", "RESULTS.md", "HANDOFF.md",
-                 os.path.join("checkpoints_kaggle", "predictor_20000.pt"),
                  os.path.join("checkpoints_c1_final", "predictor_30000.pt"),
+                 os.path.join("checkpoints_egoexo", "predictor_20000.pt"),
                  os.path.join("webapp", "backend.py"),
                  os.path.join("webapp", "README.md"),
                  os.path.join("webapp", "static", "index.html"),
@@ -34,7 +36,7 @@ C2_FILES = [os.path.join("eval_data", "COIN.json"),
             os.path.join("eval_data", "egoexo_takes_218.txt"),
             os.path.join("eval_data", "egoexo_takes_pred40.txt"),
             os.path.join("eval_data", "a100m_videos", "a100m_segments.json")]
-SKIP_PATTERNS = ("__pycache__", ".pyc", "cloudflared", "server.log")
+SKIP_PATTERNS = ("__pycache__", ".pyc", "cloudflared", "server.log", "autopilot.log")
 
 
 def main():

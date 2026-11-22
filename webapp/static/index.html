@@ -214,6 +214,12 @@
         <video id="cam" autoplay muted playsinline></video>
         <canvas id="grab" style="display:none"></canvas>
 
+        <div id="modelWrap" style="display:none">
+          <label>What it can say</label>
+          <div class="seg" id="modelSel"></div>
+          <p class="hint" id="modelHint"></p>
+        </div>
+
         <label>Decoding strategy</label>
         <div class="seg" id="modeSel">
           <button data-mode="adaptive" class="on">✨ adaptive</button>
@@ -283,7 +289,34 @@
 <script>
 const $ = s => document.querySelector(s);
 let mode = "adaptive", src = "file", ws = null, camStream = null, camTimer = null, running = false, done = false;
-let TAU = 0.15, DEVICE = "", selectedSample = null, track = [];
+let TAU = 0.15, DEVICE = "", selectedSample = null, track = [], model = "coin";
+/* what each switchable predictor was trained to say (ids match backend MODELS) */
+const MODEL_INFO = {
+  coin: { icon: "🛠", short: "how-to steps",
+          hint: "Trained on 747 how-to steps from COIN instructional videos: precise on cooking, repair and craft tasks." },
+  egoexo: { icon: "👐", short: "everyday actions",
+            hint: "Trained on 6,888 free-form first-person descriptions from EgoExo4D: broader but looser. Works best with the camera looking down at your hands." }
+};
+function buildModels(list, dflt) {
+  if (!list || list.length < 2) return;            /* one model: nothing to choose */
+  const sel = $("#modelSel"); sel.innerHTML = "";
+  model = list.some(m => m.id === dflt) ? dflt : list[0].id;
+  list.forEach(m => {
+    const info = MODEL_INFO[m.id] || { icon: "•", short: m.label, hint: m.label };
+    const b = document.createElement("button");
+    b.dataset.model = m.id; b.title = m.label;
+    b.textContent = info.icon + " " + info.short;
+    if (m.id === model) b.classList.add("on");
+    b.onclick = () => {
+      if (running) return;
+      sel.querySelectorAll("button").forEach(x => x.classList.remove("on"));
+      b.classList.add("on"); model = m.id; $("#modelHint").textContent = info.hint;
+    };
+    sel.appendChild(b);
+  });
+  $("#modelHint").textContent = (MODEL_INFO[model] || {}).hint || "";
+  $("#modelWrap").style.display = "block";
+}
 const TOKEN = new URLSearchParams(location.search).get("token") || "";
 
 /* ---------- hero animation: sparse vs dense decoding ---------- */
@@ -309,6 +342,7 @@ const TOKEN = new URLSearchParams(location.search).get("token") || "";
 fetch("/config").then(r => r.json()).then(c => {
   TAU = c.tau || 0.15;
   DEVICE = c.device || ""; setHint();
+  buildModels(c.models, c.default_model);
   $("#foot").textContent = `LiveJEPA · checkpoint ${c.ckpt || "none"} · ${c.device} · τ=${c.tau} · upload limit ${c.max_upload_mb} MB` +
     (c.token_required ? " · access token required" : "");
 }).catch(() => {});
@@ -446,7 +480,7 @@ async function startVideo() {
   const maxw = parseInt($("#maxw").value || "0", 10);
   ws = new WebSocket(`${wsProto()}://${location.host}/ws`);
   ws.onopen = () => { $("#status").textContent = "connected — watching in embedding space…";
-    ws.send(JSON.stringify({ video, mode, hz: parseFloat($("#hz").value || "0.2"), max_windows: maxw, token: TOKEN })); };
+    ws.send(JSON.stringify({ video, mode, model, hz: parseFloat($("#hz").value || "0.2"), max_windows: maxw, token: TOKEN })); };
   ws.onmessage = ev => {
     const m = JSON.parse(ev.data); handleMsg(m);
     if (maxw && m.n_steps) $("#prog").style.width = Math.min(100, 100 * m.n_steps / maxw) + "%";
@@ -467,7 +501,7 @@ async function startWebcam() {
   resetStats(); done = false; setRunning(true, "■ Stop"); $("#prog").style.width = "0%";
   ws = new WebSocket(`${wsProto()}://${location.host}/ws_cam`);
   ws.onopen = () => {
-    ws.send(JSON.stringify({ mode, hz: parseFloat($("#hz").value || "0.2"), token: TOKEN }));
+    ws.send(JSON.stringify({ mode, model, hz: parseFloat($("#hz").value || "0.2"), token: TOKEN }));
     const c = $("#grab"); c.width = 224; c.height = 168; const ctx = c.getContext("2d");
     camTimer = setInterval(() => {
       if (!ws || ws.readyState !== 1) return;

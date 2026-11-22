@@ -22,7 +22,9 @@ Endpoints:
     WS   /ws_cam      -> live webcam: browser sends JPEG frames, receives captions
 
 Deployment env vars (all optional):
-    LIVEJEPA_CKPT           predictor checkpoint path
+    LIVEJEPA_CKPT           predictor checkpoint path (the default "coin" model)
+    LIVEJEPA_CKPT_EGOEXO    the switchable "egoexo" predictor (default
+                            checkpoints_egoexo/predictor_20000.pt; offered if present)
     LIVEJEPA_UPLOAD_DIR     where uploads are stored
     LIVEJEPA_MAX_UPLOAD_MB  upload size cap (default 500)
     LIVEJEPA_TOKEN          shared secret; if set, /upload and both WS require it
@@ -66,6 +68,20 @@ def _default_ckpt():
 
 
 DEFAULT_CKPT = os.environ.get("LIVEJEPA_CKPT") or _default_ckpt()
+
+# The predictors the demo can switch between, keyed by the id the UI sends. Same
+# architecture and windowing; they differ only in what they were trained to say:
+#   coin   - 26,360 COIN clips, 747 distinct how-to steps (thesis section 4)
+#   egoexo - 11,556 EgoExo4D clips, 6,888 distinct free-form first-person
+#            descriptions (the in-domain predictor of section 5b)
+# Any checkpoint that is missing is simply not offered.
+MODELS = {
+    "coin": {"label": "How-to steps (COIN)", "ckpt": DEFAULT_CKPT},
+    "egoexo": {"label": "Everyday actions (EgoExo4D)",
+               "ckpt": os.environ.get("LIVEJEPA_CKPT_EGOEXO")
+               or os.path.join(ROOT, "checkpoints_egoexo", "predictor_20000.pt")},
+}
+DEFAULT_MODEL = "coin"
 MAX_UPLOAD_MB = int(os.environ.get("LIVEJEPA_MAX_UPLOAD_MB", "500"))
 TOKEN = os.environ.get("LIVEJEPA_TOKEN", "")  # empty -> auth disabled (localhost use)
 ALLOWED_EXT = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
@@ -94,6 +110,12 @@ class Pipeline:
         self.cfg = yaml.safe_load(open(cfg_path))
         self.cfg["project"]["use_stubs"] = False
         self.ckpt = ckpt or (DEFAULT_CKPT if os.path.exists(DEFAULT_CKPT) else None)
+        # model id -> checkpoint, for every switchable predictor present on disk
+        self.ckpts = {DEFAULT_MODEL: self.ckpt}
+        if ckpt is None:
+            self.ckpts.update({k: m["ckpt"] for k, m in MODELS.items()
+                               if k != DEFAULT_MODEL and os.path.exists(m["ckpt"])})
+        self.predictors = {}
         self._loaded = False
         self._load_lock = threading.Lock()   # prevent double-load (startup vs WS)
         self._infer_lock = threading.Lock()  # single GPU -> one inference at a time
@@ -109,7 +131,9 @@ class Pipeline:
             from livejepa.predictor.infer import load_predictor
             self.vision = VisionEncoder(self.cfg)
             self.sonar = SonarSpace(self.cfg)
-            self.predict = load_predictor(self.cfg, self.ckpt)
+            # every predictor is small (29.9M params), so all of them load up front
+            self.predictors = {k: load_predictor(self.cfg, p) for k, p in self.ckpts.items()}
+            self.predict = self.predictors[DEFAULT_MODEL]
             # The SONAR decoder (~5.5 GB) normally loads on the first caption, which
             # keeps the 8 GB T1000 workable. A cloud GPU has room, so the pod setup
             # sets LIVEJEPA_EAGER_DECODER=1: the download happens before /health says
@@ -121,12 +145,18 @@ class Pipeline:
                     ensure()
             self._loaded = True
 
-    def stream(self, video_path, mode="adaptive", hz=0.2, tau=None, max_windows=0):
+    def model_id(self, name):
+        """The requested model id if it is loaded, else the default one."""
+        return name if name in self.predictors else DEFAULT_MODEL
+
+    def stream(self, video_path, mode="adaptive", hz=0.2, tau=None, max_windows=0,
+               model=None):
         """Generator: yields one event dict per processed window.
 
         event = {n_steps, n_dec, caption (str|None), time (float|None), done?}
         """
         self.load()
+        predict = self.predictors[self.model_id(model)]
         cfg, sc = self.cfg, self.cfg["selective"]
         K = cfg["encoders"]["vision"]["frames_per_window"]
         fps = cfg["demo"]["display_fps"]
@@ -148,7 +178,7 @@ class Pipeline:
                 buf.pop(0)
             if len(buf) < K:
                 continue
-            emb = self.predict(self.vision.encode_window(buf))
+            emb = predict(self.vision.encode_window(buf))
             recent.append(emb)
             if len(recent) > smooth:
                 recent.pop(0)
@@ -209,7 +239,8 @@ def _safe_load():
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": PIPE._loaded,
-            "ckpt": PIPE.ckpt, "error": getattr(PIPE, "_load_error", None)}
+            "ckpt": PIPE.ckpt, "models": sorted(PIPE.predictors),
+            "error": getattr(PIPE, "_load_error", None)}
 
 
 @app.get("/config")
@@ -224,6 +255,11 @@ def config():
         "default_hz": 0.2,
         "max_upload_mb": MAX_UPLOAD_MB,
         "token_required": bool(TOKEN),
+        # switchable predictors on this server (known before the models finish loading)
+        "models": [{"id": k, "label": MODELS[k]["label"],
+                    "ckpt": os.path.basename(p) if p else None}
+                   for k, p in PIPE.ckpts.items()],
+        "default_model": DEFAULT_MODEL,
     }
 
 
@@ -328,12 +364,14 @@ async def ws(websocket: WebSocket):
             await websocket.close()
             return
         try:
-            log.info("ws job start: video=%s mode=%s hz=%s tau=%s",
-                     os.path.basename(path), mode, hz, tau)
+            model = req.get("model")
+            log.info("ws job start: video=%s mode=%s model=%s hz=%s tau=%s",
+                     os.path.basename(path), mode, model or DEFAULT_MODEL, hz, tau)
             job_t0 = time.time()
             await websocket.send_json({"status": "loading models..." if not PIPE._loaded else "running",
                                        "mode": mode})
-            gen = PIPE.stream(path, mode=mode, hz=hz, tau=tau, max_windows=maxw)
+            gen = PIPE.stream(path, mode=mode, hz=hz, tau=tau, max_windows=maxw,
+                              model=model)
             loop = asyncio.get_event_loop()
             SENTINEL = object()
             while True:                               # advance the heavy generator off-loop
@@ -400,12 +438,13 @@ async def ws_cam(websocket: WebSocket):
             await websocket.send_json({"error": "invalid token"})
             await websocket.close()
             return
-        log.info("ws_cam session start: mode=%s", req.get("mode", "adaptive"))
         cam_t0 = time.time()
         mode = req.get("mode", "adaptive")
         tau = req.get("tau"); tau = float(tau) if tau not in (None, "") else None
         hz = float(req.get("hz", 0.2))
         PIPE.load()
+        predict = PIPE.predictors[PIPE.model_id(req.get("model"))]
+        log.info("ws_cam session start: mode=%s model=%s", mode, PIPE.model_id(req.get("model")))
         cfg, sc = PIPE.cfg, PIPE.cfg["selective"]
         K = cfg["encoders"]["vision"]["frames_per_window"]
 
@@ -461,7 +500,7 @@ async def ws_cam(websocket: WebSocket):
 
         def process_window(window):
             nonlocal n_dec, n_steps, recent
-            emb = PIPE.predict(PIPE.vision.encode_window(window[-K:]))
+            emb = predict(PIPE.vision.encode_window(window[-K:]))
             recent.append(emb)
             if len(recent) > smooth:
                 recent.pop(0)

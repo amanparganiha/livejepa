@@ -29,6 +29,9 @@ print("GPU:", torch.cuda.get_device_name(0))
 ck = "checkpoints_c1_final/predictor_30000.pt"   # the model webapp/backend.py serves
 assert os.path.exists(ck), f"missing {ck} — was the bundle built with the checkpoint?"
 print("checkpoint OK:", os.path.getsize(ck)//1_000_000, "MB")
+eg = "checkpoints_egoexo/predictor_20000.pt"           # the demo's second, switchable model
+print("everyday-actions model:", "OK" if os.path.exists(eg)
+      else "not bundled (the demo will offer how-to steps only)")
 # The decoder's tokenizer is built from sentencepiece.bpe.model, which needs protobuf.
 # Without it every caption fails, so stop here instead (a small download).
 from transformers import AutoTokenizer

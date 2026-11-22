@@ -206,6 +206,10 @@ detail: [webapp/README.md](webapp/README.md).
 
 **What to expect.**
 
+- A **What it can say** switch picks the predictor: *how-to steps* (COIN, 747
+  instructional captions, the default) or *everyday actions* (EgoExo4D, 6,888
+  first-person descriptions; broader but looser). Neither can caption arbitrary
+  scenes: the predictor says things close to what it was trained on.
 - Captions appear only when the scene's meaning changes; a still scene stays silent
   by design.
 - The first caption needs 8 seconds of video plus 8 windows of context: about 50
