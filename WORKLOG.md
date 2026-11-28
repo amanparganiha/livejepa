@@ -6,6 +6,608 @@ backfilled summaries.
 
 ---
 
+## 2026-11-27 (Friday)
+
+**Theme: no lab work. The user answered the two open questions: they cannot download
+EgoExo4D right now, and there is no deadline or chosen venue. Checked EgoExo4D access and
+searched for venues.**
+
+**EgoExo4D access (checked today on the official docs)**
+- Access has moved to lab22.ai: make an account and request Ego-Exo4D (free). The old
+  route (ego4d.dev renewal link, Dropbox Sign) is no longer the way in.
+- New approval takes about 48 h. A previously approved user is "immediately re-activated"
+  on a new request. The emailed AWS keys expire after 14 days.
+- Not needed now: all 219 faithful-benchmark takes have video on disk (219/219 checked;
+  786 take folders in total). C: has 283 GB free.
+- Only the official-train-split predictor (the predicted-stream test) needs it. Request on
+  the day that download is ready to start, so the 14 days are not wasted.
+
+**Venues (searched today)**
+- IEEE ICME 2027, Xiamen, 13–17 Jul 2027 (official site, 2027.ieeeicme.org):
+  - paper deadline 30 Dec 2026; rebuttal 26 Feb – 4 Mar; decision 24 Mar 2027;
+  - 6 pages INCLUDING references; double-blind, via CMT;
+  - topics include image and video processing, multimedia analysis, AI-based multimedia,
+    and multimodal computing;
+  - at least one author must present in person and register at a non-student rate by
+    10 May 2027, or the paper may be dropped from IEEE Xplore. The fee is not published yet.
+- TMLR: rolling and free. It accepts on evidence and audience interest; novelty is not
+  required. It has a Reproducibility Certification.
+- IEEE TCSVT: rolling. Our paper is already `IEEEtran` journal class. About 11 pages for a
+  regular paper before overlength charges (~$125/page, from a copy of IEEE's fee list).
+- Not open yet:
+  - ICCV 2027 (Hong Kong, 2–8 Oct 2027; deadline estimated early March 2027);
+  - CVPR 2027 workshops such as EgoVis (the 2026 deadline was 27 Feb 2026; 8 pages + refs;
+    IEEE Xplore);
+  - ICIP 2027 (Singapore, 29 Nov – 3 Dec 2027; deadline not announced).
+- Ruled out: IEEE Access (APC about $2,075–2,160); MLRC 2026 (closed 30 Sep 2026).
+- Recommended to the user: ICME 2027 if IIIT-NR funds registration and travel, else TMLR.
+  Not both at once (dual-submission rules).
+
+**Queued next (waiting on the user)**
+1. The user asks their guide: ICME or TMLR, and whether the institute funds ICME.
+2. The paper-edit before/after list (still awaiting OK; `paper_ieee.tex` untouched).
+3. Then the venue version. For ICME: a 6-page anonymous version by 30 Dec.
+
+---
+
+## 2026-11-26 (Thursday)
+
+**Theme: on VL-JEPA's own benchmark, uniform still beats the paper's adaptive on CIDEr
+(−10%, 7/8 budgets). But the loss is averaging (−24%); adaptive placement itself helps
+(+13% with no averaging, +14% when both average). See the 19:24 result at the end.**
+
+- C1 finished uniform and adaptive at all 8 budgets at 09:09, after 9.6 h of decoding. That
+  is everything the primary measure needs. uniform_pool and take_mean are still decoding.
+- Computed the primary from the partial file with `results_fidelity/interim_primary.py`.
+  - It imports `boot_ci` and `cluster_boot_ci` from `eval_gt_fidelity.py` and uses the
+    same seeds.
+  - It rebuilds the take order and participant groups exactly as that script does.
+  - So the final JSON's paired block must reproduce these numbers. Check this when C1 ends.
+
+**Primary (pre-registered): CIDEr adaptive − uniform, per take, mean over the 8 budgets**
+- **−0.254**, CI over takes [−0.280, −0.228]; over participants [−0.281, −0.228].
+- That is −10.4% of uniform's mean (2.453). The ±2% tie band is ±0.049.
+- Uniform wins 7 of 8 budgets; per-take means and corpus CIDEr agree.
+- Adaptive is ahead on the 8-budget mean in only 22 of 219 takes.
+- **Verdict by the rule: the claim stands.** "Uniform beats adaptive on clean atomic
+  annotations" now holds on the faithful benchmark.
+
+| Hz | corpus U | corpus A | per-take A − U [95% CI] | takes favouring A |
+|---|---|---|---|---|
+| 1.00 | 4.962 | 4.302 | −0.661 [−0.715, −0.607] | 11/219 |
+| 0.50 | 4.068 | 3.698 | −0.363 [−0.418, −0.309] | 34/219 |
+| 0.35 | 3.497 | 3.436 | −0.069 [−0.125, −0.011] | 89/219 |
+| 0.20 | 2.813 | 2.847 | +0.039 [−0.021, +0.099] ns | 115/219 |
+| 0.10 | 2.078 | 1.866 | −0.159 [−0.208, −0.110] | 51/219 |
+| 0.05 | 1.581 | 1.267 | −0.295 [−0.332, −0.258] | 22/219 |
+| 0.02 | 1.077 | 0.810 | −0.285 [−0.325, −0.244] | 26/219 |
+| 0.01 | 0.827 | 0.607 | −0.240 [−0.278, −0.202] | 31/219 |
+
+- Per scenario, all below 0:
+  - Bike Repair −0.223 [−0.298, −0.147];
+  - Cooking −0.261 [−0.295, −0.227];
+  - Health −0.266 [−0.309, −0.227].
+- Determinism check passed: C1's per-take semantic arrays for uniform and adaptive are
+  identical to S1's.
+
+**What this changes in the paper (proposed, not edited)**
+- "Loses at every budget" appears in the abstract (l.71), the contributions (l.129),
+  §boundary (l.864, l.872), and the Table 7 and Fig. atomic captions.
+  - It is true on the old 218 set (8/8).
+  - On the faithful benchmark it is 7/8; at 0.20 Hz there is no significant difference.
+- The effect is smaller on the faithful benchmark: −10.4% of uniform's mean, against −16.0%
+  on the old set (−0.305 of 1.903).
+- The old 218 density-matched set must stop being called "the paper's benchmark".
+- "Adaptive *placement* loses" (l.129) is not yet justified.
+  - Adaptive here is placement plus averaging; uniform is a single point.
+  - At matched pooling, the semantic screen has placement helping at 1.0–0.2 Hz.
+  - uniform_pool's CIDEr (decoding now) decides whether the loss comes from averaging or
+    from placement. Hold the wording until then.
+
+**Still running**
+- C1's uniform_pool CIDEr, started at 1.0 Hz at 09:09. Then take_mean, then S3, S4, S2 and S5
+  (semantic only).
+- The decode cache had 121k entries at 09:55 and was growing at about 3.5/s.
+
+**12:56: first uniform_pool cell (1.0 Hz, 7,774 s). An early signal from 1 of 8 budgets.**
+- Corpus CIDEr: uniform 4.962, uniform_pool 3.990, adaptive 4.302.
+- adaptive − uniform_pool, i.e. placement at equal averaging: **+0.272** [+0.225, +0.321].
+  Adaptive is ahead on 183/219 takes.
+- uniform_pool − uniform, i.e. averaging alone: **−0.934** [−0.986, −0.883]. Averaging helps on
+  only 3/219 takes.
+- So at 1.0 Hz the loss to plain uniform (−0.661) is all averaging (−0.934), partly offset by
+  better placement (+0.272).
+- The semantic screen crossed over below 0.2 Hz, so the low budgets may go the other way. No
+  conclusion until all 8 budgets are in.
+- A likely reason, not yet a result: on a clean stream, averaging only blends neighbouring
+  captions, because there is no noise for it to remove. VL-JEPA pools *predicted* embeddings.
+- **ETA revised.**
+  - Ward cuts one merge tree (`AgglomerativeClustering`, `n_clusters` per budget), so
+    adaptive's segments are nested across budgets. Its lower budgets reused cached decodes.
+  - uniform_pool's blocks are not nested, so its lower budgets reuse few decodes.
+  - New estimate: uniform_pool done at about 17:30–18:30, everything at about 19:00–20:00.
+    The 2–7 pm guess was too optimistic.
+- Health check: one runner and one python.exe (Windows PID 24060, started 23:26); GPU at 99%.
+
+### 16:53: ALL DONE. Final results of the fidelity rerun
+
+**Runs**
+- C1 exited 0 at 16:20. S3, S4, S2 and S5 exited 0, and the runner logged ALL DONE at 16:53.
+- One process ran throughout, and the lock was released.
+- The 12:56 ETA (19:00–20:00) was too pessimistic: the low-budget cells needed fewer decodes
+  than estimated.
+
+**Checks**
+- The final JSON reproduces the morning's interim primary exactly: −0.2542 [−0.2803, −0.2281],
+  participants [−0.2808, −0.2280].
+- C1's semantic arrays are identical to S1's.
+
+**Primary (pre-registered): unchanged.** The claim stands; uniform wins 7 of 8 budgets.
+
+**Decomposition (secondary).** This is why uniform_pool was in the design. Per-take CIDEr;
+\* = 95% CI over takes excludes 0.
+- uniform = raw single steps.
+- uniform_pool (P) = pre-smoothing (window 3) plus a fixed-block mean.
+- adaptive (A) = the same smoothing plus a Ward-segment mean.
+- So A − P is placement at equal smoothing and pooling, and P − U is "averaging"
+  (smoothing plus pooling).
+
+| Hz | placement A − P | averaging P − U | net A − U |
+|---|---|---|---|
+| 1.00 | +0.272 [+0.225, +0.321]\* | −0.934 [−0.986, −0.883]\* | −0.661\* |
+| 0.50 | +0.340 [+0.276, +0.404]\* | −0.704 [−0.747, −0.660]\* | −0.363\* |
+| 0.35 | +0.655 [+0.595, +0.717]\* | −0.724 [−0.760, −0.686]\* | −0.069\* |
+| 0.20 | +0.759 [+0.693, +0.826]\* | −0.720 [−0.761, −0.679]\* | +0.039 ns |
+| 0.10 | +0.433 [+0.384, +0.482]\* | −0.592 [−0.632, −0.551]\* | −0.159\* |
+| 0.05 | +0.228 [+0.195, +0.263]\* | −0.523 [−0.563, −0.483]\* | −0.295\* |
+| 0.02 | +0.088 [+0.065, +0.113]\* | −0.373 [−0.412, −0.334]\* | −0.285\* |
+| 0.01 | +0.028 [+0.012, +0.043]\* | −0.267 [−0.306, −0.229]\* | −0.240\* |
+| 8-budget mean | **+0.351** [+0.330, +0.372], +14.3% | **−0.605** [−0.627, −0.582], −24.6% | **−0.254**, −10.4% |
+
+- A − P has participant CI [+0.330, +0.371].
+- Corpus CIDEr, uniform / uniform_pool / adaptive:
+
+  | Hz | uniform | uniform_pool | adaptive |
+  |---|---|---|---|
+  | 1.0 | 4.962 | 3.990 | 4.302 |
+  | 0.5 | 4.068 | 3.326 | 3.698 |
+  | 0.35 | 3.497 | 2.757 | 3.436 |
+  | 0.2 | 2.813 | 2.082 | 2.847 |
+  | 0.1 | 2.078 | 1.464 | 1.866 |
+  | 0.05 | 1.581 | 1.033 | 1.267 |
+  | 0.02 | 1.077 | 0.708 | 0.810 |
+  | 0.01 | 0.827 | 0.577 | 0.607 |
+
+- take_mean, one averaged caption per take: CIDEr 0.319, semantic 0.806.
+
+**Reading**
+- Adaptive loses to single-point uniform because it *averages*, not because of where it
+  decodes.
+  - At equal smoothing and pooling, Ward placement wins at all 8 budgets.
+  - The gain is largest in the mid-band: +0.66 to +0.76 at 0.35–0.2 Hz.
+- On a clean stream, averaging only blends neighbouring captions, at a cost of −24.6%.
+  - On the predicted stream the paper found that pooling *helps* uniform, by 5–26% (l.933).
+  - So the averaging effect changes sign between clean and noisy streams. That is consistent
+    with averaging acting as denoising.
+  - VL-JEPA's "pooling helps both strategies" is therefore a predicted-stream statement.
+- **The semantic screen misled; withdrawn.**
+  - At matched pooling it gave a tie with a crossover, with adaptive behind at 0.1–0.01 Hz.
+  - CIDEr has adaptive ahead at every budget.
+  - The semantic metric rewards blur even at matched pooling. take_mean scores 0.806
+    semantic, above uniform at ≤0.1 Hz, yet it has the lowest CIDEr of all (0.319).
+  - Yesterday's reading, "placement hurts at the lowest rates", is withdrawn.
+
+**Attribution (semantic, adaptive − uniform_pool)**, from `results_fidelity/attribution.py`:
+
+| cell | takes | ann/take | min | A − P [95% CI] | pattern 1.0→0.01 Hz |
+|---|---|---|---|---|---|
+| old 218, all passes, full (S4) | 218 | 112.3 | 2.85 | −0.0036 [−0.0046, −0.0026] | +++0---- |
+| old 218, first pass, full (S3) | 218 | 88.8 | 2.84 | −0.0019 [−0.0029, −0.0008] | +++0---- |
+| proc219, all passes, full (S2) | 219 | 194.4 | 5.82 | −0.0018 [−0.0028, −0.0009] | ++++---- |
+| proc219, first pass, cap 360 s (S5) | 219 | 102.6 | 3.88 | −0.0002 [−0.0010, +0.0007] | ++++---- |
+| proc219, first pass, full (S1 = C1) | 219 | 143.8 | 5.81 | −0.0003 [−0.0012, +0.0006] | ++++---- |
+
+- V (old 218, all passes, cap 360 s) had no uniform_pool run.
+- Every cell is a near-tie: |mean| ≤ 0.004, against a ±2% band of about ±0.017. All show the
+  same crossover. Take set, passes and cap barely move it.
+- CIDEr, two cells: the old set gives −0.305 (−16.0%, 8/8); the faithful set gives −0.254
+  (−10.4%, 7/8).
+- The conclusion does not depend on the benchmark choice. Only its size and the "every budget"
+  wording do.
+
+**Paper changes now justified (proposed; NOT edited, ask first)**
+1. "Loses at every budget" → "loses to single-point uniform at 7 of 8 budgets (n.s. at
+   0.20 Hz)", on the 219 procedural takes with one annotator.
+   - Appears in the abstract (l.71), contributions (l.129), §boundary (l.862–872), and the
+     Table 7 and Fig. atomic captions.
+2. Contributions l.129, "adaptive placement loses": reverse the attribution.
+   - At equal smoothing and pooling, placement *wins* at 8/8 budgets (+14%).
+   - The loss comes from averaging (−25%) on a clean stream.
+3. §boundary l.865–867, "offers nothing for a segmenter to exploit, so … segment means can only
+   blur": the first half is contradicted, the second is supported.
+   - The "redundancy" story becomes: placement gain minus averaging cost, where the averaging
+     cost grows with event density.
+4. Describe the benchmark as VL-JEPA's (219 procedural val takes, one annotator, full length).
+   The old 218 set becomes a robustness note.
+5. Give the GT tables CIs over both takes and participants.
+
+**Proposed next (needs the user's OK): a placement-only check with no averaging at all**
+- Config `smoothing_window: 1` and `pool: none`, so adaptive decodes the raw midpoint step of
+  each Ward segment. This is VL-JEPA's "exact" variant. Compare it with plain uniform on
+  proc219.
+- Nearly every decode is an exact caption embedding already in the cache.
+- The cost is mostly Ward plus scoring: about 1–2 h locally (estimate).
+
+**19:05: the exact check, started on the user's OK ("Yes"). Rules fixed before any result.**
+- Question: with no averaging at all, does adaptive's placement beat plain uniform?
+  - This is VL-JEPA's own unpooled pair. Its §4.6 (p. 8) decodes "either from the exact
+    embedding or from the average-pooled embedding within the segment"; Fig. 4 plots
+    "Selective Decoding" and "Uniform Decoding" without pooling.
+- Run E1: `configs/fidelity_exact.yaml` is `default.yaml` with only `pool: none` and
+  `smoothing_window: 1` changed (checked with diff and a YAML compare).
+  - Methods uniform and adaptive; proc219, first pass, full length; full CIDEr; the shared
+    decode cache. Runner `results_fidelity/run_exact.sh`; stop it with `stop_runs.sh`.
+- **Primary:** per-take CIDEr, adaptive-exact − uniform, mean over the 8 budgets. Paired
+  bootstrap CIs over takes and over participants (n = 5000, seed 0).
+- **Rules:**
+  - Both CIs above 0: placement alone helps. The paper may then say adaptive *placement*
+    helps, and that the budget-matched segment *means* lose because averaging blurs a clean
+    stream.
+  - Both CIs below 0: placement alone loses to uniform on the clean stream. Its +14% over
+    uniform_pool exists only when both average: its segments are better *averaging
+    windows* than fixed blocks, nothing more. The paper must then say adaptive loses with
+    or without averaging.
+  - Otherwise: no reliable difference. Call it a tie only if both CIs lie inside ±2% of
+    uniform's mean.
+  - "Every budget" wording needs all 8 budgets significant in the same direction.
+- **Identity check, before reading the verdict:** E1's uniform per-take CIDEr must equal C1's
+  exactly at every budget, because uniform reads neither setting. If it does not, stop.
+- Analysis: `results_fidelity/exact_check.py`. With C1's uniform_pool and adaptive it also
+  fills a 2×2 (placement × averaging).
+  - Caveat: for adaptive, turning averaging on also moves the Ward boundaries (they are
+    found on the smoothed stream). So adaptive-mean − adaptive-exact is averaging plus a
+    boundary shift, not averaging alone.
+- Smoke test (first 2 takes, written to scratch only) passed in 49 s.
+  - It needed 2 new decodes: the cache went from 195,120 to 195,122 entries.
+  - The identity check held, and `exact_check.py` ran end to end.
+  - With n = 2, its numbers are a pipeline test only, not evidence.
+- Full run: 19:04:57 → 19:22:21, 17 min (streams 8 min, Ward and scoring 9 min). It needed
+  594 new decodes (cache 195,122 → 195,716). The earlier 1–2 h guess was too high.
+
+**19:24: exact check RESULT. Placement alone helps.**
+- Identity check passed: E1's uniform per-take CIDEr equals C1's exactly at all 8 budgets.
+- **Primary: adaptive-exact − uniform = +0.325**, CI over takes [+0.303, +0.347], over
+  participants [+0.303, +0.348]. That is +13.2% of uniform's mean (2.453).
+  - Adaptive is ahead at all 8 budgets, significantly at the five highest (1.0–0.1 Hz).
+    At 0.05–0.01 Hz the gap (+0.009 to +0.028) is not significant.
+  - 214 of 219 takes favour adaptive on the 8-budget mean.
+  - Per scenario, every CI is above 0: Bike Repair +0.333, Cooking +0.341, Health +0.297.
+- **Verdict by the rule: PLACEMENT ALONE HELPS.** It is not "at every budget": 5 of 8 are
+  significant.
+- Full output: `results_fidelity/E1_exact_check.txt`.
+
+| Hz | U | P | Ax | Am | Ax − U [95% CI] | Am − Ax | corpus U | corpus Ax |
+|---|---|---|---|---|---|---|---|---|
+| 1.00 | 4.893 | 3.959 | 5.204 | 4.232 | +0.311 [+0.278, +0.345] | −0.972 | 4.962 | 5.266 |
+| 0.50 | 3.978 | 3.274 | 4.767 | 3.615 | +0.789 [+0.739, +0.840] | −1.153 | 4.068 | 4.858 |
+| 0.35 | 3.405 | 2.681 | 4.136 | 3.336 | +0.731 [+0.665, +0.796] | −0.800 | 3.497 | 4.231 |
+| 0.20 | 2.676 | 1.956 | 3.154 | 2.715 | +0.479 [+0.420, +0.538] | −0.440 | 2.813 | 3.261 |
+| 0.10 | 1.845 | 1.252 | 2.073 | 1.685 | +0.228 [+0.183, +0.273] | −0.387 | 2.078 | 2.258 |
+| 0.05 | 1.328 | 0.804 | 1.350 | 1.033 | +0.023 [−0.011, +0.056] ns | −0.318 | 1.581 | 1.580 |
+| 0.02 | 0.854 | 0.481 | 0.863 | 0.569 | +0.009 [−0.024, +0.043] ns | −0.294 | 1.077 | 1.082 |
+| 0.01 | 0.646 | 0.379 | 0.675 | 0.406 | +0.028 [−0.010, +0.069] ns | −0.268 | 0.827 | 0.849 |
+
+U, P, Ax and Am are per-take CIDEr means (uniform, uniform_pool, adaptive exact, adaptive
+mean). Every Am − Ax cell is significant.
+
+**The 2×2: per-take CIDEr, mean over budgets and takes**
+
+| | averaging off | averaging on | effect of averaging |
+|---|---|---|---|
+| uniform placement | U 2.453 | P 1.849 | −0.605 (−24.6%) |
+| adaptive placement | Ax 2.778 | Am 2.199 | −0.579 (−23.6%)* |
+| effect of adaptive placement | +0.325 (+13.2%) | +0.351 (+14.3%) | |
+
+- The two effects almost exactly add up. The interaction is +0.026 [+0.007, +0.044], +1% of
+  uniform's mean.
+- The paper's comparison, Am − U = −0.254 (−10.4%), reproduces this morning's primary
+  exactly. It is +14% for placement minus 24% for averaging.
+- \* For adaptive, averaging on also moves the Ward boundaries.
+- Semantic on E1: +0.018 [+0.017, +0.020], ahead at 7/8 budgets. Here it points the same way
+  as CIDEr, unlike at matched pooling.
+- Exploratory, not pre-registered: adaptive-exact at 0.5 Hz (corpus 4.858) comes within 2.1%
+  of uniform at 1 Hz (4.962), with half the decodes.
+
+**What this means for the paper (proposed, not edited; ask the user first)**
+1. l.129 "adaptive placement loses" must be reversed. On clean annotations adaptive
+   placement helps: +13% with no averaging, +14% when both average. What loses is
+   averaging (−24%), which adaptive uses and plain uniform does not.
+2. §boundary (l.862–872): "offers nothing for a segmenter to exploit" is now contradicted
+   with and without averaging. "Segment means can only blur" stands.
+3. "Uniform beats adaptive" holds only for the paper's pairing: averaged adaptive against raw
+   uniform. Report the 2×2 instead.
+4. Placement's gain is significant at 1.0–0.1 Hz and fades to a tie at 0.05–0.01 Hz, where
+   each take gets only about 3–17 decodes.
+5. Today's GT runs show the semantic metric rewards blur and misranked schedules at matched
+   pooling. So check the paper's semantic-metric controls (e.g. l.994, the Fig. at l.1036,
+   the headroom table at l.1194). Where a claim rests on the semantic metric alone, back it
+   with CIDEr or soften it.
+- Next, needs the user's OK: draft these edits as a diff for approval before touching
+  `paper_ieee.tex`.
+
+---
+
+## 2026-11-25 (Wednesday)
+
+**Theme: evaluation day. An easy-English speaking guide.**
+
+- The user asked for what to say "in easy words". The theory notes were too technical
+  for speaking.
+- Built `Aman_Parganiha_Easy_Words.pdf` (18 A4 pages, in `Downloads\For ppt`). Front page:
+  - how to use it;
+  - the whole talk in 1 minute;
+  - ten numbers to remember.
+- Each slide then gets a thumbnail, an "In one line" fallback sentence, and a "Say this"
+  script in short, simple sentences. Below that come "Hard words, made easy" and "If they
+  ask" answers.
+- At the end: 11 general questions with easy answers, phrases to use if stuck, and a
+  timing plan (about 16 min at 130 wpm, with a "short of time" tip).
+- The content is hand-written in `scratchpad/tools/make_easy.py`, with the same facts as
+  the deck notes.
+- Checked the ICM source PDF: "if one robot is switched off, the other takes every mould"
+  is in it. A robot-cycle-time explanation of the odd/even split was left out because it
+  was not in the source.
+- The deck itself was not changed.
+
+### Research review for publication (after the evaluation)
+
+The user asked for a strict reviewer's assessment of the IEEE draft before planning
+publication. Read the full `paper_ieee.tex`, VL-JEPA §4.6 (`reference paper/2512.10942v2.pdf`),
+and the selective, eval and bootstrap code; re-derived tables from the JSONs.
+
+**Checks that passed**
+- The tables re-derive from the JSONs exactly: gt, headline, and both paired-bootstrap tables.
+- Budget matching is exact (`select_points`).
+- `uniform_pool` is implemented as the paper describes: centred block of one stride, same
+  smoothing.
+- The bootstrap resamples whole takes, the right unit for a paired test.
+
+**New findings, not in the paper**
+- **The benchmark differs from VL-JEPA's.** VL-JEPA uses "EgoExo4D val, procedural domains,
+  218 videos, avg 6 min, ~143 atomic annotations".
+  - On disk, the procedural val takes (Cooking 98, Health 72, Bike Repair 49) are 219 takes,
+    mean 5.95 min, 143.8 annotations using one annotator pass. That is a near-exact match.
+  - Our `egoexo_takes_218.txt` was selected by annotation count across all 8 scenarios: only
+    99/218 are procedural, mean about 2.9 min.
+  - `egoexo_takes_pred40.txt` has 15/40 procedural takes and 30 participants.
+- **`load_atomic_descriptions` merges all annotator passes** and does not drop `rejected`
+  passes (112 rejected passes in the val file; none in the 218 set).
+  - 92/218 and 18/40 takes are multi-pass.
+  - Mean annotations in the 218 set: 112.3 merged against 88.8 with one pass.
+  - So "loses at every budget on the paper's own benchmark" is not established.
+- **The online `SegmentTrigger` is scored at retrospective segment midpoints**
+  (`run_online_segments`, used through `ablations.py`). A live stream only gets the caption
+  when the next shift fires, so the "causal" claim needs emission-time scoring.
+- **Statistics:** "tied" is read off non-significance; 32 cells with no multiplicity control;
+  GT tables have no CIs; single training seed.
+- **Related work** misses the streaming "when to respond" VideoLLM line (Dispider, MMDuet2,
+  Em-Garde, Response-G1, StreamPro, LiveStarPro).
+- **Third-party VL-JEPA reimplementations exist** (Mini-VL-JEPA, Soumya-Chakraborty/VL-JEPA).
+  A web search on 11-25 found no official VL-JEPA code.
+- **Inconsistency:** the paper says about 11 s/window on the T1000; the deck says 4.65 s on the
+  T1000 and 0.10 s on the RTX 4090.
+
+**Next step recommended (not started):** a benchmark-fidelity rerun in GT mode.
+- Take list: the 219 procedural takes, one non-rejected pass each, no 360 s cap.
+- All four schedules, with a paired bootstrap.
+- A 2×2 attribution: {old 218, procedural 219} × {merged, one pass}.
+- Cost reference: D.1 (218 takes, 2 schedules) took about 45 h on the T1000 (Jul 20–22).
+  So run the semantic screen first, then CIDEr, or rent a 4090 (ask first).
+- This comes before the participant-disjoint retrain, because the test takes decide which
+  takes can be training data. The cleanest route is EgoExo4D's official train split.
+
+### Pre-registered analysis plan, fidelity rerun (written before any result)
+
+**Setup.**
+- Benchmark: `eval_data/egoexo_takes_proc219.txt`, with `passes="first"` (one annotator, first
+  non-rejected pass) and full takes (no 360 s cap).
+- Stream: ground truth, with the selective config used for D.1 (ward, pool mean, smoothing 3).
+- Schedules: uniform, uniform_pool, adaptive and take_mean at the 8 usual budgets.
+
+**Validation gate.** Before any new number is trusted, `scripts/eval_gt_fidelity.py` must
+reproduce Table 7 (atomic-218: uniform and adaptive CIDEr, all passes, 360 s cap) exactly
+from the D.1 decode cache.
+
+**Primary measure.** Per take, the paired difference adaptive − uniform in time-aligned CIDEr,
+averaged over the 8 budgets. Report a 95% bootstrap CI over takes and, as a check, a bootstrap
+over participants (52 participants). Per-budget CIs are secondary.
+
+**Decision rules.**
+- CI entirely below 0, and uniform wins at least 6 of 8 budgets: "uniform beats adaptive on
+  clean atomic annotations" stands, on the faithful benchmark.
+- CI entirely above 0: withdraw that claim, and report the protocol sensitivity as a finding.
+- CI straddles 0: "no reliable difference". Call it a tie only if the CI lies within ±2% of
+  uniform's mean.
+
+**Semantic screen.** It needs no decoding, but it rewards averaging in itself, so it is valid
+only at matched pooling. It answers adaptive − uniform_pool, i.e. whether placement helps on
+the clean stream at equal pooling, under the same rules. It is NOT a proxy for the primary
+measure.
+
+**Attribution.** Compare the semantic cells {218, proc219} × {all, first}. All cells use full
+takes; one extra cell keeps the 360 s cap.
+
+**Cost.** CIDEr for the pooled schedules is about 40 h per schedule on the T1000 at the
+measured 1.2 decodes/s. Ask the user before a long local run or a 4090 rental.
+
+### Fidelity rerun: first results (user said go, ~21:45)
+
+**Built**
+- `scripts/select_egoexo_procedural.py` writes `eval_data/egoexo_takes_proc219.txt`: 219 takes,
+  52 participants, LF line endings. The frozen 218/40 lists are untouched.
+- `load_atomic_descriptions(passes=all|accepted|first)`. The default `all` is the legacy
+  behaviour (verified: the 218 set still gives 112.3 annotations per take).
+- `scripts/eval_gt_fidelity.py`:
+  - per-take semantic and CIDEr scores;
+  - paired bootstrap over takes and over participants;
+  - per-scenario breakdown;
+  - `--cider off|cache-only|full`;
+  - partial flushes and a PID file.
+- `results_fidelity/` holds the runner, the stop script, summarize.py and the gate checker.
+
+**Validation gate PASSED.** Rerunning the old setup (218 takes, all passes, 360 s cap,
+`--encode-chunk 0`) from the D.1 decode cache reproduces all 16 cells of Table 7 to 2e-16.
+
+**Table 7 now has CIs.** Uniform beats adaptive on CIDEr at 8/8 budgets, all significant.
+- Mean over budgets −0.305, CI [−0.344, −0.266]; participant-clustered CI [−0.346, −0.265].
+- On the semantic metric adaptive is +0.089. That is the averaging bias, so it says nothing
+  about placement.
+
+**Faithful benchmark (S1), semantic screen**
+- Benchmark statistics: 219 takes, 143.8 annotations per take, 5.81 min, one annotation per
+  2.43 s; 59 takes are longer than 360 s.
+- adaptive − uniform_pool, pre-registered mean over budgets: **−0.0003**, CI [−0.0012, +0.0006];
+  participant CI [−0.0014, +0.0008].
+  - That is inside ±2% (±0.0176), so it is a **tie by the rule**.
+- Per budget (secondary) there is a significant **crossover**:
+  - adaptive ahead at 1.0/0.5/0.35/0.2 Hz (+0.007 to +0.014; ahead on 178–203 of 219 takes);
+  - adaptive behind at 0.1–0.01 Hz (−0.005 to −0.016).
+  - The same pattern holds in all three scenarios.
+  - So on clean procedural annotations, placement at matched pooling helps at the higher
+    rates and hurts at the lowest. This is the same "mid-band" shape as COIN and keysteps.
+- The primary (CIDEr adaptive − uniform) is still pending.
+
+**Decode speed measured properly**
+- 3.93 decodes/s on real pooled embeddings with the encoder unloaded.
+- D.1's realised rate was about 0.6/s (about 95k decodes in 45 h). The "1.2/s" figure in July
+  was a projection. D.1 kept encoder and decoder on the 8 GB GPU together.
+- Full CIDEr on the faithful set: about 374k decodes before dedup, so about 16–27 h locally.
+  No rental is needed.
+
+**Incident (no effect on results)**
+- Stopping a background runner with TaskStop killed only the wrapper shell. Two copies of
+  `run_all.sh` (from 21:48 and 22:08) kept starting runs, so duplicate attribution runs
+  competed for the GPU from about 22:06 to 23:20.
+- This invalidated my first two decode benchmarks, which were confounded.
+- It did not affect S1: the pipeline is deterministic and the JSON was written by a single
+  process.
+- Fix: `run_cider.sh` takes a lock directory and writes `runner.pid`;
+  `results_fidelity/stop_runs.sh` kills the runner and its Python child.
+
+**Running from 23:26**
+- C1: full CIDEr on the faithful benchmark, all 4 schedules, cache
+  `eval_data/decode_cache_proc219.jsonl`. Partial results go to
+  `results_fidelity/C1_proc219_first_full_cider.partial.json`.
+- Then the attribution runs S3, S4, S2 and S5.
+- C1's semantic numbers must equal S1's exactly; this is a determinism check.
+
+---
+
+## 2026-11-24 (Tuesday)
+
+**Theme: presentation decks for the 25 Nov evaluation.**
+
+- Late on 11-23: a thesis-only viva deck (16 slides, Slides artifact) was built, then
+  fully redesigned after the user's "Not looking good" (bigger type, fuller slides, a
+  meaning-lane diagram, the results chart redrawn).
+  Link: https://claude.ai/artifact/6yHHX4HLHkTbPZUgrAfr16
+- 11-24: the user shared a classmate's evaluation deck as the format to follow (Part A
+  thesis, Part B internship), the two internship write-ups and a dark-theme design
+  brief. Built a new 24-slide evaluation deck:
+  https://claude.ai/artifact/HAoMtDd52XSbYFj99PXNu9
+  - Cover in the evaluation's format: name, roll no., co-author (Part A) Kumar Gaurav
+    Atram, date 25/11/2026, and the official thesis title.
+  - Part A, 11 slides in plain words: problem, idea, data, architecture, trigger,
+    three results, the main finding ("the gain is averaging, not timing"), demo,
+    outcome and limitations. Numbers re-checked against `thesis_body.tex` and the
+    result JSONs. The predicted-stream chart is redrawn as a native SVG from
+    `results_egoexo_predictor_40_indomain_pooled.json`.
+  - Part B, 9 slides on the two internship projects, from the user's PDFs and the
+    reference deck's images.
+  - Every slide has plain-words speaker notes. The last slide's notes list likely
+    viva questions with short answers.
+  - All 24 slides rendered in headless Chrome. Three slides (a-trigger, jt-problem,
+    jt-flow) ran 10–17 px past the footer line; fixed, and nothing crosses it now.
+- Later, at the user's request, the deck was cut to **18 slides**:
+  - Merged: problem + idea, architecture + trigger, Result 2 + main finding, the
+    ICM PLC slide + results, and the Janyu lifecycle + customer portal.
+  - Dropped the Part B divider.
+  - Re-rendered: nothing crosses the footer line.
+  - Speaker notes rewritten as a spoken script of about 14 minutes at 140 wpm.
+- Speaker-script PDF (9 A4 pages): a timing plan, then each slide's script with a
+  thumbnail, 14 likely questions with short answers, and a word list. It is built from
+  the deck's own notes, so the two match. Saved in the user's `Downloads\For ppt`.
+- Theory-notes PDF (10 A4 pages), a companion to the script. For each slide it gives
+  the concepts behind it in simple words, checked against `thesis_body.tex` (JEPA,
+  SONAR, InfoNCE, SegmentTrigger, Ward, CIDEr-D, paired bootstrap, homography, PLC
+  watchdog, ACID transactions), plus "if they ask" answers. It states that "adaptive"
+  in every results table means the offline Ward segmenter, budget-matched to uniform,
+  not the live τ = 0.15 trigger. Saved in `Downloads\For ppt`.
+- Not done: the 11-23 page fixes (errors next to Start), and the pod is off. The
+  demo slide's notes point to the user's 11-22 demo recording.
+
+---
+
+## 2026-11-23 (Monday)
+
+**Theme: the demo page made phone-ready before the second RunPod session.**
+
+- Found while preparing the redeploy: the webcam asked for no particular camera, so
+  a phone opened its selfie camera. Pointed down at the hands (the only angle that
+  captions well, per the 11-22 viewpoint test), its screen then faces the table.
+  Every frame was also drawn into a fixed 224x168 canvas, so an upright phone's tall
+  picture reached V-JEPA 2 squeezed sideways by ~1.8x.
+- Fix (`webapp/static/index.html`):
+  - `facingMode: {ideal: "environment"}` requests the back camera. A laptop keeps its
+    only camera, since `ideal` never fails.
+  - Frames keep the camera's shape: 168 px on the short side, fixed per session.
+    Later frames are centre-cropped to that shape, so turning the phone mid-run
+    never stretches a frame or mixes frame sizes in one window.
+  - No frame is sent before the camera delivers one, so no blank frames at the start.
+  - An explicit `play()` keeps the preview running when the page scrolls.
+  - The preview is capped at 45% of the screen height.
+  - The webcam hint now says to point the camera down at the hands.
+- Verified with a stub-model server and headless Chrome's fake camera:
+  - A laptop-shaped feed still gives 224x168 frames, as before.
+  - A square feed gives 168x168 frames (previously stretched to 224x168), and a
+    circle stays round in the frames sent.
+  - Each run: 14 windows, a done event after Stop, no page errors.
+  - The crop arithmetic also checks out for upright, rotated-mid-run and 16:9 inputs.
+  - Not testable here: a real phone's back camera. The pod session checks that.
+- Docs:
+  - `deploy/README_CLOUD.md` now has the measured numbers: $0.89/hr, 0.10 s/window,
+    $1.06 for the first run. It also gives ports 8888 + 8000 and a 50 GB disk, says
+    Stop comes before Terminate, and adds the camera-down advice.
+  - `webapp/README.md` describes the camera behaviour.
+- `livejepa_cloud.zip` rebuilt (298.9 MB, 85 files, both predictors; the new page
+  verified inside the zip).
+- Second RunPod session (RTX 4090), checked from here:
+  - `/health` reports both predictors loaded and no error, and the pod serves the
+    new page.
+  - Phone-shaped frames (168x224, a centre 3:4 crop of the top-down kitchen clip,
+    6–36 s) sent through the proxy to `/ws_cam`, with real models, uniform 1 Hz:
+    - first caption 8.9 s after Start (the 16-frame window filling);
+    - 46 windows in 31 s, so it keeps up live;
+    - captions on theme with fuzzy nouns: "pour into a glass", "pour into a glass
+      of rice", "rinse and wash the sauce", "install the new tap on the tap".
+  - So the real V-JEPA 2 processor handles tall frames.
+- The user's first phone try: the camera closed right after Start. Reproduced on
+  the pod with headless Chrome:
+  - Cause: the link had no `?token=` (the RunPod Connect URL drops it). The server
+    answers "invalid token", and the page stops the camera.
+  - The error is shown only in the status line, which on a phone is below the
+    screen, so it looked like the camera closing by itself.
+  - With the token: the camera stays on, 2 windows/s.
+  - Page fix queued for viva day: say so next to Start, before opening the camera.
+- Adaptive mode on the 4090, real page and real models, same kitchen clip: silent
+  for 25 s (36 windows), one caption only at the Stop flush. Live captions need
+  uniform mode (0.5 Hz suggested). This matches the T1000 finding (11-22).
+- The user's second try, with the token link, also failed ("not working"; details
+  not given yet). The user then shut the pod down; its link returned 404 right
+  after. Next: find out what the phone showed, and fix it before the 25th.
+
+---
+
 ## 2026-11-22 (Sunday)
 
 **Theme: the first RunPod deployment. Setup ran clean, first try, on an RTX
@@ -108,6 +710,35 @@ backfilled summaries.
     streams. For a live demo that should keep talking, uniform mode is the honest
     fallback.
 - Zip rebuilt: 85 files, both switchable checkpoints.
+
+### "Will this work better?" Camera angle matters more than the model
+- The EgoExo predictor was trained on **head-mounted views only** (11,556 `ego_`
+  windows, 0 `exo_`). A laptop webcam is a fixed third-person camera, so the
+  same take's fixed GoPro views served as proxies.
+- Setup: real T1000, headless Chrome fake camera, uniform 1 Hz, ~100 s each.
+  Same take as before (upenn_0711_Cooking_6_5). Ground truth: kettle under the
+  faucet 15–28 s, cabinet and mug 30–40 s, tea pack in the cabinet 41–48 s.
+- **Side view across the room (gp03, like a desk webcam): both models fail.**
+  - everyday actions: "picks up a neck in a refrigerator", "kicks the camera
+    holder's neck out of the rope"…
+  - how-to steps: "iron the iron with the iron", "remove the rotor harness"…
+- **Top-down over the sink (gp05, like a phone propped above the table): both
+  are relevant.**
+  - how-to steps: "pour into glass", "pour into a glass", "pour into a glass of
+    water" (13–34 s, while the kettle fills at the faucet), then "refill the
+    wash basin", "fill in the soap tray", "plug the water spout".
+  - everyday actions: "holds the cabinet with her left hand" (46 s; ground
+    truth: cabinet 41–48 s), "opens the cabinet with his left hand", plus
+    nonsense ("black dance", "cape thing").
+- **First-person (head-mounted), the earlier run:** everyday actions is clearly
+  better.
+- Conclusion: the switch adds vocabulary, but **viewpoint decides**. A face or a
+  far side view fails with either model; hands seen from above or first-person
+  work. This is one take (its participants overlap EgoExo training), so it is
+  anecdotal, not a measurement.
+- For the viva: phone above the table looking down at the hands; pour water into
+  a glass, open a cabinet or box; try both switches; rehearse on a pod on the
+  24th.
 - Viva-day plan: a fresh 4090 (A40 as fallback) ~30 min early with the same zip
   and commands (`cd /workspace` first). Setup took well under 10 minutes today.
 
