@@ -6,6 +6,30 @@ backfilled summaries.
 
 ---
 
+## 2026-11-28 (Saturday)
+
+**Theme: everything pushed to GitHub, on a new branch.**
+
+- PR #3 (model-switch) had already been merged into main, so the work went on a new
+  branch, `benchmark-fidelity`, started from origin/main (the same tree as model-switch).
+- Three commits:
+  - 5b915da: the 11-23 phone-ready demo page and the cloud README;
+  - cba70ca: the fidelity rerun and the exact check (the loader's `passes` flag,
+    runners, config, final JSONs and logs);
+  - 5b93e38: WORKLOG 11-23 to 11-27.
+- Checks before committing: tests 16/16; no secrets, emails or local paths in the changes.
+- Left out on purpose, and now in `.gitignore`:
+  - `reference paper/` (VL-JEPA's PDF and one other PDF, not opened; not ours to
+    redistribute);
+  - the runners' `.pid` and `.partial.json` files.
+- The `gh` CLI is not installed on this machine, so no pull request was opened. The user
+  opens it at https://github.com/amanparganiha/livejepa/pull/new/benchmark-fidelity.
+
+**Queued next (unchanged):** the user asks their guide about ICME or TMLR; the
+paper-edit before/after list (awaiting OK).
+
+---
+
 ## 2026-11-27 (Friday)
 
 **Theme: no lab work. The user answered the two open questions: they cannot download
