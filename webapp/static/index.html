@@ -87,7 +87,7 @@
   #start:disabled { opacity:.5; cursor:not-allowed; }
   #start.stop { background:var(--red); }
   .hint { color:var(--muted); font-size:12px; margin-top:10px; }
-  #cam { width:100%; border-radius:8px; margin-top:8px; display:none; background:#000; }
+  #cam { width:100%; max-height:45vh; object-fit:contain; border-radius:8px; margin-top:8px; display:none; background:#000; }
 
   #current { font-size:24px; min-height:40px; padding:16px 18px; background:#0d1116; border:1px solid var(--line);
              border-radius:10px; color:var(--green); }
@@ -387,7 +387,8 @@ document.querySelectorAll("#src button").forEach(b => b.onclick = () => {
 function setHint() {
   const cam = src === "webcam", t1000 = /T1000/i.test(DEVICE);
   $("#hint").textContent = cam
-    ? "Hold up an object, switch activities, walk away — watch the meter spike right before it speaks."
+    ? "Point the camera down at your hands (a phone uses its back camera): pour water, open a box, take something out."
+      + " Watch the meter spike right before it speaks."
       + (t1000 ? " Captions lag ~5 s/window on this GPU." : "")   /* measured live 2026-11-18 */
     : (t1000 ? "Each window is ~11 s of GPU time on this T1000 — captions stream in progressively."
              : "Captions stream in progressively, one window at a time.")
@@ -495,17 +496,29 @@ async function startVideo() {
 /* ---------- webcam flow ---------- */
 async function startWebcam() {
   try {
-    camStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+    // Prefer the back camera: a phone then looks down at the table while its screen faces
+    // you (both models learned from hands-and-objects footage). A laptop keeps its only camera.
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 320, height: 240, facingMode: { ideal: "environment" } } });
   } catch (e) { $("#status").textContent = "camera access denied/unavailable: " + e; return; }
   const v = $("#cam"); v.srcObject = camStream; v.style.display = "block";
+  v.play().catch(() => {});  // explicit play: phones may pause an autoplaying video scrolled off screen
   resetStats(); done = false; setRunning(true, "■ Stop"); $("#prog").style.width = "0%";
   ws = new WebSocket(`${wsProto()}://${location.host}/ws_cam`);
   ws.onopen = () => {
     ws.send(JSON.stringify({ mode, model, hz: parseFloat($("#hz").value || "0.2"), token: TOKEN }));
-    const c = $("#grab"); c.width = 224; c.height = 168; const ctx = c.getContext("2d");
+    const c = $("#grab"); const ctx = c.getContext("2d");
+    let cw = 0, ch = 0;  // frame size, fixed for the session from the first camera frame
     camTimer = setInterval(() => {
-      if (!ws || ws.readyState !== 1) return;
-      ctx.drawImage(v, 0, 0, c.width, c.height);
+      if (!ws || ws.readyState !== 1 || v.readyState < 2 || !v.videoWidth) return;  // no blank frames
+      const vw = v.videoWidth, vh = v.videoHeight;
+      if (!cw) {  // keep the camera's shape (an upright phone gives a tall frame), short side 168 px
+        const s = 168 / Math.min(vw, vh);
+        cw = c.width = Math.round(vw * s); ch = c.height = Math.round(vh * s);
+      }
+      // centre-crop to that shape, so turning the phone mid-run never stretches the picture
+      const k = Math.min(vw / cw, vh / ch), sw = cw * k, sh = ch * k;
+      ctx.drawImage(v, (vw - sw) / 2, (vh - sh) / 2, sw, sh, 0, 0, cw, ch);
       ws.send(JSON.stringify({ frame: c.toDataURL("image/jpeg", 0.6) }));
     }, 500);  // ~2 fps
   };

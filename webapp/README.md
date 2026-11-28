@@ -110,6 +110,9 @@ one checkpoint is present.
 - **Webcam** is captured by the *browser* (`getUserMedia`) and streamed to the
   backend — so it works from any laptop even though the server machine has no camera.
   Requires `http://localhost` or HTTPS (browsers block camera on plain remote HTTP).
+  The page asks for the back camera (on a phone it then looks at the table while the
+  screen faces you) and keeps the camera's shape: frames are 168 px on the short
+  side, so an upright phone sends tall frames instead of stretched ones.
 - Single GPU → one job at a time (the backend refuses a second concurrent job with a
   "server busy" message).
 

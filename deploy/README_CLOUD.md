@@ -1,7 +1,8 @@
 # LiveJEPA on a rented GPU (RunPod / Vast.ai)
 
-Rent an RTX 3090/4090 for a few hours (~$0.25–0.70/hr) and run the **real-time**
-demo, or fast training. Total cost for a demo session: well under $2.
+Rent an RTX 4090 (or 3090) for an hour or two and run the **real-time** demo, or
+fast training. The first deployment (2026-11-22: RTX 4090 at $0.89/hr, about
+70 minutes including setup) cost $1.06.
 
 ## Step 0 — build the bundle (on your machine, once)
 
@@ -13,7 +14,8 @@ python scripts/make_cloud_bundle.py        # -> livejepa_cloud.zip (~300 MB)
 
 1. runpod.io → Deploy → pick **RTX 4090** (or 3090 to save money), Community Cloud.
 2. Template: **RunPod PyTorch** (torch + CUDA preinstalled).
-3. Before deploying, click *Edit Template* → **Expose HTTP port 8000**.
+3. Before deploying, click *Edit Template*: HTTP ports **8888, 8000** (8888 is
+   Jupyter, 8000 the demo) and container disk **50 GB** (the models need ~7 GB).
 4. Deploy. Wait until Running.
 
 ## Step 2 — upload the bundle
@@ -49,8 +51,12 @@ https://<pod-id>-8000.proxy.runpod.net/?token=pick-a-secret
 That opens the white brand page; its **Open the live demo** button goes to `/demo`
 and carries the `?token=` along (so do the links to and from `/about`).
 
-HTTPS means the **webcam works directly** — no tunnel needed. On a 4090 expect
-roughly ~1 s/window (vs ~11 s on the T1000): near-real-time captions.
+HTTPS means the **webcam works directly** — no tunnel needed. A 4090 takes 0.10 s
+per window (measured 2026-11-22; the T1000 takes 4.65 s), so captions keep up live.
+
+Point the camera **down at your hands**: both models learned from hands-and-objects
+footage, so a laptop webcam facing you gives off-topic captions. On a phone, open
+the same link: the page uses the back camera, so the screen still faces you.
 
 Vast.ai instead: choose a "pytorch" image, add port mapping 8000, then use the
 instance's "Open" button URL — or run cloudflared inside the pod if no HTTPS port
@@ -77,5 +83,6 @@ Download the resulting `checkpoints_cloud/predictor_*.pt` before stopping the po
 - **STOP (terminate) the pod when done** — billing runs while it exists, even idle.
   "Stop" on RunPod still bills storage; *Terminate* ends all charges.
 - Models re-download on a fresh pod (~7 GB, a few minutes on datacenter internet) — fine.
-- A demo session (setup 10 min + 2 h of playing) on a 4090 ≈ $1.50.
+- A demo session (setup 10 min + 1 h of playing) on a 4090 at $0.89/hr ≈ $1.05.
+- RunPod shows *Terminate* only after *Stop Pod*: stop first, then terminate.
 - Nothing sensitive is in the bundle; the token gates uploads/jobs on the public URL.
