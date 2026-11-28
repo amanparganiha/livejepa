@@ -110,14 +110,31 @@ def _find_take_video(data_root, take_info):
     return max(vids, key=score)
 
 
-def load_atomic_descriptions(data_root, split="val", normalize_subject=True):
+ANNOTATION_PASSES = ("all", "accepted", "first")
+
+
+def load_atomic_descriptions(data_root, split="val", normalize_subject=True, passes="all"):
     """Return {take_uid: [(timestamp_seconds, text), ...] sorted by time}.
 
     Parses annotations/atomic_descriptions_<split>.json, whose shape is
     {"annotations": {take_uid: [ {"descriptions": [ {"timestamp", "text"}, ...]}, ...]}}.
     Robust to a take mapping straight to a single descriptions dict, and to a
     few alternate field names.
+
+    A take can carry several annotation passes (one per annotator; 237 of the
+    826 val takes have 2-4), and a pass can be flagged ``rejected``. ``passes``
+    chooses how they are combined:
+      'all'      every pass merged, rejected ones included. The legacy
+                 behaviour that every result before 2026-11-25 used; it stays
+                 the default so those results remain reproducible.
+      'accepted' every non-rejected pass merged.
+      'first'    one annotator: the first non-rejected pass in file order. With
+                 the procedural val takes this reproduces VL-JEPA's published
+                 benchmark statistics (~143 annotations per video).
+    Under 'accepted'/'first' a take whose passes are all rejected is dropped.
     """
+    if passes not in ANNOTATION_PASSES:
+        raise ValueError(f"passes must be one of {ANNOTATION_PASSES}, got {passes!r}")
     path = _find_annotation_file(data_root, split, "atomic_descriptions")
     if path is None:
         return {}
@@ -125,11 +142,16 @@ def load_atomic_descriptions(data_root, split="val", normalize_subject=True):
         data = json.load(f)
     anns = data.get("annotations", data) if isinstance(data, dict) else {}
     out = {}
-    for uid, passes in anns.items():
-        if isinstance(passes, dict):
-            passes = [passes]
+    for uid, take_passes in anns.items():
+        if isinstance(take_passes, dict):
+            take_passes = [take_passes]
+        take_passes = [p for p in take_passes if isinstance(p, dict)]
+        if passes != "all":
+            take_passes = [p for p in take_passes if not p.get("rejected")]
+            if passes == "first":
+                take_passes = take_passes[:1]
         pairs = []
-        for p in passes:
+        for p in take_passes:
             if not isinstance(p, dict):
                 continue
             for d in p.get("descriptions", []):

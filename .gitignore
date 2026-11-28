@@ -92,3 +92,9 @@ thesis_materials/*.log
 # the Overleaf upload archive: regenerate with scripts/make_overleaf_zip.py
 # (also matched by *.zip above; named here so its absence is not a mystery)
 /livejepa_thesis_overleaf.zip
+# results_fidelity runner state: PID files, per-budget partial flushes, the lock dir
+results_fidelity/*.pid
+results_fidelity/*.partial.json
+results_fidelity/.lock/
+# third-party papers kept locally for reference (not ours to redistribute)
+/reference paper/

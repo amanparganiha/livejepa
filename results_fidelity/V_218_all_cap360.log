@@ -1,0 +1,24 @@
+Loading weights:   0%|          | 0/387 [00:00<?, ?it/s]Loading weights: 100%|██████████| 387/387 [00:00<00:00, 10088.73it/s]
+built 218 streams in 329s (missing 0) | {'n_takes': 218, 'missing_uids': [], 'participants': 77, 'scenarios': {'Dance': 52, 'Bike Repair': 18, 'Basketball': 36, 'Cooking': 41, 'Soccer': 18, 'Health': 40, 'Rock Climbing': 9, 'Music': 4}, 'mean_annotations': 110.33944954128441, 'mean_stream_seconds': 162.9862385321101, 'annotations_per_second': 0.6769862936590583}
+decode cache (read-only): 59588 entries from eval_data/decode_cache.jsonl
+  [uniform     ]  1.00Hz n= 35482 sem=0.9088 CIDEr=4.477  (9s, total 0.2m)
+  [uniform     ]  0.50Hz n= 17733 sem=0.8449 CIDEr=3.472  (9s, total 0.3m)
+  [uniform     ]  0.35Hz n= 11822 sem=0.8074 CIDEr=2.911  (9s, total 0.4m)
+  [uniform     ]  0.20Hz n=  7101 sem=0.7684 CIDEr=2.314  (9s, total 0.6m)
+  [uniform     ]  0.10Hz n=  3548 sem=0.7328 CIDEr=1.777  (9s, total 0.7m)
+  [uniform     ]  0.05Hz n=  1776 sem=0.7071 CIDEr=1.404  (8s, total 0.9m)
+  [uniform     ]  0.02Hz n=   702 sem=0.6819 CIDEr=1.082  (8s, total 1.0m)
+  [uniform     ]  0.01Hz n=   385 sem=0.6686 CIDEr=0.914  (9s, total 1.2m)
+  [adaptive    ]  1.00Hz n= 35482 sem=0.9270 CIDEr=3.569  (14s, total 1.4m)
+  [adaptive    ]  0.50Hz n= 17733 sem=0.9079 CIDEr=3.107  (15s, total 1.6m)
+  [adaptive    ]  0.35Hz n= 11822 sem=0.8882 CIDEr=2.794  (15s, total 1.9m)
+  [adaptive    ]  0.20Hz n=  7101 sem=0.8605 CIDEr=2.261  (15s, total 2.1m)
+  [adaptive    ]  0.10Hz n=  3548 sem=0.8281 CIDEr=1.605  (15s, total 2.4m)
+  [adaptive    ]  0.05Hz n=  1776 sem=0.8099 CIDEr=1.208  (14s, total 2.6m)
+  [adaptive    ]  0.02Hz n=   702 sem=0.8058 CIDEr=0.890  (14s, total 2.9m)
+  [adaptive    ]  0.01Hz n=   385 sem=0.8046 CIDEr=0.762  (13s, total 3.1m)
+
+=== summary (adaptive - baseline, mean over budgets; 95% CI takes | participants) ===
+  adaptive_minus_uniform       semantic +0.0890 [+0.0856,+0.0925] | [+0.0848,+0.0933]  adaptive ahead at 8/8 budgets
+  adaptive_minus_uniform       cider    -0.3050 [-0.3441,-0.2663] | [-0.3456,-0.2650]  adaptive ahead at 0/8 budgets
+wrote results_fidelity/V_218_all_cap360.json

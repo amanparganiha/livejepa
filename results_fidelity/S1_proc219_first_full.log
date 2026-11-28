@@ -1,0 +1,48 @@
+Loading weights:   0%|          | 0/387 [00:00<?, ?it/s]Loading weights: 100%|██████████| 387/387 [00:00<00:00, 13738.43it/s]
+  building streams: 25/219 (147s)
+  building streams: 50/219 (344s)
+  building streams: 75/219 (671s)
+  building streams: 100/219 (892s)
+  building streams: 125/219 (1210s)
+  building streams: 150/219 (1483s)
+  building streams: 175/219 (1763s)
+  building streams: 200/219 (2047s)
+built 219 streams in 2299s (missing 0) | {'n_takes': 219, 'missing_uids': [], 'participants': 52, 'scenarios': {'Bike Repair': 49, 'Cooking': 98, 'Health': 72}, 'mean_annotations': 143.78995433789953, 'mean_stream_seconds': 348.7762557077626, 'annotations_per_second': 0.41226990652247913}
+decode cache (read-only): 59588 entries from eval_data/decode_cache.jsonl
+  [uniform     ]  1.00Hz n= 76328 sem=0.9539 CIDEr=n/a (48948 uncached decodes)  (2s, total 0.0m)
+  [uniform     ]  0.50Hz n= 38158 sem=0.9017 CIDEr=n/a (24474 uncached decodes)  (2s, total 0.1m)
+  [uniform     ]  0.35Hz n= 25435 sem=0.8681 CIDEr=n/a (16310 uncached decodes)  (2s, total 0.1m)
+  [uniform     ]  0.20Hz n= 15268 sem=0.8234 CIDEr=n/a (9816 uncached decodes)  (1s, total 0.1m)
+  [uniform     ]  0.10Hz n=  7638 sem=0.7751 CIDEr=n/a (4894 uncached decodes)  (2s, total 0.1m)
+  [uniform     ]  0.05Hz n=  3816 sem=0.7347 CIDEr=n/a (2430 uncached decodes)  (2s, total 0.2m)
+  [uniform     ]  0.02Hz n=  1529 sem=0.7002 CIDEr=n/a (989 uncached decodes)  (2s, total 0.2m)
+  [uniform     ]  0.01Hz n=   779 sem=0.6781 CIDEr=n/a (485 uncached decodes)  (2s, total 0.2m)
+  [uniform_pool]  1.00Hz n= 76328 sem=0.9532 CIDEr=n/a (60301 uncached decodes)  (5s, total 0.3m)
+  [uniform_pool]  0.50Hz n= 38158 sem=0.9322 CIDEr=n/a (32574 uncached decodes)  (4s, total 0.4m)
+  [uniform_pool]  0.35Hz n= 25435 sem=0.9150 CIDEr=n/a (22084 uncached decodes)  (3s, total 0.4m)
+  [uniform_pool]  0.20Hz n= 15268 sem=0.8921 CIDEr=n/a (14253 uncached decodes)  (3s, total 0.5m)
+  [uniform_pool]  0.10Hz n=  7638 sem=0.8648 CIDEr=n/a (7435 uncached decodes)  (3s, total 0.5m)
+  [uniform_pool]  0.05Hz n=  3816 sem=0.8436 CIDEr=n/a (3791 uncached decodes)  (3s, total 0.6m)
+  [uniform_pool]  0.02Hz n=  1529 sem=0.8241 CIDEr=n/a (1527 uncached decodes)  (3s, total 0.6m)
+  [uniform_pool]  0.01Hz n=   779 sem=0.8148 CIDEr=n/a (767 uncached decodes)  (3s, total 0.7m)
+  [adaptive    ]  1.00Hz n= 76328 sem=0.9604 CIDEr=n/a (54366 uncached decodes)  (12s, total 0.9m)
+  [adaptive    ]  0.50Hz n= 38158 sem=0.9447 CIDEr=n/a (27841 uncached decodes)  (13s, total 1.1m)
+  [adaptive    ]  0.35Hz n= 25435 sem=0.9288 CIDEr=n/a (18829 uncached decodes)  (14s, total 1.3m)
+  [adaptive    ]  0.20Hz n= 15268 sem=0.9028 CIDEr=n/a (11428 uncached decodes)  (14s, total 1.6m)
+  [adaptive    ]  0.10Hz n=  7638 sem=0.8602 CIDEr=n/a (5752 uncached decodes)  (14s, total 1.8m)
+  [adaptive    ]  0.05Hz n=  3816 sem=0.8295 CIDEr=n/a (2893 uncached decodes)  (15s, total 2.0m)
+  [adaptive    ]  0.02Hz n=  1529 sem=0.8084 CIDEr=n/a (1179 uncached decodes)  (14s, total 2.3m)
+  [adaptive    ]  0.01Hz n=   779 sem=0.8024 CIDEr=n/a (613 uncached decodes)  (14s, total 2.5m)
+  [take_mean   ]  1.00Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.5m)
+  [take_mean   ]  0.50Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.5m)
+  [take_mean   ]  0.35Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.5m)
+  [take_mean   ]  0.20Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.5m)
+  [take_mean   ]  0.10Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.5m)
+  [take_mean   ]  0.05Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.6m)
+  [take_mean   ]  0.02Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.6m)
+  [take_mean   ]  0.01Hz n=   219 sem=0.8060 CIDEr=n/a (219 uncached decodes)  (0s, total 2.6m)
+
+=== summary (adaptive - baseline, mean over budgets; 95% CI takes | participants) ===
+  adaptive_minus_uniform       semantic +0.0753 [+0.0735,+0.0771] | [+0.0724,+0.0784]  adaptive ahead at 8/8 budgets
+  adaptive_minus_uniform_pool  semantic -0.0003 [-0.0012,+0.0006] | [-0.0014,+0.0008]  adaptive ahead at 4/8 budgets
+wrote results_fidelity/S1_proc219_first_full.json

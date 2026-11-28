@@ -1,0 +1,47 @@
+Loading weights:   0%|          | 0/387 [00:00<?, ?it/s]Loading weights: 100%|██████████| 387/387 [00:00<00:00, 12241.20it/s]
+  building streams: 25/218 (43s)
+  building streams: 50/218 (68s)
+  building streams: 75/218 (93s)
+  building streams: 100/218 (119s)
+  building streams: 125/218 (145s)
+  building streams: 150/218 (176s)
+  building streams: 175/218 (204s)
+  building streams: 200/218 (236s)
+built 218 streams in 257s (missing 0) | {'n_takes': 218, 'missing_uids': [], 'participants': 77, 'scenarios': {'Dance': 52, 'Bike Repair': 18, 'Basketball': 36, 'Cooking': 41, 'Soccer': 18, 'Health': 40, 'Rock Climbing': 9, 'Music': 4}, 'mean_annotations': 88.8211009174312, 'mean_stream_seconds': 170.35550458715596, 'annotations_per_second': 0.521386738471895}
+  [uniform     ]  1.00Hz n= 37086 sem=0.9405  (0s, total 0.0m)
+  [uniform     ]  0.50Hz n= 18536 sem=0.8757  (0s, total 0.0m)
+  [uniform     ]  0.35Hz n= 12359 sem=0.8351  (0s, total 0.0m)
+  [uniform     ]  0.20Hz n=  7422 sem=0.7913  (0s, total 0.0m)
+  [uniform     ]  0.10Hz n=  3713 sem=0.7514  (0s, total 0.0m)
+  [uniform     ]  0.05Hz n=  1852 sem=0.7251  (0s, total 0.0m)
+  [uniform     ]  0.02Hz n=   736 sem=0.6963  (0s, total 0.0m)
+  [uniform     ]  0.01Hz n=   398 sem=0.6810  (0s, total 0.0m)
+  [uniform_pool]  1.00Hz n= 37086 sem=0.9400  (2s, total 0.1m)
+  [uniform_pool]  0.50Hz n= 18536 sem=0.9151  (2s, total 0.1m)
+  [uniform_pool]  0.35Hz n= 12359 sem=0.8972  (2s, total 0.1m)
+  [uniform_pool]  0.20Hz n=  7422 sem=0.8766  (2s, total 0.1m)
+  [uniform_pool]  0.10Hz n=  3713 sem=0.8554  (2s, total 0.2m)
+  [uniform_pool]  0.05Hz n=  1852 sem=0.8399  (2s, total 0.2m)
+  [uniform_pool]  0.02Hz n=   736 sem=0.8253  (2s, total 0.2m)
+  [uniform_pool]  0.01Hz n=   398 sem=0.8190  (2s, total 0.2m)
+  [adaptive    ]  1.00Hz n= 37086 sem=0.9480  (7s, total 0.3m)
+  [adaptive    ]  0.50Hz n= 18536 sem=0.9289  (7s, total 0.5m)
+  [adaptive    ]  0.35Hz n= 12359 sem=0.9086  (7s, total 0.6m)
+  [adaptive    ]  0.20Hz n=  7422 sem=0.8785  (7s, total 0.7m)
+  [adaptive    ]  0.10Hz n=  3713 sem=0.8419  (7s, total 0.8m)
+  [adaptive    ]  0.05Hz n=  1852 sem=0.8225  (7s, total 0.9m)
+  [adaptive    ]  0.02Hz n=   736 sem=0.8135  (7s, total 1.1m)
+  [adaptive    ]  0.01Hz n=   398 sem=0.8117  (6s, total 1.2m)
+  [take_mean   ]  1.00Hz n=   218 sem=0.8152  (0s, total 1.2m)
+  [take_mean   ]  0.50Hz n=   218 sem=0.8152  (0s, total 1.2m)
+  [take_mean   ]  0.35Hz n=   218 sem=0.8152  (0s, total 1.2m)
+  [take_mean   ]  0.20Hz n=   218 sem=0.8152  (0s, total 1.2m)
+  [take_mean   ]  0.10Hz n=   218 sem=0.8152  (0s, total 1.2m)
+  [take_mean   ]  0.05Hz n=   218 sem=0.8152  (0s, total 1.2m)
+  [take_mean   ]  0.02Hz n=   218 sem=0.8152  (0s, total 1.2m)
+  [take_mean   ]  0.01Hz n=   218 sem=0.8152  (0s, total 1.2m)
+
+=== summary (adaptive - baseline, mean over budgets; 95% CI takes | participants) ===
+  adaptive_minus_uniform       semantic +0.0822 [+0.0790,+0.0853] | [+0.0790,+0.0853]  adaptive ahead at 8/8 budgets
+  adaptive_minus_uniform_pool  semantic -0.0019 [-0.0029,-0.0008] | [-0.0032,-0.0006]  adaptive ahead at 4/8 budgets
+wrote results_fidelity/S3_218_first_full.json

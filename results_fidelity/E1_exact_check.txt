@@ -1,0 +1,32 @@
+219 takes, 52 participants | E1 = E1_proc219_first_exact.json
+identity check, E1 uniform per-take CIDEr == C1 uniform at all 8 budgets: True
+
+per-take CIDEr means; Ax = adaptive exact (raw midpoint), Am = adaptive mean (C1)
+   Hz      U      P     Ax     Am | Ax-U (primary) [95% CI]    Ax>U takes | Am-Ax [95% CI]               | corpus U  corpus Ax
+  1.00  4.893  3.959  5.204  4.232 |  +0.311 [+0.278,+0.345] SIG  198/219 |  -0.972 [-1.039,-0.904] SIG |    4.962     5.266
+  0.50  3.978  3.274  4.767  3.615 |  +0.789 [+0.739,+0.840] SIG  213/219 |  -1.153 [-1.210,-1.096] SIG |    4.068     4.858
+  0.35  3.405  2.681  4.136  3.336 |  +0.731 [+0.665,+0.796] SIG  206/219 |  -0.800 [-0.866,-0.736] SIG |    3.497     4.231
+  0.20  2.676  1.956  3.154  2.715 |  +0.479 [+0.420,+0.538] SIG  200/219 |  -0.440 [-0.486,-0.392] SIG |    2.813     3.261
+  0.10  1.845  1.252  2.073  1.685 |  +0.228 [+0.183,+0.273] SIG  172/219 |  -0.387 [-0.423,-0.352] SIG |    2.078     2.258
+  0.05  1.328  0.804  1.350  1.033 |  +0.023 [-0.011,+0.056] ns   126/219 |  -0.318 [-0.354,-0.280] SIG |    1.581     1.580
+  0.02  0.854  0.481  0.863  0.569 |  +0.009 [-0.024,+0.043] ns   104/219 |  -0.294 [-0.335,-0.254] SIG |    1.077     1.082
+  0.01  0.646  0.379  0.675  0.406 |  +0.028 [-0.010,+0.069] ns   103/219 |  -0.268 [-0.310,-0.228] SIG |    0.827     0.849
+
+  PRIMARY  Ax - U, mean over budgets +0.3249  CI takes [+0.3032,+0.3472]  CI participants [+0.3025,+0.3482]
+  = +13.2% of uniform's mean 2.4531 (±2% tie band = ±0.0491)
+  budgets: adaptive ahead 8/8 (5 significant), behind 0/8 (0 significant); takes ahead on the 8-budget mean 214/219
+  pre-registered verdict: PLACEMENT ALONE HELPS (both CIs above 0)
+
+  2x2, per-take CIDEr, mean over budgets [95% CI takes], % of uniform's mean
+    placement, averaging off    Ax - U    +0.3249 [+0.3032,+0.3472]   +13.2%
+    placement, averaging on     Am - P    +0.3505 [+0.3296,+0.3715]   +14.3%
+    averaging, uniform          P - U     -0.6046 [-0.6271,-0.5820]   -24.6%
+    averaging*, adaptive        Am - Ax   -0.5790 [-0.6047,-0.5540]   -23.6%
+    interaction  (Am-P) - (Ax-U)          +0.0256 [+0.0069,+0.0442]    +1.0%
+    net, as in the paper        Am - U    -0.2542 [-0.2803,-0.2281]   -10.4%
+    * includes the Ward-boundary shift from segmenting the smoothed stream
+
+  per scenario, primary Ax - U (mean over budgets)
+    Bike Repair  n= 49  +0.3334 [+0.2741,+0.3945]
+    Cooking      n= 98  +0.3412 [+0.3142,+0.3692]
+    Health       n= 72  +0.2969 [+0.2586,+0.3339]

@@ -1,0 +1,7 @@
+Loading weights:   0%|          | 0/387 [00:00<?, ?it/s]Loading weights: 100%|██████████| 387/387 [00:00<00:00, 10962.43it/s]
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 7632.95it/s]
+Loading weights:   0%|          | 0/1013 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1013/1013 [00:00<00:00, 10264.36it/s]
+64 real pooled decodes in 16.3s -> 3.93 decodes/s
+  e.g. the camera bearer places the front wheel in his left hand in the bicycle fork.
+  e.g. the camera bearer holds the front wheel in his left hand with the bike fork.
+  e.g. the camera wearer holds the front wheel with his right hand.

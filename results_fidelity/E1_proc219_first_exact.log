@@ -1,0 +1,34 @@
+Loading weights:   0%|          | 0/387 [00:00<?, ?it/s]Loading weights: 100%|██████████| 387/387 [00:00<00:00, 10494.57it/s]
+  building streams: 25/219 (56s)
+  building streams: 50/219 (99s)
+  building streams: 75/219 (162s)
+  building streams: 100/219 (207s)
+  building streams: 125/219 (270s)
+  building streams: 150/219 (324s)
+  building streams: 175/219 (378s)
+  building streams: 200/219 (436s)
+built 219 streams in 488s (missing 0) | {'n_takes': 219, 'missing_uids': [], 'participants': 52, 'scenarios': {'Bike Repair': 49, 'Cooking': 98, 'Health': 72}, 'mean_annotations': 143.78995433789953, 'mean_stream_seconds': 348.7762557077626, 'annotations_per_second': 0.41226990652247913}
+decode cache: resumed 195122 entries from eval_data/decode_cache_proc219.jsonl
+  [uniform     ]  1.00Hz n= 76328 sem=0.9539 CIDEr=4.962  (12s, total 0.2m)
+  [uniform     ]  0.50Hz n= 38158 sem=0.9017 CIDEr=4.068  (13s, total 0.4m)
+  [uniform     ]  0.35Hz n= 25435 sem=0.8681 CIDEr=3.497  (13s, total 0.6m)
+  [uniform     ]  0.20Hz n= 15268 sem=0.8234 CIDEr=2.813  (12s, total 0.8m)
+  [uniform     ]  0.10Hz n=  7638 sem=0.7751 CIDEr=2.078  (13s, total 1.1m)
+  [uniform     ]  0.05Hz n=  3816 sem=0.7347 CIDEr=1.581  (12s, total 1.3m)
+  [uniform     ]  0.02Hz n=  1529 sem=0.7002 CIDEr=1.077  (12s, total 1.5m)
+  [uniform     ]  0.01Hz n=   779 sem=0.6781 CIDEr=0.827  (13s, total 1.7m)
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1063.46it/s]
+Loading weights:   0%|          | 0/1013 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1013/1013 [00:00<00:00, 11300.08it/s]
+  [adaptive    ]  1.00Hz n= 76328 sem=0.9717 CIDEr=5.266  (289s, total 6.5m)
+  [adaptive    ]  0.50Hz n= 38158 sem=0.9476 CIDEr=4.858  (21s, total 6.9m)
+  [adaptive    ]  0.35Hz n= 25435 sem=0.9120 CIDEr=4.231  (24s, total 7.3m)
+  [adaptive    ]  0.20Hz n= 15268 sem=0.8544 CIDEr=3.261  (22s, total 7.6m)
+  [adaptive    ]  0.10Hz n=  7638 sem=0.7865 CIDEr=2.258  (22s, total 8.0m)
+  [adaptive    ]  0.05Hz n=  3816 sem=0.7360 CIDEr=1.580  (23s, total 8.4m)
+  [adaptive    ]  0.02Hz n=  1529 sem=0.6950 CIDEr=1.082  (25s, total 8.8m)
+  [adaptive    ]  0.01Hz n=   779 sem=0.6784 CIDEr=0.849  (22s, total 9.2m)
+
+=== summary (adaptive - baseline, mean over budgets; 95% CI takes | participants) ===
+  adaptive_minus_uniform       semantic +0.0183 [+0.0166,+0.0200] | [+0.0164,+0.0204]  adaptive ahead at 7/8 budgets
+  adaptive_minus_uniform       cider    +0.3249 [+0.3032,+0.3472] | [+0.3025,+0.3482]  adaptive ahead at 8/8 budgets
+wrote results_fidelity/E1_proc219_first_exact.json

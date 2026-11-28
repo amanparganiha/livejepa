@@ -1,0 +1,51 @@
+Loading weights:   0%|          | 0/387 [00:00<?, ?it/s]Loading weights: 100%|██████████| 387/387 [00:00<00:00, 12810.93it/s]
+  building streams: 25/219 (59s)
+  building streams: 50/219 (103s)
+  building streams: 75/219 (166s)
+  building streams: 100/219 (212s)
+  building streams: 125/219 (275s)
+  building streams: 150/219 (329s)
+  building streams: 175/219 (383s)
+  building streams: 200/219 (441s)
+built 219 streams in 493s (missing 0) | {'n_takes': 219, 'missing_uids': [], 'participants': 52, 'scenarios': {'Bike Repair': 49, 'Cooking': 98, 'Health': 72}, 'mean_annotations': 143.78995433789953, 'mean_stream_seconds': 348.7762557077626, 'annotations_per_second': 0.41226990652247913}
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1804.00it/s]
+Loading weights:   0%|          | 0/1013 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1013/1013 [00:00<00:00, 11548.09it/s]
+  [uniform     ]  1.00Hz n= 76328 sem=0.9539 CIDEr=4.962  (5816s, total 96.9m)
+  [uniform     ]  0.50Hz n= 38158 sem=0.9017 CIDEr=4.068  (288s, total 101.7m)
+  [uniform     ]  0.35Hz n= 25435 sem=0.8681 CIDEr=3.497  (13s, total 101.9m)
+  [uniform     ]  0.20Hz n= 15268 sem=0.8234 CIDEr=2.813  (13s, total 102.2m)
+  [uniform     ]  0.10Hz n=  7638 sem=0.7751 CIDEr=2.078  (13s, total 102.4m)
+  [uniform     ]  0.05Hz n=  3816 sem=0.7347 CIDEr=1.581  (61s, total 103.4m)
+  [uniform     ]  0.02Hz n=  1529 sem=0.7002 CIDEr=1.077  (13s, total 103.6m)
+  [uniform     ]  0.01Hz n=   779 sem=0.6781 CIDEr=0.827  (14s, total 103.8m)
+  [adaptive    ]  1.00Hz n= 76328 sem=0.9604 CIDEr=4.302  (13668s, total 331.6m)
+  [adaptive    ]  0.50Hz n= 38158 sem=0.9447 CIDEr=3.698  (6555s, total 440.9m)
+  [adaptive    ]  0.35Hz n= 25435 sem=0.9288 CIDEr=3.436  (3159s, total 493.5m)
+  [adaptive    ]  0.20Hz n= 15268 sem=0.9028 CIDEr=2.847  (2305s, total 531.9m)
+  [adaptive    ]  0.10Hz n=  7638 sem=0.8602 CIDEr=1.866  (1262s, total 553.0m)
+  [adaptive    ]  0.05Hz n=  3816 sem=0.8295 CIDEr=1.267  (645s, total 563.7m)
+  [adaptive    ]  0.02Hz n=  1529 sem=0.8084 CIDEr=0.810  (392s, total 570.3m)
+  [adaptive    ]  0.01Hz n=   779 sem=0.8024 CIDEr=0.607  (262s, total 574.6m)
+  [uniform_pool]  1.00Hz n= 76328 sem=0.9532 CIDEr=3.990  (7774s, total 704.2m)
+  [uniform_pool]  0.50Hz n= 38158 sem=0.9322 CIDEr=3.326  (6021s, total 804.6m)
+  [uniform_pool]  0.35Hz n= 25435 sem=0.9150 CIDEr=2.757  (4102s, total 872.9m)
+  [uniform_pool]  0.20Hz n= 15268 sem=0.8921 CIDEr=2.082  (3617s, total 933.2m)
+  [uniform_pool]  0.10Hz n=  7638 sem=0.8648 CIDEr=1.464  (2087s, total 968.0m)
+  [uniform_pool]  0.05Hz n=  3816 sem=0.8436 CIDEr=1.033  (1164s, total 987.4m)
+  [uniform_pool]  0.02Hz n=  1529 sem=0.8241 CIDEr=0.708  (510s, total 995.9m)
+  [uniform_pool]  0.01Hz n=   779 sem=0.8148 CIDEr=0.577  (293s, total 1000.8m)
+  [take_mean   ]  1.00Hz n=   219 sem=0.8060 CIDEr=0.319  (210s, total 1004.3m)
+  [take_mean   ]  0.50Hz n=   219 sem=0.8060 CIDEr=0.319  (13s, total 1004.5m)
+  [take_mean   ]  0.35Hz n=   219 sem=0.8060 CIDEr=0.319  (13s, total 1004.7m)
+  [take_mean   ]  0.20Hz n=   219 sem=0.8060 CIDEr=0.319  (13s, total 1004.9m)
+  [take_mean   ]  0.10Hz n=   219 sem=0.8060 CIDEr=0.319  (13s, total 1005.1m)
+  [take_mean   ]  0.05Hz n=   219 sem=0.8060 CIDEr=0.319  (13s, total 1005.4m)
+  [take_mean   ]  0.02Hz n=   219 sem=0.8060 CIDEr=0.319  (13s, total 1005.6m)
+  [take_mean   ]  0.01Hz n=   219 sem=0.8060 CIDEr=0.319  (13s, total 1005.8m)
+
+=== summary (adaptive - baseline, mean over budgets; 95% CI takes | participants) ===
+  adaptive_minus_uniform       semantic +0.0753 [+0.0735,+0.0771] | [+0.0724,+0.0784]  adaptive ahead at 8/8 budgets
+  adaptive_minus_uniform       cider    -0.2542 [-0.2803,-0.2281] | [-0.2808,-0.2280]  adaptive ahead at 1/8 budgets
+  adaptive_minus_uniform_pool  semantic -0.0003 [-0.0012,+0.0006] | [-0.0014,+0.0008]  adaptive ahead at 4/8 budgets
+  adaptive_minus_uniform_pool  cider    +0.3505 [+0.3296,+0.3715] | [+0.3295,+0.3714]  adaptive ahead at 8/8 budgets
+wrote results_fidelity/C1_proc219_first_full_cider.json
